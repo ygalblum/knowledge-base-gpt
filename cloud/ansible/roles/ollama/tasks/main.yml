@@ -1,0 +1,11 @@
+- name: Installations
+  ansible.builtin.include_tasks:
+    file: install.yml
+    apply:
+      become: true
+
+- name: Configure Ollama Quadlet
+  ansible.builtin.include_tasks:
+    file: setup_ollama.yml
+    apply:
+      become: false

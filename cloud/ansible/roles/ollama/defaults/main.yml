@@ -1,0 +1,2 @@
+ollama_quadlet_directory: "{{ ansible_user_dir }}/.config/containers/systemd/"
+ollama_model: llama2-uncensored

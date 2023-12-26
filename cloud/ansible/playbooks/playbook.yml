@@ -1,0 +1,5 @@
+- name: Prepare the machine for installing Ollama
+  hosts: all
+  tasks:
+  roles:
+  - ollama

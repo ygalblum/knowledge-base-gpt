@@ -1,0 +1,27 @@
+- name: Create Quadlet directory
+  ansible.builtin.file:
+    path: "{{ ollama_quadlet_directory }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+
+- name: Create Quadlet files
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ ollama_quadlet_directory }}/{{ item }}"
+    mode: '0755'
+  loop:
+  - ollama.volume
+  - ollama.container
+
+- name: Start Ollama
+  ansible.builtin.systemd_service:
+    state: started
+    daemon_reload: true
+    scope: user
+    name: ollama.service
+
+- name: Pull model
+  ansible.builtin.command:
+    cmd: "podman exec ollama ollama pull {{ ollama_model }}"

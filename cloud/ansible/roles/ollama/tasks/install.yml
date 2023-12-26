@@ -1,0 +1,55 @@
+- name: Upgrade all packages
+  ansible.builtin.package:
+    name: "*"
+    state: latest
+  register: updated
+
+- name: Reboot to get use new kernel
+  when: updated.changed
+  ansible.builtin.reboot:
+
+- name: Install EPEL
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+
+# TODO adjust according to running OS (Fedora/CentOS/RHEL)
+- name: Set CUDA Repo OSName
+  ansible.builtin.set_fact:
+    ollama_cuda_os_name: rhel
+    ollama_cuda_os_version: 9
+
+- name: Add NVIDIA CUDA repository
+  ansible.builtin.command:
+    cmd: "dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/{{ ollama_cuda_os_name }}{{ ollama_cuda_os_version }}/{{ ansible_machine }}/cuda-{{ ollama_cuda_os_name }}{{ ollama_cuda_os_version }}.repo"
+    creates: /etc/yum.repos.d/cuda-{{ ollama_cuda_os_name }}{{ ollama_cuda_os_version }}.repo
+
+- name: Add NVIDIA toolkit repository
+  ansible.builtin.command:
+    cmd: dnf config-manager --add-repo https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo
+    creates: /etc/yum.repos.d/nvidia-container-toolkit.repo
+
+- name: Install the required packages
+  ansible.builtin.dnf:
+    name:
+    - cuda-drivers
+    - nvidia-container-toolkit
+    - podman
+    - "kernel-devel-{{ ansible_kernel }}"
+    - "kernel-headers-{{ ansible_kernel }}"
+    state: present
+
+- name: Add the NVIDIA module
+  community.general.modprobe:
+    name: nvidia
+    state: present
+
+- name: Create CDI File
+  ansible.builtin.command:
+    cmd: nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+    creates: /etc/cdi/nvidia.yaml
+
+- name: Enable lingering for ansible_user
+  ansible.builtin.command:
+    cmd: loginctl enable-linger {{ ansible_user_id }}
+    creates: '/var/lib/systemd/linger/{{ ansible_user_id }}'
