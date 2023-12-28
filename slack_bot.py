@@ -19,7 +19,7 @@ def got_message(message, say):
 
 
 def main():
-    PrivateGPT.get_instance().initialize(True)
+    PrivateGPT.get_instance().initialize()
     SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"]).start()
 
 

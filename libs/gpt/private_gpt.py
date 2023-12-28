@@ -41,13 +41,13 @@ class PrivateGPT():
             raise Exception("This class is a singleton!")
         PrivateGPT.__instance = self
 
-    def initialize(self, hide_source):
+    def initialize(self, hide_source=True, verbose=False):
         self._hide_source = hide_source
         embeddings = HuggingFaceEmbeddings(model_name=constants.embeddings_model_name)
         db = Chroma(persist_directory=constants.persist_directory, embedding_function=embeddings)
         retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
         llm = Ollama(model=model, base_url=f"http://{ollama_host}:11434")
-        self._qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents=not self._hide_source, chain_type_kwargs=dict(prompt=PROMPT, verbose=True))
+        self._qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents=not self._hide_source, chain_type_kwargs=dict(prompt=PROMPT, verbose=verbose))
 
     def answer_query(self, query):
         res = self._qa(query)
