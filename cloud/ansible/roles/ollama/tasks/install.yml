@@ -1,11 +1,32 @@
+- name: Make sure the required related facts are available
+  ansible.builtin.setup:
+    gather_subset:
+    - "!all"
+    - "!min"
+    - kernel
+
+- name: Get kernel version
+  ansible.builtin.set_fact:
+    current_kernel_version: "{{ ansible_facts.kernel }}"
+
 - name: Upgrade all packages
   ansible.builtin.package:
     name: "*"
     state: latest
-  register: updated
 
-- name: Reboot to get use new kernel
-  when: updated.changed
+- name: Get default kernel
+  ansible.builtin.command:
+    cmd: /sbin/grubby --default-kernel
+  register: _grubby_rc
+  changed_when: false
+
+- name: Parse default kernel version
+  ansible.builtin.set_fact:
+    default_kernel_version: "{{ ((((_grubby_rc.stdout_lines[0] | split('/'))[2] | split('-'))[1:]) | join('-')) | trim }}"
+
+
+- name: Reboot if the current kernel version is not the default
+  when: current_kernel_version != default_kernel_version
   ansible.builtin.reboot:
 
 - name: Install EPEL
