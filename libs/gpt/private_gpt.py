@@ -32,13 +32,15 @@ class PrivateGPT():
 
     @staticmethod
     def get_instance():
-        if PrivateGPT.__instance == None:
+        if PrivateGPT.__instance is None:
             PrivateGPT()
         return PrivateGPT.__instance
 
     def __init__(self):
-        if PrivateGPT.__instance != None:
+        if PrivateGPT.__instance is not None:
             raise Exception("This class is a singleton!")
+        self._qa = None
+        self._hide_source = True
         PrivateGPT.__instance = self
 
     def initialize(self, hide_source=True, verbose=False):
@@ -47,9 +49,15 @@ class PrivateGPT():
         db = Chroma(persist_directory=constants.persist_directory, embedding_function=embeddings)
         retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
         llm = Ollama(model=model, base_url=f"http://{ollama_host}:11434")
-        self._qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents=not self._hide_source, chain_type_kwargs=dict(prompt=PROMPT, verbose=verbose))
+        self._qa = RetrievalQA.from_chain_type(
+            llm=llm,
+            chain_type="stuff",
+            retriever=retriever,
+            return_source_documents=not self._hide_source,
+            chain_type_kwargs={"prompt":PROMPT, "verbose":verbose}
+        )
 
     def answer_query(self, query):
         res = self._qa(query)
-        answer, docs = res['result'], [] if self._hide_source else res['source_documents']
+        answer, _ = res['result'], [] if self._hide_source else res['source_documents']
         return answer
