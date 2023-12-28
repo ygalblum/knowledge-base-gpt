@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 import os
-import glob
 from typing import List
 
+from langchain.docstore.document import Document
 from langchain.document_loaders import GoogleDriveLoader
-
+from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.docstore.document import Document
-from constants import CHROMA_SETTINGS
+
+from libs.common.constants import CHROMA_SETTINGS
 
 
 # Load environment variables
