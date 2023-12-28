@@ -8,12 +8,10 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 
-from libs.common.constants import CHROMA_SETTINGS
+from libs.common import constants
 
 
 # Load environment variables
-persist_directory = os.environ.get('PERSIST_DIRECTORY', 'db')
-embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME', 'all-MiniLM-L6-v2')
 chunk_size = 500
 chunk_overlap = 50
 
@@ -60,12 +58,12 @@ def does_vectorstore_exist(persist_directory: str) -> bool:
 
 def main():
     # Create embeddings
-    embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
+    embeddings = HuggingFaceEmbeddings(model_name=constants.embeddings_model_name)
 
-    if does_vectorstore_exist(persist_directory):
+    if does_vectorstore_exist(constants.persist_directory):
         # Update and store locally vectorstore
-        print(f"Appending to existing vectorstore at {persist_directory}")
-        db = Chroma(persist_directory=persist_directory, embedding_function=embeddings, client_settings=CHROMA_SETTINGS)
+        print(f"Appending to existing vectorstore at {constants.persist_directory}")
+        db = Chroma(persist_directory=constants.persist_directory, embedding_function=embeddings, client_settings=constants.CHROMA_SETTINGS)
         collection = db.get()
         texts = process_documents(set(metadata['source'] for metadata in collection['metadatas']))
         print(f"Creating embeddings. May take some minutes...")
@@ -75,7 +73,7 @@ def main():
         print("Creating new vectorstore")
         texts = process_documents()
         print(f"Creating embeddings. May take some minutes...")
-        db = Chroma.from_documents(texts, embeddings, persist_directory=persist_directory)
+        db = Chroma.from_documents(texts, embeddings, persist_directory=constants.persist_directory)
     db.persist()
     db = None
 
