@@ -34,7 +34,8 @@ def load_documents(ignored_files: List[str] = []) -> List[Document]:
         recursive=False,
         file_types=["sheet", "document", "pdf"],
     )
-    return loader.load()
+    docs = loader.load()
+    return [doc for doc in docs if doc.metadata['source'] not in ignored_files]
 
 
 def process_documents(ignored_files: List[str] = []) -> List[Document]:
@@ -56,14 +57,7 @@ def does_vectorstore_exist(persist_directory: str) -> bool:
     """
     Checks if vectorstore exists
     """
-    if os.path.exists(os.path.join(persist_directory, 'index')):
-        if os.path.exists(os.path.join(persist_directory, 'chroma-collections.parquet')) and os.path.exists(os.path.join(persist_directory, 'chroma-embeddings.parquet')):
-            list_index_files = glob.glob(os.path.join(persist_directory, 'index/*.bin'))
-            list_index_files += glob.glob(os.path.join(persist_directory, 'index/*.pkl'))
-            # At least 3 documents are needed in a working vectorstore
-            if len(list_index_files) > 3:
-                return True
-    return False
+    return os.path.exists(os.path.join(persist_directory, 'chroma.sqlite3'))
 
 def main():
     # Create embeddings
@@ -74,7 +68,7 @@ def main():
         print(f"Appending to existing vectorstore at {persist_directory}")
         db = Chroma(persist_directory=persist_directory, embedding_function=embeddings, client_settings=CHROMA_SETTINGS)
         collection = db.get()
-        texts = process_documents([metadata['source'] for metadata in collection['metadatas']])
+        texts = process_documents(set(metadata['source'] for metadata in collection['metadatas']))
         print(f"Creating embeddings. May take some minutes...")
         db.add_documents(texts)
     else:

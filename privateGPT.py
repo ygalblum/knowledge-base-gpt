@@ -44,8 +44,7 @@ PROMPT = PromptTemplate(
     template=better_prompt_template, input_variables=["context", "question"]
 )
 
-# host='localhost'
-host='ec2-34-239-171-213.compute-1.amazonaws.com'
+ollama_host = os.environ.get("OLLAMA_HOST", 'localhost')
 
 class PrivateGPT():
     def __init__(self, hide_source):
@@ -55,7 +54,7 @@ class PrivateGPT():
         embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
         db = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
         retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
-        llm = Ollama(model=model, base_url=f"http://{host}:11434")
+        llm = Ollama(model=model, base_url=f"http://{ollama_host}:11434")
         self._qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents=not self._hide_source, chain_type_kwargs=dict(prompt=PROMPT, verbose=True))
 
     def handle_query(self, query, say):
@@ -75,7 +74,7 @@ def main():
     # activate/deactivate the streaming StdOut callback for LLMs
     callbacks = [] if args.mute_stream else [StreamingStdOutCallbackHandler()]
 
-    llm = Ollama(model=model, callbacks=callbacks, base_url=f"http://{host}:11434")
+    llm = Ollama(model=model, callbacks=callbacks, base_url=f"http://{ollama_host}:11434")
 
     qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents= not args.hide_source, chain_type_kwargs=dict(prompt=PROMPT, verbose=True))
     # Interactive questions and answers
