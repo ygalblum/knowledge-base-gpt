@@ -8,7 +8,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 
-from libs.common import constants
+from knowledge_base_gpt.libs.common import constants
 
 
 # Load environment variables

@@ -6,7 +6,7 @@ from langchain.llms import Ollama
 from langchain.prompts import PromptTemplate
 from langchain.vectorstores import Chroma
 
-from libs.common import constants
+from knowledge_base_gpt.libs.common import constants
 
 model = os.environ.get("MODEL", "llama2-uncensored")
 target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))

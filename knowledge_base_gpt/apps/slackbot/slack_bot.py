@@ -4,7 +4,7 @@ import os
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-from libs.gpt.private_gpt import PrivateGPT
+from knowledge_base_gpt.libs.gpt.private_gpt import PrivateGPT
 
 
 app = App(
