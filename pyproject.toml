@@ -1,25 +1,31 @@
 [tool.poetry]
-name = "privategpt"
+name = "knowledge-base-gpt"
 version = "0.1.0"
 description = ""
-authors = ["Ivan Martinez <ivanmartit@gmail.com>"]
+authors = ["Ygal Blum <ygal.blum@gmail.com>"]
 license = "Apache Version 2.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-langchain = "0.0.261"
-gpt4all = "^1.0.3"
-chromadb = "^0.3.26"
-PyMuPDF = "^1.22.5"
-python-dotenv = "^1.0.0"
-unstructured = "^0.8.0"
-extract-msg = "^0.41.5"
-tabulate = "^0.9.0"
-pandoc = "^2.3"
-pypandoc = "^1.11"
-tqdm = "^4.65.0"
-sentence-transformers = "^2.2.2"
+python = "^3.11"
+langchain = "0.0.274"
+gpt4all = "1.0.8"
+chromadb = "0.4.7"
+llama-cpp-python = "0.1.81"
+urllib3 = "2.0.4"
+PyMuPDF = "1.23.5"
+python-dotenv = "1.0.0"
+unstructured = "0.10.8"
+extract-msg = "0.45.0"
+tabulate = "0.9.0"
+pandoc = "2.3"
+pypandoc = "1.11"
+sentence_transformers = "2.2.2"
+google-api-python-client = "2.111.0"
+google-auth-httplib2 = "0.2.0"
+google-auth-oauthlib = "1.2.0"
+PyPDF2 = "3.0.1"
+slack_bolt = "1.18.1"
 
 [build-system]
 requires = ["poetry-core"]
