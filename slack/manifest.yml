@@ -1,0 +1,20 @@
+display_information:
+  name: KnowledgeBase
+features:
+  bot_user:
+    display_name: KnowledgeBase
+    always_online: false
+oauth_config:
+  scopes:
+    bot:
+      - chat:write
+      - im:history
+settings:
+  event_subscriptions:
+    bot_events:
+      - message.im
+  interactivity:
+    is_enabled: true
+  org_deploy_enabled: false
+  socket_mode_enabled: true
+  token_rotation_enabled: false
