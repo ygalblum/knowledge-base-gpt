@@ -15,8 +15,7 @@ from knowledge_base_gpt.libs.common import constants
 chunk_size = 500
 chunk_overlap = 50
 
-TOKEN_FILE = 'token.json'
-SERVICE_KEY_FILE = 'service_key.json'
+service_key_file = os.environ.get('SERVICE_KEY_FILE', 'service_key.json')
 
 def load_documents(ignored_files: List[str] = []) -> List[Document]:
     folder_id = os.environ.get('GOOGLE_DRIVE_FOLDER_ID')
@@ -25,8 +24,7 @@ def load_documents(ignored_files: List[str] = []) -> List[Document]:
         exit(1)
 
     loader = GoogleDriveLoader(
-        service_account_key=SERVICE_KEY_FILE,
-        token_path=TOKEN_FILE,
+        service_account_key=service_key_file,
         folder_id=folder_id,
         recursive=False,
         file_types=["sheet", "document", "pdf"],
