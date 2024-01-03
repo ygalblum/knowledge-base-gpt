@@ -10,7 +10,7 @@
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ ollama_quadlet_directory }}/{{ item }}"
-    mode: '0755'
+    mode: '0644'
   loop:
   - ollama.volume
   - ollama.container
