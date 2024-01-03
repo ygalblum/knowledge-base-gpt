@@ -74,3 +74,8 @@
   ansible.builtin.command:
     cmd: loginctl enable-linger {{ ansible_user_id }}
     creates: '/var/lib/systemd/linger/{{ ansible_user_id }}'
+
+- name: Add the ip_table module to allow using a Podman Network
+  community.general.modprobe:
+    name: ip_tables
+    state: present
