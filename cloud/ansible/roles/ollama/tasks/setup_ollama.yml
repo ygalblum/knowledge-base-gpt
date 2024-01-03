@@ -12,16 +12,36 @@
     dest: "{{ ollama_quadlet_directory }}/{{ item }}"
     mode: '0644'
   loop:
-  - ollama.volume
+  - embedding.volume
+  - ingest.container
   - ollama.container
+  - ollama.network
+  - ollama.volume
+  - slackbot.container
+
+- name: Copy the Google API service key file
+  ansible.builtin.copy:
+    src: "{{ ollama_ingest_google_api_service_key_file }}"
+    dest: "{{ ollama_quadlet_directory }}/service_key.json"
+    mode: '0644'
+
+- name: Run daemon reload to make Quadlet create the service files
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: user
 
 - name: Start Ollama
   ansible.builtin.systemd_service:
     state: started
-    daemon_reload: true
     scope: user
     name: ollama.service
 
 - name: Pull model
   ansible.builtin.command:
     cmd: "podman exec ollama ollama pull {{ ollama_model }}"
+
+- name: Run slackbot
+  ansible.builtin.systemd_service:
+    state: started
+    scope: user
+    name: slackbot.service

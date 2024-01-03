@@ -1,0 +1,12 @@
+[Service]
+TimeoutStartSec=1800
+
+[Container]
+Image=quay.io/yblum/knowledge_base_gpt:3
+ContainerName=slackbot
+Volume=embedding.volume:/db
+Environment=PERSIST_DIRECTORY=/db
+Environment=SLACK_APP_TOKEN={{ollama_slack_app_token}}
+Environment=SLACK_BOT_TOKEN={{ollama_slack_bot_token}}
+Environment=OLLAMA_HOST=ollama
+Network=ollama.network

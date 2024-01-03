@@ -1,0 +1,13 @@
+[Service]
+TimeoutStartSec=1800
+Type=oneshot
+RemainAfterExit=yes
+
+[Container]
+Image={{ ollama_client_container_image }}
+Exec=python -m knowledge_base_gpt.apps.ingest.ingest
+Volume=embedding.volume:/db
+Environment=PERSIST_DIRECTORY=/db
+Environment=GOOGLE_DRIVE_FOLDER_ID={{ ollama_ingest_google_drive_folder_id }}
+Volume=./service_key.json:/usr/app/service.json:z
+Environment=SERVICE_KEY_FILE=/usr/app/service.json

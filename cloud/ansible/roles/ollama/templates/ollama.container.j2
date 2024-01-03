@@ -1,10 +1,14 @@
 [Container]
 Image=docker.io/ollama/ollama:latest
 ContainerName=ollama
-PublishPort=11434:11434
 Volume=ollama.volume:/root/.ollama
 AddDevice=nvidia.com/gpu=all
 SecurityLabelDisable=true
+Network=ollama.network
 
 [Install]
 WantedBy=multi-user.target
+
+[Unit]
+Requires=ingest.service
+After=ingest.service

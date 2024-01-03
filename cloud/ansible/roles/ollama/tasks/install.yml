@@ -56,13 +56,14 @@
     - cuda-drivers
     - nvidia-container-toolkit
     - podman
-    - "kernel-devel-{{ ansible_kernel }}"
-    - "kernel-headers-{{ ansible_kernel }}"
+    - "kernel-devel"
+    - "kernel-headers"
     state: present
 
 - name: Add the NVIDIA module
   community.general.modprobe:
     name: nvidia
+    persistent: present
     state: present
 
 - name: Create CDI File
@@ -78,4 +79,5 @@
 - name: Add the ip_table module to allow using a Podman Network
   community.general.modprobe:
     name: ip_tables
+    persistent: present
     state: present
