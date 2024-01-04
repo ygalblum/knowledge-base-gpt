@@ -59,6 +59,8 @@
     - "kernel-devel"
     - "kernel-headers"
     state: present
+  async: 1800
+  poll: 60
 
 - name: Add the NVIDIA module
   community.general.modprobe:
