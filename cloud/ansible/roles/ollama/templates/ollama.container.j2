@@ -1,5 +1,5 @@
 [Container]
-Image=docker.io/ollama/ollama:latest
+Image=docker.io/ollama/ollama:{{ ollama_container_image_tag }}
 ContainerName=ollama
 Volume=ollama.volume:/root/.ollama
 AddDevice=nvidia.com/gpu=all

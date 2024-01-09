@@ -1,4 +1,5 @@
 ollama_quadlet_directory: "{{ ansible_user_dir }}/.config/containers/systemd/"
+ollama_container_image_tag: "0.1.17"
 ollama_model: llama2-uncensored
 ollama_client_container_image_tag: "4"
 ollama_client_container_image: "quay.io/yblum/knowledge_base_gpt:{{ ollama_client_container_image_tag }}"
