@@ -1,3 +1,7 @@
+[Unit]
+Requires=ingest.service
+After=ingest.service
+
 [Service]
 TimeoutStartSec=1800
 
