@@ -35,13 +35,19 @@
     state: started
     scope: user
     name: ollama.service
+  async: 1800
+  poll: 60
 
 - name: Pull model
   ansible.builtin.command:
     cmd: "podman exec ollama ollama pull {{ ollama_model }}"
+  async: 1800
+  poll: 60
 
 - name: Run slackbot
   ansible.builtin.systemd_service:
     state: started
     scope: user
     name: slackbot.service
+  async: 1800
+  poll: 60
