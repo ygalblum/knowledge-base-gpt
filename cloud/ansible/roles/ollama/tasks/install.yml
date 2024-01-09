@@ -13,6 +13,8 @@
   ansible.builtin.package:
     name: "*"
     state: latest
+  async: 1800
+  poll: 60
 
 - name: Get default kernel
   ansible.builtin.command:
