@@ -15,7 +15,7 @@ from knowledge_base_gpt.libs.common import constants
 chunk_size = 500
 chunk_overlap = 50
 
-service_key_file = os.environ.get('SERVICE_KEY_FILE', 'service_key.json')
+service_key_file = os.environ.get('SERVICE_KEY_FILE')
 
 def load_documents(ignored_files: List[str] = []) -> List[Document]:
     folder_id = os.environ.get('GOOGLE_DRIVE_FOLDER_ID')
@@ -23,12 +23,15 @@ def load_documents(ignored_files: List[str] = []) -> List[Document]:
         print("GOOGLE_DRIVE_FOLDER_ID is not set")
         exit(1)
 
-    loader = GoogleDriveLoader(
-        service_account_key=service_key_file,
-        folder_id=folder_id,
-        recursive=False,
-        file_types=["sheet", "document", "pdf"],
-    )
+    loader_args = {
+        "folder_id": folder_id,
+        "recursive": False,
+        "file_types": ["sheet", "document", "pdf"],
+    }
+    if service_key_file is not None:
+        loader_args['service_account_key'] = service_key_file
+
+    loader = GoogleDriveLoader(**loader_args)
     docs = loader.load()
     return [doc for doc in docs if doc.metadata['source'] not in ignored_files]
 

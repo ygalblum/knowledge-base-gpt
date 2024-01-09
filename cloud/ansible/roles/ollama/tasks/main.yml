@@ -6,10 +6,6 @@
     ansible.builtin.assert:
       that: ollama_ingest_google_drive_folder_id | default("") | length > 0
       fail_msg: "Make sure to set ollama_ingest_google_drive_folder_id"
-  - name: Verify ollama_ingest_google_api_service_key_file was set
-    ansible.builtin.assert:
-      that: ollama_ingest_google_api_service_key_file | default("") | length > 0
-      fail_msg: "Make sure to set ollama_ingest_google_api_service_key_file"
   - name: Verify ollama_slack_app_token was set
     ansible.builtin.assert:
       that: ollama_slack_app_token | default("") | length > 0
