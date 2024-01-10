@@ -6,7 +6,7 @@ After=ingest.service
 TimeoutStartSec=1800
 
 [Container]
-Image=quay.io/yblum/knowledge_base_gpt:3
+Image={{ ollama_client_container_image }}
 ContainerName=slackbot
 Volume=embedding.volume:/db
 Environment=PERSIST_DIRECTORY=/db
