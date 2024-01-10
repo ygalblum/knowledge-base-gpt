@@ -10,12 +10,13 @@ RUN dnf groupinstall --nodocs -y 'Development Tools' && \
 
 WORKDIR ${APP_ROOT}
 
-COPY ./dist/knowledge_base_gpt*.whl /tmp/
+COPY pyproject.toml poetry.lock ${APP_ROOT}
 
 RUN python3 -m venv ${APP_ROOT}/venv \
     && source ${APP_ROOT}/venv/bin/activate \
     && pip install --no-cache-dir -U pip wheel \
-    && pip install --no-cache-dir /tmp/knowledge_base_gpt*.whl \
+    && pip install poetry \
+    && poetry install --no-root --no-directory --directory=${APP_ROOT}  \
     && echo "unset BASH_ENV PROMPT_COMMAND ENV" >> ${APP_ROOT}/venv/bin/activate
 
 FROM registry.fedoraproject.org/fedora:37
@@ -25,6 +26,12 @@ ARG APP_ROOT
 WORKDIR ${APP_ROOT}
 
 COPY --from=build ${APP_ROOT}/venv ${APP_ROOT}/venv
+
+COPY README.md pyproject.toml poetry.lock ${APP_ROOT}
+COPY knowledge_base_gpt/ ${APP_ROOT}/knowledge_base_gpt
+
+RUN source ${APP_ROOT}/venv/bin/activate \
+    && poetry install --directory=${APP_ROOT}
 
 # activate virtualenv with workaround RHEL/CentOS 8+
 ENV BASH_ENV="${APP_ROOT}/venv/bin/activate" \
