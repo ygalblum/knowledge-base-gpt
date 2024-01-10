@@ -14,6 +14,7 @@ app = App(
 
 @app.message()
 def got_message(message, say):
+    say("On it. Be back with your answer soon")
     answer = PrivateGPT.get_instance().answer_query(message['text'])
     say(answer)
 
