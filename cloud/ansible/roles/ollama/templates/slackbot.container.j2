@@ -1,6 +1,6 @@
 [Unit]
-Requires=ingest.service
-After=ingest.service
+Requires=ingest.service redis.service
+After=ingest.service redis.service
 
 [Service]
 TimeoutStartSec=1800
@@ -13,4 +13,6 @@ Environment=PERSIST_DIRECTORY=/db
 Environment=SLACK_APP_TOKEN={{ollama_slack_app_token}}
 Environment=SLACK_BOT_TOKEN={{ollama_slack_bot_token}}
 Environment=OLLAMA_HOST=ollama
+Environment=REDIS_HOST=redis
+Environment=FORWARD_QUESTION_CHANNEL_NAME={{ollama_forward_question_channel_name}}
 Network=ollama.network

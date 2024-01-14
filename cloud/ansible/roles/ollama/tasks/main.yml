@@ -14,6 +14,10 @@
     ansible.builtin.assert:
       that: ollama_slack_bot_token | default("") | length > 0
       fail_msg: "Make sure to set ollama_slack_bot_token"
+  - name: Verify ollama_forward_question_channel_name was set
+    ansible.builtin.assert:
+      that: ollama_forward_question_channel_name | default("") | length > 0
+      fail_msg: "Make sure to set ollama_forward_question_channel_name"
 
 - name: Installations
   ansible.builtin.include_tasks:

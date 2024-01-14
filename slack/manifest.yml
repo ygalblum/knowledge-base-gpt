@@ -4,11 +4,23 @@ features:
   bot_user:
     display_name: KnowledgeBase
     always_online: false
+  slash_commands:
+    - command: /conversation_reset
+      description: Reset the conversation history
+      should_escape: false
+    - command: /conversation_forward
+      description: Forward the conversation to the dedicated channel
+      should_escape: false
 oauth_config:
   scopes:
     bot:
+      - channels:manage
+      - channels:read
       - chat:write
+      - commands
+      - groups:write
       - im:history
+      - channels:join
 settings:
   event_subscriptions:
     bot_events:

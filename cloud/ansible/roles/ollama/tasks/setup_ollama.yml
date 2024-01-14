@@ -17,6 +17,7 @@
   - ollama.container
   - ollama.network
   - ollama.volume
+  - redis.container
   - slackbot.container
 
 - name: Copy the Google API service key file
