@@ -70,6 +70,12 @@
     persistent: present
     state: present
 
+- name: Start and enable NVIDIA Persistenced
+  ansible.builtin.systemd_service:
+    state: started
+    enabled: true
+    name: nvidia-persistenced.service
+
 - name: Create CDI File
   ansible.builtin.command:
     cmd: nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml

@@ -16,3 +16,6 @@ Environment=OLLAMA_HOST=ollama
 Environment=REDIS_HOST=redis
 Environment=FORWARD_QUESTION_CHANNEL_NAME={{ollama_forward_question_channel_name}}
 Network=ollama.network
+
+[Install]
+WantedBy=default.target
