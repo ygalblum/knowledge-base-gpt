@@ -6,6 +6,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.errors import SlackApiError
 
 from knowledge_base_gpt.libs.gpt.private_chat import PrivateChat
+from knowledge_base_gpt.libs.history.redis import HistoryRedis
 
 
 forward_question_channel_name = os.environ.get("FORWARD_QUESTION_CHANNEL_NAME")
@@ -53,12 +54,14 @@ class KnowledgeBaseSlackBot():
 
     def _got_message(self, message, say):
         say("On it. Be back with your answer soon")
-        answer = self._private_chat.answer_query(message['user'], message['text'])
-        say(answer)
+        history = HistoryRedis(message['user'])
+        answer = self._private_chat.answer_query(history.get_messages(), message['text'])
+        history.add_to_history(answer)
+        say(answer['answer'])
 
     def _reset_conversation(self, ack, say, command):
         ack()
-        self._private_chat.reset_conversation(command['user_id'])
+        HistoryRedis(command['user_id']).reset()
         say("The previous conversation was cleared. You can start a new one now")
 
     @staticmethod
@@ -72,7 +75,7 @@ class KnowledgeBaseSlackBot():
 
     def _forward_question(self, ack, say, command):
         ack()
-        messages = self._private_chat.get_conversation(command['user_id'])
+        messages = HistoryRedis(command['user_id']).get_messages()
         if len(messages) == 0:
             say("There is no active conversation")
         else:
