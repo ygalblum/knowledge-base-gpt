@@ -3,10 +3,10 @@ import os
 from typing import List
 
 from langchain.docstore.document import Document
-from langchain.document_loaders import GoogleDriveLoader
-from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma
+from langchain_community.document_loaders import GoogleDriveLoader
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
 
 from knowledge_base_gpt.libs.common import constants
 
