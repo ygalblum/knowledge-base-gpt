@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 langchain = "0.0.354"
-chromadb = "0.4.7"
+chromadb = "0.4.22"
 sentence_transformers = "2.2.2"
 google-api-python-client = "2.111.0"
 google-auth-httplib2 = "0.2.0"
@@ -17,6 +17,7 @@ google-auth-oauthlib = "1.2.0"
 PyPDF2 = "3.0.1"
 slack_bolt = "1.18.1"
 redis = "5.0.1"
+gradio = "4.14.0"
 
 [build-system]
 requires = ["poetry-core"]
