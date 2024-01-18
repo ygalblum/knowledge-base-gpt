@@ -27,7 +27,7 @@ class KnowledgeBaseSlackBot():
 
     def __init__(self):
         if KnowledgeBaseSlackBot.__instance is not None:
-            raise Exception("This class is a singleton!")
+            raise KnowledgeBaseSlackBotException("This class is a singleton!")
         KnowledgeBaseSlackBot.__instance = self
 
     def run(self):
