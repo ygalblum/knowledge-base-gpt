@@ -53,16 +53,39 @@ class KnowledgeBaseSlackBot():
         raise KnowledgeBaseSlackBotException(f"The channel {forward_question_channel_name} does not exits")
 
     def _got_message(self, message, say):
-        say("On it. Be back with your answer soon")
+        self._app.client.chat_postEphemeral(
+            channel=message['channel'],
+            user=message['user'],
+            text="On it. Be back with your answer soon"
+        )
         history = HistoryRedis(message['user'])
         answer = self._private_chat.answer_query(history.get_messages(), message['text'])
         history.add_to_history(answer)
         say(answer['answer'])
 
+    def _is_direct_message_channel(self, command):
+        if command['channel_name'] == 'directmessage':
+            return True
+        self._app.client.chat_postEphemeral(
+            channel=command['channel_id'],
+            user=command['user_id'],
+            text='This command can only be triggered on the direct messages channel'
+        )
+        return False
+
+
     def _reset_conversation(self, ack, say, command):
         ack()
+        if not self._is_direct_message_channel(command):
+            return
+
         HistoryRedis(command['user_id']).reset()
-        say("The previous conversation was cleared. You can start a new one now")
+
+        self._app.client.chat_postEphemeral(
+            channel=command['channel_id'],
+            user=command['user_id'],
+            text='The previous conversation was cleared. You can start a new one now'
+        )
 
     @staticmethod
     def _messages_to_text(messages):
@@ -75,12 +98,21 @@ class KnowledgeBaseSlackBot():
 
     def _forward_question(self, ack, say, command):
         ack()
+        if not self._is_direct_message_channel(command):
+            return
+
         messages = HistoryRedis(command['user_id']).get_messages()
         if len(messages) == 0:
-            say("There is no active conversation")
+            msg = 'There is no active conversation'
         else:
             self._app.client.chat_postMessage(channel=self._forward_question_channel_id, text=self._messages_to_text(messages))
-            say(f"The conversation was forwarded to {forward_question_channel_name}")
+            msg = f'The conversation was forwarded to {forward_question_channel_name}'
+
+        self._app.client.chat_postEphemeral(
+            channel=command['channel_id'],
+            user=command['user_id'],
+            text=msg
+        )
 
     @staticmethod
     def got_message(message, say):
