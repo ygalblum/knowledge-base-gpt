@@ -25,16 +25,21 @@ class KnowledgeBaseGradio():
 
     def run(self):
         self._private_chat = PrivateChat()
-        gr.ChatInterface(KnowledgeBaseGradio.handle_query).launch()
+        with gr.Blocks() as demo:
+            chatbot = gr.Chatbot()
+            msg = gr.Textbox(label="", autofocus=True)
+            clear = gr.ClearButton([msg, chatbot])
+            msg.submit(KnowledgeBaseGradio.handle_query, [msg, chatbot], [msg, chatbot])
+        demo.launch()
 
     def _handle_query(self, message, history):
         history_langchain_format = []
         for human, ai in history:
             history_langchain_format.append(HumanMessage(content=human))
             history_langchain_format.append(AIMessage(content=ai))
-        history_langchain_format.append(HumanMessage(content=message))
         answer = self._private_chat.answer_query(history_langchain_format, message)
-        return answer['answer']
+        history.append((message, answer['answer']))
+        return "", history
 
     @staticmethod
     def handle_query(message, history):
