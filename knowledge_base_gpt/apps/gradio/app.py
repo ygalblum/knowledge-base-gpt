@@ -48,7 +48,7 @@ class KnowledgeBaseGradio():
                         self._forward_question,
                         inputs=chatbot
                     )
-        demo.launch()
+        demo.launch(server_name="0.0.0.0")
 
     @staticmethod
     def _messages_to_text(messages):
