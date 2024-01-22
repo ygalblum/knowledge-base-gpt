@@ -1,0 +1,18 @@
+[Unit]
+Requires=ingest.service
+After=ingest.service
+
+[Service]
+TimeoutStartSec=1800
+
+[Container]
+Image={{ ollama_client_container_image }}
+Exec=python -m knowledge_base_gpt.apps.gradio.app
+Volume=embedding.volume:/db
+Environment=PERSIST_DIRECTORY=/db
+Environment=OLLAMA_HOST=ollama
+Network=ollama.network
+PublishPort=7860:7860
+
+[Install]
+WantedBy=default.target

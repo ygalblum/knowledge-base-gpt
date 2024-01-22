@@ -45,3 +45,8 @@ variable "ssh_port" {
     type = number
     default = 22
 }
+
+variable "gradio_port" {
+    type = number
+    default = 7860
+}

@@ -28,6 +28,7 @@ resource "aws_instance" "ollama" {
     vpc_security_group_ids = [
       aws_security_group.ssh.id,
       aws_security_group.ollama.id,
+      aws_security_group.gradio.id,
       aws_security_group.outbound.id,
     ]
 

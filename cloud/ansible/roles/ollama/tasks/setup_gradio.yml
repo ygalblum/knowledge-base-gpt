@@ -1,0 +1,35 @@
+- name: Create Quadlet directory
+  ansible.builtin.file:
+    path: "{{ ollama_quadlet_directory }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+
+- name: Create Quadlet files
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ ollama_quadlet_directory }}/{{ item }}"
+    mode: '0644'
+  loop:
+  - gradio.container
+
+- name: Copy the Google API service key file
+  ansible.builtin.copy:
+    src: "{{ ollama_ingest_google_api_service_key_file }}"
+    dest: "{{ ollama_quadlet_directory }}/service_key.json"
+    mode: '0644'
+  when: (ollama_ingest_google_api_service_key_file | default('') | length) > 0
+
+- name: Run daemon reload to make Quadlet create the service files
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: user
+
+- name: Run the UI
+  ansible.builtin.systemd_service:
+    state: started
+    scope: user
+    name: gradio.service
+  async: 1800
+  poll: 60

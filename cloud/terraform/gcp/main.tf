@@ -74,6 +74,9 @@ resource "google_compute_instance" "ollama" {
     enable_vtpm                 = true
   }
 
-  tags = ["${var.name}-ssh"]
+  tags = [
+    "${var.name}-ssh",
+    "${var.name}-gradio"
+  ]
   zone = local.zone
 }

@@ -40,3 +40,10 @@
     file: setup_slackbot.yml
     apply:
       become: false
+
+- name: Provision SlackBot
+  when: ollama_provision_ui
+  ansible.builtin.include_tasks:
+    file: setup_gradio.yml
+    apply:
+      become: false

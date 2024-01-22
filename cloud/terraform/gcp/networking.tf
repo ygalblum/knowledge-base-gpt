@@ -28,3 +28,17 @@ resource "google_compute_firewall" "ssh" {
   source_ranges = [ local.myip_cidr ]
   target_tags = [ "${var.name}-ssh" ]
 }
+
+# Allow access to the UI port from provisioning machine
+resource "google_compute_firewall" "gradio" {
+  name    = "${var.name}-gradio"
+  network = google_compute_network.this.name
+
+  allow {
+    protocol = "tcp"
+    ports    = [ var.gradio_port ]
+  }
+
+  source_ranges = [ local.myip_cidr ]
+  target_tags = [ "${var.name}-gradio" ]
+}
