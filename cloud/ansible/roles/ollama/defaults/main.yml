@@ -5,6 +5,7 @@ ollama_client_container_image_tag: "9"
 ollama_client_container_image: "quay.io/yblum/knowledge_base_gpt:{{ ollama_client_container_image_tag }}"
 ollama_ingest_google_drive_folder_id: ""
 ollama_ingest_google_api_service_key_file: ""
+ollama_provision_slackbot: True
 ollama_slack_app_token: ""
 ollama_slack_bot_token: ""
 ollama_forward_question_channel_name: ""

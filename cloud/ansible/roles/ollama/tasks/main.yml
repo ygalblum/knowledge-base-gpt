@@ -6,18 +6,21 @@
     ansible.builtin.assert:
       that: ollama_ingest_google_drive_folder_id | default("") | length > 0
       fail_msg: "Make sure to set ollama_ingest_google_drive_folder_id"
-  - name: Verify ollama_slack_app_token was set
-    ansible.builtin.assert:
-      that: ollama_slack_app_token | default("") | length > 0
-      fail_msg: "Make sure to set ollama_slack_app_token"
-  - name: Verify ollama_slack_bot_token was set
-    ansible.builtin.assert:
-      that: ollama_slack_bot_token | default("") | length > 0
-      fail_msg: "Make sure to set ollama_slack_bot_token"
-  - name: Verify ollama_forward_question_channel_name was set
-    ansible.builtin.assert:
-      that: ollama_forward_question_channel_name | default("") | length > 0
-      fail_msg: "Make sure to set ollama_forward_question_channel_name"
+  - name: Slackbot checks
+    when: ollama_provision_slackbot
+    block:
+    - name: Verify ollama_slack_app_token was set
+      ansible.builtin.assert:
+        that: ollama_slack_app_token | default("") | length > 0
+        fail_msg: "Make sure to set ollama_slack_app_token"
+    - name: Verify ollama_slack_bot_token was set
+      ansible.builtin.assert:
+        that: ollama_slack_bot_token | default("") | length > 0
+        fail_msg: "Make sure to set ollama_slack_bot_token"
+    - name: Verify ollama_forward_question_channel_name was set
+      ansible.builtin.assert:
+        that: ollama_forward_question_channel_name | default("") | length > 0
+        fail_msg: "Make sure to set ollama_forward_question_channel_name"
 
 - name: Installations
   ansible.builtin.include_tasks:
@@ -25,8 +28,15 @@
     apply:
       become: true
 
-- name: Configure Ollama Quadlet
+- name: Provision Ollama
   ansible.builtin.include_tasks:
     file: setup_ollama.yml
+    apply:
+      become: false
+
+- name: Provision SlackBot
+  when: ollama_provision_slackbot
+  ansible.builtin.include_tasks:
+    file: setup_slackbot.yml
     apply:
       become: false
