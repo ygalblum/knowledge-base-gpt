@@ -10,6 +10,7 @@ from knowledge_base_gpt.libs.common import constants
 model = os.environ.get("MODEL", "llama2-uncensored")
 target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))
 ollama_host = os.environ.get("OLLAMA_HOST", 'localhost')
+ollama_port = os.environ.get("OLLAMA_PORT", '11434')
 
 
 class PrivateChat():
@@ -18,7 +19,7 @@ class PrivateChat():
         embeddings = HuggingFaceEmbeddings(model_name=constants.embeddings_model_name)
         db = Chroma(persist_directory=constants.persist_directory, embedding_function=embeddings)
         retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
-        chat = ChatOllama(model=model, base_url=f"http://{ollama_host}:11434")
+        chat = ChatOllama(model=model, base_url=f"http://{ollama_host}:{ollama_port}")
         self._chain = ConversationalRetrievalChain.from_llm(
             llm=chat,
             retriever=retriever,
