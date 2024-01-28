@@ -1,0 +1,10 @@
+[Container]
+Image=docker.io/library/haproxy:lts
+ContainerName=haproxy
+PublishPort={{ ollama_secured_port }}:{{ ollama_secured_port }}
+Volume=./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro,z
+# Volume=haproxy_certs/:/usr/local/certs/haproxy/
+Network=ollama.network
+
+[Install]
+WantedBy=default.target

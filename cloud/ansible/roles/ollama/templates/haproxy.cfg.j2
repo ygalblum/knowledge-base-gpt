@@ -1,0 +1,15 @@
+#---------------------------------------------------------------------
+# main frontend which proxys to the backends
+#---------------------------------------------------------------------
+frontend ollama-secured
+    mode tcp
+    bind *:{{ ollama_secured_port }} # ssl crt /usr/local/certs/haproxy/cert verify required ca-file /usr/local/certs/haproxy/ca-certificate.pem
+    default_backend ollama
+
+#---------------------------------------------------------------------
+# round robin balancing between the various backends
+#---------------------------------------------------------------------
+backend ollama
+    mode tcp
+    balance     roundrobin
+    server  ollama ollama:11434

@@ -34,6 +34,13 @@
     apply:
       become: false
 
+- name: Provision secured port
+  when: ollama_expose_secured_port
+  ansible.builtin.include_tasks:
+    file: setup_secure_ollama.yml
+    apply:
+      become: false
+
 - name: Provision Ingest
   when: ollama_provision_slackbot or ollama_provision_ui
   ansible.builtin.include_tasks:

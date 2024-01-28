@@ -10,3 +10,5 @@ ollama_slack_app_token: ""
 ollama_slack_bot_token: ""
 ollama_forward_question_channel_name: ""
 ollama_provision_ui: True
+ollama_expose_secured_port: False
+ollama_secured_port: 11435
