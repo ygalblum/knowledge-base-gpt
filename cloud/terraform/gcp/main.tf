@@ -76,7 +76,8 @@ resource "google_compute_instance" "ollama" {
 
   tags = [
     "${var.name}-ssh",
-    "${var.name}-gradio"
+    "${var.name}-gradio",
+    "${var.name}-secured-ollama"
   ]
   zone = local.zone
 }

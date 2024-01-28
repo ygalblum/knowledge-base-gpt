@@ -42,3 +42,17 @@ resource "google_compute_firewall" "gradio" {
   source_ranges = [ local.myip_cidr ]
   target_tags = [ "${var.name}-gradio" ]
 }
+
+# Allow access to the UI port from provisioning machine
+resource "google_compute_firewall" "secured_ollama" {
+  name    = "${var.name}-secured-ollama"
+  network = google_compute_network.this.name
+
+  allow {
+    protocol = "tcp"
+    ports    = [ var.secured_ollama_port ]
+  }
+
+  source_ranges = [ local.myip_cidr ]
+  target_tags = [ "${var.name}-secured-ollama" ]
+}

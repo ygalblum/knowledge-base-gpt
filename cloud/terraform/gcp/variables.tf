@@ -50,3 +50,8 @@ variable "gradio_port" {
     type = number
     default = 7860
 }
+
+variable "secured_ollama_port" {
+    type = number
+    default = 11435
+}
