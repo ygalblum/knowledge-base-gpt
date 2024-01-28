@@ -34,6 +34,13 @@
     apply:
       become: false
 
+- name: Provision Ingest
+  when: ollama_provision_slackbot or ollama_provision_ui
+  ansible.builtin.include_tasks:
+    file: setup_ingest.yml
+    apply:
+      become: false
+
 - name: Provision SlackBot
   when: ollama_provision_slackbot
   ansible.builtin.include_tasks:
