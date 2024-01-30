@@ -1,10 +1,11 @@
 [Container]
-Image=docker.io/library/haproxy:lts
+Image=docker.io/envoyproxy/envoy:v1.29-latest
 ContainerName=ollama-proxy
 PublishPort={{ ollama_secured_port }}:{{ ollama_secured_port }}
-Volume=./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro,z
-# Volume=haproxy_certs/:/usr/local/certs/haproxy/
+Volume=./ollama-proxy-config.yml:/etc/envoy/envoy.yaml:ro,z
+# Volume=./ollama-proxy-certs/:/etc/envoy-certificates:ro,z
 Network=ollama.network
+Environment=ENVOY_UID=0
 
 [Install]
 WantedBy=default.target

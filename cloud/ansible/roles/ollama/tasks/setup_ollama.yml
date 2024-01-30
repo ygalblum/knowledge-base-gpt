@@ -12,7 +12,7 @@
 
 - name: Add HAProxy files if needed
   ansible.builtin.set_fact:
-    _ollama_template_files_list: "{{ _ollama_template_files_list + ['ollama-proxy.container', 'haproxy.cfg']}}"
+    _ollama_template_files_list: "{{ _ollama_template_files_list + ['ollama-proxy.container', 'ollama-proxy-config.yml']}}"
   when: ollama_expose_secured_port
 
 - name: Create Quadlet files
