@@ -12,7 +12,7 @@
 
 - name: Add HAProxy files if needed
   ansible.builtin.set_fact:
-    _ollama_template_files_list: "{{ _ollama_template_files_list + ['haproxy.container', 'haproxy.cfg']}}"
+    _ollama_template_files_list: "{{ _ollama_template_files_list + ['ollama-proxy.container', 'haproxy.cfg']}}"
   when: ollama_expose_secured_port
 
 - name: Create Quadlet files
@@ -45,7 +45,7 @@
   ansible.builtin.systemd_service:
     state: started
     scope: user
-    name: haproxy.service
+    name: ollama-proxy.service
   async: 1800
   poll: 60
   when: ollama_expose_secured_port
