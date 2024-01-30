@@ -31,6 +31,8 @@ resource "google_compute_firewall" "ssh" {
 
 # Allow access to the UI port from provisioning machine
 resource "google_compute_firewall" "gradio" {
+  count = var.gradio_port == 0 ? 0 : 1
+
   name    = "${var.name}-gradio"
   network = google_compute_network.this.name
 
@@ -45,6 +47,8 @@ resource "google_compute_firewall" "gradio" {
 
 # Allow access to the UI port from provisioning machine
 resource "google_compute_firewall" "secured_ollama" {
+  count = var.secured_ollama_port == 0 ? 0 : 1
+
   name    = "${var.name}-secured-ollama"
   network = google_compute_network.this.name
 

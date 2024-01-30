@@ -6,6 +6,13 @@ data "google_compute_zones" "available" {
 }
 
 locals {
+  instance_network_tags = concat(
+    concat(
+      ["${var.name}-ssh"],
+      var.gradio_port == 0 ? [] : ["${var.name}-gradio"]
+    ),
+    var.secured_ollama_port == 0 ? [] : ["${var.name}-secured-ollama"]
+  )
   myip_cidr = "${chomp(data.http.myip.response_body)}/32"
   zone = data.google_compute_zones.available.names[0]
 }
@@ -74,10 +81,6 @@ resource "google_compute_instance" "ollama" {
     enable_vtpm                 = true
   }
 
-  tags = [
-    "${var.name}-ssh",
-    "${var.name}-gradio",
-    "${var.name}-secured-ollama"
-  ]
+  tags = tolist(local.instance_network_tags)
   zone = local.zone
 }
