@@ -6,7 +6,7 @@ After=ingest.service
 TimeoutStartSec=1800
 
 [Container]
-Image={{ ollama_client_container_image }}
+Image={{ frontend_client_container_image }}
 Exec=python -m knowledge_base_gpt.apps.gradio.app
 Volume=embedding.volume:/db
 Environment=PERSIST_DIRECTORY=/db

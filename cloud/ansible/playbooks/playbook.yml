@@ -1,5 +1,11 @@
-- name: Prepare the machine for installing Ollama
-  hosts: all
+- name: Install Ollama backend
+  hosts: ollama_backend
   tasks:
   roles:
   - ollama
+
+- name: Install Frontend
+  hosts: frontend
+  tasks:
+  roles:
+  - frontend

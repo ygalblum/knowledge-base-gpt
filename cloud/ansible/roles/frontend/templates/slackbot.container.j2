@@ -6,15 +6,15 @@ After=ingest.service redis.service
 TimeoutStartSec=1800
 
 [Container]
-Image={{ ollama_client_container_image }}
+Image={{ frontend_client_container_image }}
 ContainerName=slackbot
 Volume=embedding.volume:/db
 Environment=PERSIST_DIRECTORY=/db
-Environment=SLACK_APP_TOKEN={{ollama_slack_app_token}}
-Environment=SLACK_BOT_TOKEN={{ollama_slack_bot_token}}
+Environment=SLACK_APP_TOKEN={{frontend_slack_app_token}}
+Environment=SLACK_BOT_TOKEN={{frontend_slack_bot_token}}
 Environment=OLLAMA_HOST=ollama
 Environment=REDIS_HOST=redis
-Environment=FORWARD_QUESTION_CHANNEL_NAME={{ollama_forward_question_channel_name}}
+Environment=FORWARD_QUESTION_CHANNEL_NAME={{frontend_forward_question_channel_name}}
 Network=ollama.network
 
 [Install]

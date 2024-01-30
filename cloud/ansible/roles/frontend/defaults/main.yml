@@ -1,0 +1,10 @@
+frontend_quadlet_directory: "{{ ansible_user_dir }}/.config/containers/systemd/"
+frontend_client_container_image_tag: "11"
+frontend_client_container_image: "quay.io/yblum/knowledge_base_gpt:{{ frontend_client_container_image_tag }}"
+frontend_ingest_google_drive_folder_id: ""
+frontend_ingest_google_api_service_key_file: ""
+frontend_provision_slackbot: True
+frontend_slack_app_token: ""
+frontend_slack_bot_token: ""
+frontend_forward_question_channel_name: ""
+frontend_provision_gradio: True

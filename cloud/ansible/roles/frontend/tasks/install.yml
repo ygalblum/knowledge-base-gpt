@@ -1,0 +1,7 @@
+- name: Install the required packages
+  ansible.builtin.dnf:
+    name:
+    - podman
+    state: present
+  async: 1800
+  poll: 60

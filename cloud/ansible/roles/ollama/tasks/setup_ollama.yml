@@ -6,15 +6,21 @@
     group: "{{ ansible_user_id }}"
     mode: '0755'
 
+- name: Create template files list
+  ansible.builtin.set_fact:
+    _ollama_template_files_list: "{{['ollama.container', 'ollama.network', 'ollama.volume']}}"
+
+- name: Add HAProxy files if needed
+  ansible.builtin.set_fact:
+    _ollama_template_files_list: "{{ _ollama_template_files_list + ['haproxy.container', 'haproxy.cfg']}}"
+  when: ollama_expose_secured_port
+
 - name: Create Quadlet files
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ ollama_quadlet_directory }}/{{ item }}"
     mode: '0644'
-  loop:
-  - ollama.container
-  - ollama.network
-  - ollama.volume
+  loop: "{{ _ollama_template_files_list }}"
 
 - name: Run daemon reload to make Quadlet create the service files
   ansible.builtin.systemd:
@@ -34,3 +40,12 @@
     cmd: "podman exec ollama ollama pull {{ ollama_model }}"
   async: 1800
   poll: 60
+
+- name: Start HAProxy
+  ansible.builtin.systemd_service:
+    state: started
+    scope: user
+    name: haproxy.service
+  async: 1800
+  poll: 60
+  when: ollama_expose_secured_port

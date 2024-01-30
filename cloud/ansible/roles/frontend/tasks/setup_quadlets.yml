@@ -1,0 +1,53 @@
+- name: Create Quadlet directory
+  ansible.builtin.file:
+    path: "{{ frontend_quadlet_directory }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+
+- name: Create template files list
+  ansible.builtin.set_fact:
+    _frontend_template_files_list: "{{ ['embedding.volume', 'ingest.container'] }}"
+    _frontend_services_list: "{{ [] }}"
+
+- name: Add Slackbot files if needed
+  ansible.builtin.set_fact:
+    _frontend_template_files_list: "{{ _frontend_template_files_list + ['redis.container', 'slackbot.container']}}"
+    _frontend_services_list: "{{ _frontend_services_list + ['slackbot'] }}"
+  when: frontend_provision_slackbot
+
+- name: Add Gradio files if needed
+  ansible.builtin.set_fact:
+    _frontend_template_files_list: "{{ _frontend_template_files_list + ['gradio.container']}}"
+    _frontend_services_list: "{{ _frontend_services_list + ['gradio'] }}"
+  when: frontend_provision_gradio
+
+- name: Create Quadlet files
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ frontend_quadlet_directory }}/{{ item }}"
+    mode: '0644'
+  loop: "{{ _frontend_template_files_list }}"
+
+- name: Copy the Google API service key file
+  ansible.builtin.copy:
+    src: "{{ frontend_ingest_google_api_service_key_file }}"
+    dest: "{{ frontend_quadlet_directory }}/service_key.json"
+    mode: '0644'
+  when: (frontend_ingest_google_api_service_key_file | default('') | length) > 0
+
+- name: Run daemon reload to make Quadlet create the service files
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: user
+
+- name: "Starting the requested services"
+  ansible.builtin.systemd_service:
+    state: started
+    scope: user
+    name: "{{ item }}.service"
+  async: 1800
+  poll: 60
+  when: _frontend_services_list | length > 0
+  loop: "{{ _frontend_services_list }}"

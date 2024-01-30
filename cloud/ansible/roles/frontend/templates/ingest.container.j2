@@ -4,12 +4,12 @@ Type=oneshot
 RemainAfterExit=yes
 
 [Container]
-Image={{ ollama_client_container_image }}
+Image={{ frontend_client_container_image }}
 Exec=python -m knowledge_base_gpt.apps.ingest.ingest
 Volume=embedding.volume:/db
 Environment=PERSIST_DIRECTORY=/db
-Environment=GOOGLE_DRIVE_FOLDER_ID={{ ollama_ingest_google_drive_folder_id }}
-{% if ollama_ingest_google_api_service_key_file | default('') | length > 0 -%}
+Environment=GOOGLE_DRIVE_FOLDER_ID={{ frontend_ingest_google_drive_folder_id }}
+{% if frontend_ingest_google_api_service_key_file | default('') | length > 0 -%}
 Volume=./service_key.json:/usr/app/service.json:z
 Environment=SERVICE_KEY_FILE=/usr/app/service.json
 {% endif -%}
