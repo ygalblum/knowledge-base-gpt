@@ -24,12 +24,6 @@ variable "machine_type" {
     default = "n1-standard-4"
 }
 
-variable "boot_image" {
-    type = string
-    # CentOS Stream 9
-    default = "projects/centos-cloud/global/images/centos-stream-9-v20231212"
-}
-
 variable "boot_image_size" {
     type = number
     default = 30

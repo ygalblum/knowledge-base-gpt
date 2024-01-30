@@ -17,13 +17,19 @@ locals {
   zone = data.google_compute_zones.available.names[0]
 }
 
+data "google_compute_image" "boot_image" {
+  project = "centos-cloud"
+  family  = "centos-stream-9"
+  most_recent = true
+}
+
 resource "google_compute_instance" "ollama" {
   boot_disk {
     auto_delete = true
     device_name = "${var.name}"
 
     initialize_params {
-      image = var.boot_image
+      image = data.google_compute_image.boot_image.id
       size  = var.boot_image_size
       type  = "pd-ssd"
     }
