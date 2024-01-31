@@ -9,10 +9,12 @@
 - name: Create template files list
   ansible.builtin.set_fact:
     _ollama_template_files_list: "{{['ollama.container', 'ollama.network', 'ollama.volume']}}"
+    _ollama_services_list: "{{ ['ollama'] }}"
 
 - name: Add HAProxy files if needed
   ansible.builtin.set_fact:
     _ollama_template_files_list: "{{ _ollama_template_files_list + ['ollama-proxy.container', 'ollama-proxy-config.yml']}}"
+    _ollama_services_list: "{{ _ollama_services_list + ['ollama-proxy'] }}"
   when: ollama_expose_secured_port
 
 - name: Create Quadlet files
@@ -27,25 +29,18 @@
     daemon_reload: true
     scope: user
 
-- name: Start Ollama
+- name: "Starting the ollama services"
   ansible.builtin.systemd_service:
     state: started
     scope: user
-    name: ollama.service
+    name: "{{ item }}.service"
   async: 1800
   poll: 60
+  when: _ollama_services_list | length > 0
+  loop: "{{ _ollama_services_list }}"
 
 - name: Pull model
   ansible.builtin.command:
     cmd: "podman exec ollama ollama pull {{ ollama_model }}"
   async: 1800
   poll: 60
-
-- name: Start HAProxy
-  ansible.builtin.systemd_service:
-    state: started
-    scope: user
-    name: ollama-proxy.service
-  async: 1800
-  poll: 60
-  when: ollama_expose_secured_port
