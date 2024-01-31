@@ -169,4 +169,4 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 # Ignore the service key file
-service_key.json
+*service_key.json
