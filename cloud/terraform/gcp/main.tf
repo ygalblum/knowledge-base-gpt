@@ -9,7 +9,7 @@ locals {
   instance_network_tags = concat(
     concat(
       ["${var.name}-ssh"],
-      var.gradio_port == 0 ? [] : ["${var.name}-gradio"]
+      var.expose_webui ? ["${var.name}-webui"] : []
     ),
     var.secured_ollama_port == 0 ? [] : ["${var.name}-secured-ollama"]
   )

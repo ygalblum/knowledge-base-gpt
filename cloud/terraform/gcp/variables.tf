@@ -40,12 +40,12 @@ variable "ssh_port" {
     default = 22
 }
 
-variable "gradio_port" {
-    type = number
-    default = 7860
-}
-
 variable "secured_ollama_port" {
     type = number
     default = 11435
+}
+
+variable "expose_webui" {
+    type = bool
+    default = false
 }

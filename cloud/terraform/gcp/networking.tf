@@ -29,23 +29,7 @@ resource "google_compute_firewall" "ssh" {
   target_tags = [ "${var.name}-ssh" ]
 }
 
-# Allow access to the UI port from provisioning machine
-resource "google_compute_firewall" "gradio" {
-  count = var.gradio_port == 0 ? 0 : 1
-
-  name    = "${var.name}-gradio"
-  network = google_compute_network.this.name
-
-  allow {
-    protocol = "tcp"
-    ports    = [ var.gradio_port ]
-  }
-
-  source_ranges = [ local.myip_cidr ]
-  target_tags = [ "${var.name}-gradio" ]
-}
-
-# Allow access to the UI port from provisioning machine
+# Allow access to the secured Ollama port
 resource "google_compute_firewall" "secured_ollama" {
   count = var.secured_ollama_port == 0 ? 0 : 1
 
@@ -59,4 +43,20 @@ resource "google_compute_firewall" "secured_ollama" {
 
   source_ranges = [ local.myip_cidr ]
   target_tags = [ "${var.name}-secured-ollama" ]
+}
+
+# Expose HTTP/S to the WebUI
+resource "google_compute_firewall" "webui" {
+  count = var.expose_webui ? 1 : 0
+
+  name    = "${var.name}-webui"
+  network = google_compute_network.this.name
+
+  allow {
+    protocol = "tcp"
+    ports    = [ 80, 443 ]
+  }
+
+  source_ranges = [ "0.0.0.0/0" ]
+  target_tags = [ "${var.name}-webui" ]
 }
