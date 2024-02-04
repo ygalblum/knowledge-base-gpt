@@ -27,7 +27,7 @@ spec:
         - name: PERSIST_DIRECTORY
           value: "/db"
         - name: OLLAMA_HOST
-          value: ollama
+          value: {{ frontend_ollama_host }}
         - name: REDIS_HOST
           value: redis
         - name: FORWARD_QUESTION_CHANNEL_NAME
