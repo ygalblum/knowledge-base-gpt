@@ -29,6 +29,7 @@ resource "aws_instance" "ollama" {
       aws_security_group.ssh.id,
       aws_security_group.ollama.id,
       aws_security_group.gradio.id,
+      aws_security_group.webui.id,
       aws_security_group.outbound.id,
     ]
 
