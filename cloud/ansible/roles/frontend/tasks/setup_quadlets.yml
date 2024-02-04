@@ -17,11 +17,15 @@
     _frontend_services_list: "{{ _frontend_services_list + ['slackbot'] }}"
   when: frontend_provision_slackbot
 
-- name: Add Gradio files if needed
+- name: Add WebUI Files
   ansible.builtin.set_fact:
-    _frontend_template_files_list: "{{ _frontend_template_files_list + ['gradio.container']}}"
-    _frontend_services_list: "{{ _frontend_services_list + ['gradio'] }}"
+    _frontend_template_files_list: "{{ _frontend_template_files_list + ['webui.kube', 'webui.yml', 'nginx-conf-configmap.yml']}}"
+    _frontend_services_list: "{{ _frontend_services_list + ['webui'] }}"
   when: frontend_provision_gradio
+
+- name: Setup secrets
+  when: frontend_provision_slackbot or frontend_provision_gradio
+  ansible.builtin.include_tasks: create_secrets.yml
 
 - name: Create Quadlet files
   ansible.builtin.template:

@@ -5,3 +5,12 @@
     state: present
   async: 1800
   poll: 60
+
+- name: Allow rootless container to bind from port 80 onwards
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_unprivileged_port_start
+    value: '80'
+    sysctl_set: true
+    state: present
+    reload: true
+  when: frontend_provision_gradio

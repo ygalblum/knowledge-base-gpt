@@ -17,6 +17,30 @@
     _ollama_services_list: "{{ _ollama_services_list + ['ollama-proxy'] }}"
   when: ollama_expose_secured_port
 
+- name: Copy the certificates
+  when: ollama_expose_secured_port
+  block:
+  - name: Create the certificates directory
+    ansible.builtin.file:
+      path: "{{ ollama_quadlet_directory }}/{{ ollama_proxy_certs_dir }}"
+      state: directory
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_id }}"
+      mode: '0755'
+      recurse: true
+  - name: Copy the certificates
+    ansible.builtin.copy:
+      src: "{{ item.src }}"
+      dest: "{{ ollama_quadlet_directory }}/{{ ollama_proxy_certs_dir }}/{{ item.filename }}"
+      mode: '0644'
+    loop:
+    - src: "{{ ollama_ca_certificate }}"
+      filename: ca-certificate.pem
+    - src: "{{ ollama_certificate_key }}"
+      filename: cert.key
+    - src: "{{ ollama_certificate }}}"
+      filename: cert
+
 - name: Create Quadlet files
   ansible.builtin.template:
     src: "{{ item }}.j2"

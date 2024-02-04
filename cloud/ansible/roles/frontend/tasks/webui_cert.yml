@@ -1,0 +1,52 @@
+- name: Create Certificates
+  delegate_to: localhost
+  block:
+  - name: Create a temporary directory
+    ansible.builtin.tempfile:
+      state: directory
+      suffix: knowledgebase-webui
+    register: scratch_dir
+
+  - name: Create private key (RSA, 4096 bits)
+    community.crypto.openssl_privatekey:
+      path: "{{ scratch_dir.path }}/certificate.key"
+
+  - name: Create certificate signing request (CSR) for self-signed certificate
+    community.crypto.openssl_csr_pipe:
+      privatekey_path: "{{ scratch_dir.path }}/certificate.key"
+      common_name: "{{ frontend_fqdn }}"
+      organization_name: Example Org
+      subject_alt_name:
+      - "DNS:{{ frontend_fqdn }}"
+    register: csr
+
+  - name: Create simple self-signed certificate
+    community.crypto.x509_certificate:
+      path: "{{ scratch_dir.path }}/certificate.pem"
+      csr_content: "{{ csr.csr }}"
+      privatekey_path: "{{ scratch_dir.path }}/certificate.key"
+      provider: selfsigned
+
+  - name: Slurp certificate pem file
+    ansible.builtin.slurp:
+      src: "{{ scratch_dir.path }}/certificate.pem"
+    register: slurp_certificate_pem
+
+  - name: Slurp certificate key file
+    ansible.builtin.slurp:
+      src: "{{ scratch_dir.path }}/certificate.key"
+    register: slurp_certificate_key
+
+- name: Create the podman secret
+  containers.podman.podman_secret:
+    name: webui-certs
+    state: present
+    skip_existing: true
+    data: |
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: webui-certs
+      data:
+        certificate.key: {{ slurp_certificate_key['content'] }}
+        certificate.pem: {{ slurp_certificate_pem['content'] }}

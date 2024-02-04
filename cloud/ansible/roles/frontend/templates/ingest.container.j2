@@ -5,6 +5,7 @@ RemainAfterExit=yes
 
 [Container]
 Image={{ frontend_client_container_image }}
+ContainerName=gradio
 Exec=python -m knowledge_base_gpt.apps.ingest.ingest
 Volume=embedding.volume:/db
 Environment=PERSIST_DIRECTORY=/db

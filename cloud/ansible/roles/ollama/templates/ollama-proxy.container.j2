@@ -3,7 +3,7 @@ Image=docker.io/envoyproxy/envoy:v1.29-latest
 ContainerName=ollama-proxy
 PublishPort={{ ollama_secured_port }}:{{ ollama_secured_port }}
 Volume=./ollama-proxy-config.yml:/etc/envoy/envoy.yaml:ro,z
-# Volume=./ollama-proxy-certs/:/etc/envoy-certificates:ro,z
+Volume=./{{ ollama_proxy_certs_dir }}/:/etc/envoy-certificates:ro,z
 Network=ollama.network
 Environment=ENVOY_UID=0
 

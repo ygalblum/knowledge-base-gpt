@@ -1,0 +1,14 @@
+[Unit]
+Requires=ingest.service
+After=ingest.service
+
+[Service]
+TimeoutStartSec=1800
+
+[Kube]
+Yaml=webui.yml
+Network=ollama.network
+ConfigMap=nginx-conf-configmap.yml
+
+[Install]
+WantedBy=default.target
