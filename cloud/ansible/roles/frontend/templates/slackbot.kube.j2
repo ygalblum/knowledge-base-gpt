@@ -1,0 +1,13 @@
+[Unit]
+Requires=ingest.service redis.service
+After=ingest.service redis.service
+
+[Service]
+TimeoutStartSec=1800
+
+[Kube]
+Yaml=slackbot.yml
+Network=ollama.network
+
+[Install]
+WantedBy=default.target
