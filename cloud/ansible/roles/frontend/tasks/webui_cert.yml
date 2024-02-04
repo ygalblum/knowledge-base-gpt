@@ -39,14 +39,14 @@
 
 - name: Create the podman secret
   containers.podman.podman_secret:
-    name: webui-certs
+    name: knowledgebase-webui-certs
     state: present
     skip_existing: true
     data: |
       apiVersion: v1
       kind: Secret
       metadata:
-        name: webui-certs
+        name: knowledgebase-webui-certs
       data:
         certificate.key: {{ slurp_certificate_key['content'] }}
         certificate.pem: {{ slurp_certificate_pem['content'] }}
