@@ -24,6 +24,12 @@ variable "machine_type" {
     default = "n1-standard-4"
 }
 
+variable "accelerator_types" {
+    type = string
+    default = "nvidia-tesla-t4"
+
+}
+
 variable "boot_image_size" {
     type = number
     default = 30

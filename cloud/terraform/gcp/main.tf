@@ -43,7 +43,7 @@ resource "google_compute_instance" "ollama" {
 
   guest_accelerator {
     count = 1
-    type  = "projects/${var.gcp_project}/zones/${local.zone}/acceleratorTypes/nvidia-tesla-t4"
+    type  = "projects/${var.gcp_project}/zones/${local.zone}/acceleratorTypes/${var.accelerator_types}"
   }
 
   labels = {
