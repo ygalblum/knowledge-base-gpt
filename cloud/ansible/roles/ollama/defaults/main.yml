@@ -4,3 +4,4 @@ ollama_model: llama2-uncensored
 ollama_expose_secured_port: False
 ollama_secured_port: 11435
 ollama_proxy_certs_dir: ollama-proxy-certs
+ollama_expose_insecure_port: False
