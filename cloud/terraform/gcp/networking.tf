@@ -60,3 +60,18 @@ resource "google_compute_firewall" "webui" {
   source_ranges = [ "0.0.0.0/0" ]
   target_tags = [ "${var.name}-webui" ]
 }
+
+resource "google_compute_firewall" "prometheus" {
+  count = var.expose_prometheus ? 1 : 0
+
+  name    = "${var.name}-prometheus"
+  network = google_compute_network.this.name
+
+  allow {
+    protocol = "tcp"
+    ports    = [ 9090 ]
+  }
+
+  source_ranges = [ local.myip_cidr ]
+  target_tags = [ "${var.name}-prometheus" ]
+}

@@ -55,3 +55,8 @@ variable "expose_webui" {
     type = bool
     default = false
 }
+
+variable "expose_prometheus" {
+    type = bool
+    default = false
+}
