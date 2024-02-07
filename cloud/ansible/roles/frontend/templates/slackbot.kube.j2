@@ -1,6 +1,6 @@
 [Unit]
-Requires=ingest.service redis.service
-After=ingest.service redis.service
+Requires=ingest.service redis.service fluentbit.service
+After=ingest.service redis.service fluentbit.service
 
 [Service]
 TimeoutStartSec=1800

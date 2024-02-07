@@ -1,6 +1,6 @@
 [Unit]
-Requires=ingest.service
-After=ingest.service
+Requires=ingest.service fluentbit.service
+After=ingest.service fluentbit.service
 
 [Service]
 TimeoutStartSec=1800

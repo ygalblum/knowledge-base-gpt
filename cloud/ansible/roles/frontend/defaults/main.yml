@@ -15,3 +15,59 @@ frontend_oauth_email_domains: ""
 frontend_oauth_client_id: ""
 frontend_oauth_client_secret: ""
 frontend_ollama_host: "ollama"
+frontend_template_files_list_base:
+- embedding.volume
+- ingest.container
+- metrics.volume
+- fluent-bit.conf
+- parsers.conf
+- fluentbit.container
+frontend_services_list_base:
+- fluentbit
+frontend_template_files_list_slackbot:
+- redis.container
+- slackbot.kube
+- slackbot.yml
+frontend_services_list_slackbot:
+- slackbot
+frontend_template_files_list_webui:
+- webui.kube
+- webui.yml
+- nginx-conf-configmap.yml
+frontend_services_list_webui:
+- webui
+frontend_metrics_base_filename: knowledgebase_metrics
+frontend_webui_metrics_filename: "{{ frontend_metrics_base_filename }}_webui.log"
+frontend_slackbot_metrics_filename: "{{ frontend_metrics_base_filename }}_slackbot.log"
+frontend_metrics_filename: metrics.log
+frontend_metrics_stages:
+- answer
+- question
+frontend_metrics_fields:
+- name: prompt_eval_count
+  type: count
+- name: eval_count
+  type: count
+- name: load_duration
+  type: duration
+- name: prompt_eval_duration
+  type: duration
+- name: eval_duration
+  type: duration
+- name: total_duration
+  type: duration
+frontend_metrics_buckets:
+  count:
+  - 50
+  - 100
+  - 300
+  - 500
+  - 1000
+  - 2000
+  - 5000
+  duration:
+  - 1000000000
+  - 5000000000
+  - 10000000000
+  - 30000000000
+  - 60000000000

@@ -25,11 +25,15 @@ spec:
         - mountPath: "/db"
           name: embedding
           readOnly: true
+        - mountPath: /metrics
+          name: metrics
         env:
         - name: PERSIST_DIRECTORY
           value: "/db"
         - name: OLLAMA_HOST
           value: {{ frontend_ollama_host }}
+        - name: METRICS_FILE
+          value: /metrics/{{ frontend_webui_metrics_filename }}
         securityContext:
           runAsUser: 0
       - name: oauth-proxy
@@ -75,6 +79,9 @@ spec:
       - name: embedding
         persistentVolumeClaim:
           claimName: systemd-embedding
+      - name: metrics
+        persistentVolumeClaim:
+          claimName: systemd-metrics
       - name: nginx-config
         configMap:
           name: knowledgebase-nginx-config

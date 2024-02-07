@@ -3,7 +3,7 @@
 
 [INPUT]
     Name tail
-    Path /metrics/kbm.log
+    Path /metrics/{{ frontend_metrics_base_filename }}*.log
     Tag metrics_file
 
 [FILTER]
@@ -12,12 +12,13 @@
     Key_Name log
     Parser knowledgebase_metrics
 
-{% for stage in stages -%}
+{% for stage in frontend_metrics_stages -%}
 [FILTER]
     Name rewrite_tag
     Match metrics_file
     Rule stage {{ stage }}_generation {{ stage }}_generation_metrics true
-{% for field in metric_fields %}
+
+{% for field in frontend_metrics_fields %}
 [FILTER]
     Name log_to_metrics
     Match {{ stage }}_generation_metrics
@@ -27,9 +28,10 @@
     metric_description {{ field.name }} to generate the {{ stage }}
     value_field {{ field.name }}
     label_field identifier
-    {%- for bucket in buckets[field.type] %}
+{% for bucket in frontend_metrics_buckets[field.type] %}
     bucket {{ bucket }}
-    {%- endfor %}
+{% endfor %}
+
 {% endfor %}
 {% endfor -%}
 

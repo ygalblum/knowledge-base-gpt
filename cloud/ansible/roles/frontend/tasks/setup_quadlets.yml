@@ -8,19 +8,19 @@
 
 - name: Create template files list
   ansible.builtin.set_fact:
-    _frontend_template_files_list: "{{ ['embedding.volume', 'ingest.container'] }}"
+    _frontend_template_files_list: "{{ frontend_template_files_list_base }}"
     _frontend_services_list: "{{ [] }}"
 
 - name: Add Slackbot files if needed
   ansible.builtin.set_fact:
-    _frontend_template_files_list: "{{ _frontend_template_files_list + ['redis.container', 'slackbot.kube', 'slackbot.yml']}}"
-    _frontend_services_list: "{{ _frontend_services_list + ['slackbot'] }}"
+    _frontend_template_files_list: "{{ _frontend_template_files_list + frontend_template_files_list_slackbot}}"
+    _frontend_services_list: "{{ _frontend_services_list + frontend_services_list_slackbot }}"
   when: frontend_provision_slackbot
 
 - name: Add WebUI Files
   ansible.builtin.set_fact:
-    _frontend_template_files_list: "{{ _frontend_template_files_list + ['webui.kube', 'webui.yml', 'nginx-conf-configmap.yml']}}"
-    _frontend_services_list: "{{ _frontend_services_list + ['webui'] }}"
+    _frontend_template_files_list: "{{ _frontend_template_files_list + frontend_template_files_list_webui}}"
+    _frontend_services_list: "{{ _frontend_services_list + frontend_services_list_webui }}"
   when: frontend_provision_gradio
 
 - name: Setup secrets
@@ -52,6 +52,18 @@
     scope: user
     name: "{{ item }}.service"
   async: 1800
-  poll: 60
+  poll: 0
   when: _frontend_services_list | length > 0
   loop: "{{ _frontend_services_list }}"
+  register: service_start_async_results
+
+- name: Wait for all services to start
+  ansible.builtin.async_status:
+    jid: "{{ async_result_item.ansible_job_id }}"
+  loop: "{{ service_start_async_results.results }}"
+  loop_control:
+    loop_var: "async_result_item"
+  register: async_poll_results
+  until: async_poll_results.finished
+  retries: 180
+  delay: 10

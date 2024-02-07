@@ -23,6 +23,8 @@ spec:
         - mountPath: "/db"
           name: embedding
           readOnly: true
+        - mountPath: /metrics
+          name: metrics
         env:
         - name: PERSIST_DIRECTORY
           value: "/db"
@@ -42,9 +44,14 @@ spec:
             secretKeyRef:
               name: knowledgebase-slackbot-tokens
               key: bot-token
+        - name: METRICS_FILE
+          value: /metrics/{{ frontend_slackbot_metrics_filename }}
         securityContext:
           runAsUser: 0
       volumes:
       - name: embedding
         persistentVolumeClaim:
           claimName: systemd-embedding
+      - name: metrics
+        persistentVolumeClaim:
+          claimName: systemd-metrics
