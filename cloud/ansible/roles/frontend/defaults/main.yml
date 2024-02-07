@@ -1,5 +1,5 @@
 frontend_quadlet_directory: "{{ ansible_user_dir }}/.config/containers/systemd/"
-frontend_client_container_image_tag: "11"
+frontend_client_container_image_tag: "12"
 frontend_client_container_image: "quay.io/yblum/knowledge_base_gpt:{{ frontend_client_container_image_tag }}"
 frontend_ingest_google_drive_folder_id: ""
 frontend_ingest_google_api_service_key_file: ""
@@ -22,8 +22,11 @@ frontend_template_files_list_base:
 - fluent-bit.conf
 - parsers.conf
 - fluentbit.container
+- prometheus.yml
+- prometheus.container
 frontend_services_list_base:
 - fluentbit
+- prometheus
 frontend_template_files_list_slackbot:
 - redis.container
 - slackbot.kube
@@ -71,3 +74,4 @@ frontend_metrics_buckets:
   - 10000000000
   - 30000000000
   - 60000000000
+  frontend_expose_prometheus: false

@@ -9,7 +9,7 @@
 - name: Create template files list
   ansible.builtin.set_fact:
     _frontend_template_files_list: "{{ frontend_template_files_list_base }}"
-    _frontend_services_list: "{{ [] }}"
+    _frontend_services_list: "{{ frontend_services_list_base }}"
 
 - name: Add Slackbot files if needed
   ansible.builtin.set_fact:
