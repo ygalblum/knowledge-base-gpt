@@ -75,3 +75,18 @@ resource "google_compute_firewall" "prometheus" {
   source_ranges = [ local.myip_cidr ]
   target_tags = [ "${var.name}-prometheus" ]
 }
+
+resource "google_compute_firewall" "grafana" {
+  count = var.expose_grafana ? 1 : 0
+
+  name    = "${var.name}-grafana"
+  network = google_compute_network.this.name
+
+  allow {
+    protocol = "tcp"
+    ports    = [ 3000 ]
+  }
+
+  source_ranges = [ local.myip_cidr ]
+  target_tags = [ "${var.name}-grafana" ]
+}

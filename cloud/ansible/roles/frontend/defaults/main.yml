@@ -24,9 +24,13 @@ frontend_template_files_list_base:
 - fluentbit.container
 - prometheus.yml
 - prometheus.container
+- prometheus.volume
+- grafana.container
+- grafana.volume
 frontend_services_list_base:
 - fluentbit
 - prometheus
+- grafana
 frontend_template_files_list_slackbot:
 - redis.container
 - slackbot.kube
@@ -74,4 +78,4 @@ frontend_metrics_buckets:
   - 10000000000
   - 30000000000
   - 60000000000
-  frontend_expose_prometheus: false
+frontend_expose_prometheus: false

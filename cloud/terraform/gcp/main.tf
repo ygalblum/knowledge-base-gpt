@@ -9,12 +9,15 @@ locals {
   instance_network_tags = concat(
     concat(
       concat(
-        ["${var.name}-ssh"],
-        var.expose_webui ? ["${var.name}-webui"] : []
+        concat(
+          ["${var.name}-ssh"],
+          var.expose_webui ? ["${var.name}-webui"] : []
+        ),
+        var.secured_ollama_port == 0 ? [] : ["${var.name}-secured-ollama"]
       ),
-      var.secured_ollama_port == 0 ? [] : ["${var.name}-secured-ollama"]
+      var.expose_prometheus ? ["${var.name}-prometheus"] : []
     ),
-    var.expose_prometheus ? ["${var.name}-prometheus"] : []
+    var.expose_grafana ? ["${var.name}-grafana"] : []
   )
   myip_cidr = "${chomp(data.http.myip.response_body)}/32"
   zone = data.google_compute_zones.available.names[0]

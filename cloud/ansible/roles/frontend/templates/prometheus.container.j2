@@ -6,6 +6,10 @@ Image=docker.io/prom/prometheus:v2.49.1
 ContainerName=prometheus
 Network=ollama.network
 Volume=./prometheus.yml:/etc/prometheus/prometheus.yml:ro,z
+Volume=prometheus.volume:/prometheus
 {% if frontend_expose_prometheus %}
 PublishPort=9090:9090
 {% endif %}
+
+[Install]
+WantedBy=default.target

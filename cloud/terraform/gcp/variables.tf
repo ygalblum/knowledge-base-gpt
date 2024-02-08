@@ -60,3 +60,8 @@ variable "expose_prometheus" {
     type = bool
     default = false
 }
+
+variable "expose_grafana" {
+    type = bool
+    default = false
+}
