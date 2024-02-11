@@ -1,49 +1,60 @@
-static_resources:
-  listeners:
-  - name: ollama_listener
-    address:
-      socket_address:
-        address: 0.0.0.0
-        port_value: {{ ollama_secured_port }}
-    # listener_filters:
-    # - name: "envoy.filters.listener.tls_inspector"
-    #   typed_config:
-    #     "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
-    filter_chains:
-    - filters:
-      - name: envoy.filters.network.tcp_proxy
-        typed_config:
-          "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
-          stat_prefix: ollama_tcp
-          cluster: ollama_cluster
-    #   transport_socket:
-    #     name: envoy.transport_sockets.tls
-    #     typed_config:
-    #       "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
-    #       require_client_certificate: true
-    #       common_tls_context:
-    #         tls_certificates:
-    #         - certificate_chain:
-    #             filename: certs/servercert.pem
-    #           private_key:
-    #             filename: certs/serverkey.pem
-    #         validation_context:
-    #           match_typed_subject_alt_names:
-    #           - san_type: DNS
-    #             matcher:
-    #               exact: proxy-ollama-frontend.example.com
-    #           trusted_ca:
-    #             filename: certs/cacert.pem
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-proxy-config
+data:
+  envoy.yaml: |
+    admin:
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 9901
+    static_resources:
+      listeners:
+      - name: ollama_listener
+        address:
+          socket_address:
+            address: 0.0.0.0
+            port_value: {{ ollama_secured_port }}
+        listener_filters:
+        - name: "envoy.filters.listener.tls_inspector"
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
+        filter_chains:
+        - filters:
+          - name: envoy.filters.network.tcp_proxy
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+              stat_prefix: ollama_tcp
+              cluster: ollama_cluster
+          transport_socket:
+            name: envoy.transport_sockets.tls
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+              require_client_certificate: true
+              common_tls_context:
+                tls_certificates:
+                - certificate_chain:
+                    filename: /etc/envoy-certificates/tls.crt
+                  private_key:
+                    filename: /etc/envoy-certificates/tls.key
+                validation_context:
+                  # match_typed_subject_alt_names:
+                  # - san_type: DNS
+                  #   matcher:
+                  #     exact: proxy-ollama-frontend.example.com
+                  trusted_ca:
+                    filename: /etc/envoy-certificates/ca.crt
 
-  clusters:
-  - name: ollama_cluster
-    type: STRICT_DNS
-    load_assignment:
-      cluster_name: ollama_cluster
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: ollama
-                port_value: 11434
+      clusters:
+      - name: ollama_cluster
+        type: STRICT_DNS
+        load_assignment:
+          cluster_name: ollama_cluster
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: ollama
+                    port_value: 11434

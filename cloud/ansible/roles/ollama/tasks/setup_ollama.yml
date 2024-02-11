@@ -11,35 +11,9 @@
     _ollama_template_files_list: "{{['ollama.container', 'ollama.network', 'ollama.volume']}}"
     _ollama_services_list: "{{ ['ollama'] }}"
 
-- name: Add HAProxy files if needed
-  ansible.builtin.set_fact:
-    _ollama_template_files_list: "{{ _ollama_template_files_list + ['ollama-proxy.container', 'ollama-proxy-config.yml']}}"
-    _ollama_services_list: "{{ _ollama_services_list + ['ollama-proxy'] }}"
+- name: Setup Proxy
   when: ollama_expose_secured_port
-
-- name: Copy the certificates
-  when: ollama_expose_secured_port
-  block:
-  - name: Create the certificates directory
-    ansible.builtin.file:
-      path: "{{ ollama_quadlet_directory }}/{{ ollama_proxy_certs_dir }}"
-      state: directory
-      owner: "{{ ansible_user_id }}"
-      group: "{{ ansible_user_id }}"
-      mode: '0755'
-      recurse: true
-  - name: Copy the certificates
-    ansible.builtin.copy:
-      src: "{{ item.src }}"
-      dest: "{{ ollama_quadlet_directory }}/{{ ollama_proxy_certs_dir }}/{{ item.filename }}"
-      mode: '0644'
-    loop:
-    - src: "{{ ollama_ca_certificate }}"
-      filename: ca-certificate.pem
-    - src: "{{ ollama_certificate_key }}"
-      filename: cert.key
-    - src: "{{ ollama_certificate }}}"
-      filename: cert
+  ansible.builtin.include_tasks: setup_secure_port.yml
 
 - name: Create Quadlet files
   ansible.builtin.template:
@@ -59,9 +33,21 @@
     scope: user
     name: "{{ item }}.service"
   async: 1800
-  poll: 60
+  poll: 0
   when: _ollama_services_list | length > 0
   loop: "{{ _ollama_services_list }}"
+  register: service_start_async_results
+
+- name: Wait for all services to start
+  ansible.builtin.async_status:
+    jid: "{{ async_result_item.ansible_job_id }}"
+  loop: "{{ service_start_async_results.results }}"
+  loop_control:
+    loop_var: "async_result_item"
+  register: async_poll_results
+  until: async_poll_results.finished
+  retries: 180
+  delay: 10
 
 - name: Pull model
   ansible.builtin.command:

@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ ollama_certificate_name }}
+  namespace: {{ ollama_certificate_namespace }}
+spec:
+  secretName: {{ ollama_certificate_name }}
+  duration: 87600h
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    kind: Issuer
+    group: cert-manager.io
+    name: {{ ollama_certificate_ca_issuer }}
+  dnsNames:
+  - {{ ollama_fqdn }}

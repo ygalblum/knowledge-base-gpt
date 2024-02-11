@@ -1,0 +1,39 @@
+- name: Check that the required parameters are set
+  block:
+  - name: Check the issuer name was set
+    ansible.builtin.assert:
+      that: ollama_certificate_ca_issuer | default('') | length > 0
+      fail_msg: ollama_certificate_ca_issuer must be set
+  - name: Check the FQDN was set
+    ansible.builtin.assert:
+      that: ollama_fqdn | default('') | length > 0
+      fail_msg: ollama_fqdn must be set
+
+- name: Create and get certificate from the certificate manager
+  delegate_to: localhost
+  block:
+  - name: Create certificate from the certificate manager
+    kubernetes.core.k8s:
+      state: present
+      template: certificate.yml.j2
+
+  - name: Read certificate secret
+    delegate_to: localhost
+    kubernetes.core.k8s_info:
+      api_version: v1
+      kind: Secret
+      name: "{{ ollama_certificate_name }}"
+      namespace: "{{ ollama_certificate_namespace }}"
+    register: ollama_certificate_secret
+
+- name: Create the podman kube secret for the ollama certificate
+  containers.podman.podman_secret:
+    name: "{{ ollama_certificate_name }}"
+    state: present
+    skip_existing: true
+    data: "{{ ollama_certificate_secret.resources[0] }}"
+
+- name: Add HAProxy files if needed
+  ansible.builtin.set_fact:
+    _ollama_template_files_list: "{{ _ollama_template_files_list + ['ollama-proxy.kube', 'ollama-proxy.yml', 'ollama-proxy-config.yml']}}"
+    _ollama_services_list: "{{ _ollama_services_list + ['ollama-proxy'] }}"

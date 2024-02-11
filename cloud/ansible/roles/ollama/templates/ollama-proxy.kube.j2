@@ -1,0 +1,8 @@
+[Kube]
+Yaml=ollama-proxy.yml
+PublishPort={{ ollama_secured_port }}:{{ ollama_secured_port }}
+Network=ollama.network
+ConfigMap=ollama-proxy-config.yml
+
+[Install]
+WantedBy=default.target

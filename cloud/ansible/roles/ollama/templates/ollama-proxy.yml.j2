@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: knowledgebase-ollama-proxy
+  labels:
+    app: knowledgebase
+    componenet: ollama-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: knowledgebase
+      componenet: ollama-proxy
+  template:
+    metadata:
+      labels:
+        app: knowledgebase
+        componenet: ollama-proxy
+    spec:
+      containers:
+      - name: envoy
+        image: docker.io/envoyproxy/envoy:v1.29-latest
+        volumeMounts:
+        - name: proxy-config
+          mountPath: /etc/envoy
+        - name: certificates
+          mountPath: /etc/envoy-certificates
+        env:
+        - name: ENVOY_UID
+          value: "0"
+      volumes:
+      - name: proxy-config
+        configMap:
+          name: ollama-proxy-config
+      - name: certificates
+        secret:
+          secretName: {{ ollama_certificate_name }}
