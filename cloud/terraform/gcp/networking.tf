@@ -41,7 +41,7 @@ resource "google_compute_firewall" "secured_ollama" {
     ports    = [ var.secured_ollama_port ]
   }
 
-  source_ranges = [ local.myip_cidr ]
+  source_ranges = [ "0.0.0.0/0" ]
   target_tags = [ "${var.name}-secured-ollama" ]
 }
 
