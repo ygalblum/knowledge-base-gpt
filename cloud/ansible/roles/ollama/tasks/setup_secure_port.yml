@@ -33,7 +33,7 @@
     skip_existing: true
     data: "{{ ollama_certificate_secret.resources[0] }}"
 
-- name: Add HAProxy files if needed
+- name: Add Proxy files and services
   ansible.builtin.set_fact:
     _ollama_template_files_list: "{{ _ollama_template_files_list + ['ollama-proxy.kube', 'ollama-proxy.yml', 'ollama-proxy-config.yml']}}"
     _ollama_services_list: "{{ _ollama_services_list + ['ollama-proxy'] }}"
