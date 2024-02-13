@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: knowledgebase-redis
+  labels:
+    app: knowledgebase
+    component: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: knowledgebase
+      component: redis
+  template:
+    metadata:
+      labels:
+        app: knowledgebase
+        component: redis
+    spec:
+      containers:
+      - name: redis
+        image: docker.io/redis/redis-stack:latest
+        resources:
+          limits:
+            cpu: 1
+            memory: 4Gi

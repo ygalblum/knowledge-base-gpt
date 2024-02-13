@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "knowledgebase-slackbot.embedding-pvc" . }}
+  labels:
+    app: knowledgebase
+    component: embedding
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.embeddingVolumeSize }}
