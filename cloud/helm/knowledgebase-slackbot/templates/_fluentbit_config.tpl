@@ -27,23 +27,23 @@ FluentBit Configuration
     Key_Name log
     Parser knowledgebase_metrics
 
+{{- range $.Values.metricsFields }}
 [FILTER]
     Name log_to_metrics
     Match metrics_file
-    Tag eval_count_metric
+    Tag {{ printf "%s_metric" .name }}
     metric_mode histogram
-    metric_name eval_count
+    metric_name {{ .name }}
     metric_description Number of token used to generate the answer
-    value_field eval_count
+    value_field {{ .name }}
     label_field identifier
     label_field stage
-    bucket 50
-    bucket 100
-    bucket 300
-    bucket 500
-    bucket 1000
-    bucket 2000
-    bucket 5000
+{{- $buckets := get $.Values.metricsBuckets .type }}
+{{- range $buckets }}
+    bucket {{ . }}
+{{- end }}
+
+{{- end }}
 
 [OUTPUT]
     name prometheus_exporter
