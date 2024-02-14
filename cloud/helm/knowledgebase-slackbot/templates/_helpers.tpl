@@ -137,3 +137,14 @@ Slackbot Pod name
 {{- define "knowledgebase-slackbot.slackbot-pod-name" -}}
 {{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "slackbot" }}
 {{- end }}
+
+{{/*
+Redis Service name
+*/}}
+{{- define "knowledgebase-slackbot.redis-host" -}}
+{{- printf "%s-redis-master" .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "knowledgebase-slackbot.redis-password-secret" -}}
+{{- printf "%s-redis" .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- end }}

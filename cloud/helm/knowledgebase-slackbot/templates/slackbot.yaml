@@ -31,7 +31,12 @@ spec:
         - name: PERSIST_DIRECTORY
           value: "/db"
         - name: REDIS_HOST
-          value: knowledgebase-redis
+          value: "{{ include "knowledgebase-slackbot.redis-host" . }}"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: "{{ include "knowledgebase-slackbot.redis-password-secret" . }}"
+              key: redis-password
         - name: FORWARD_QUESTION_CHANNEL_NAME
           valueFrom:
             secretKeyRef:

@@ -136,3 +136,6 @@ metricsBuckets:
   - 10000000000
   - 30000000000
   - 60000000000
+
+redis:
+  architecture: standalone
