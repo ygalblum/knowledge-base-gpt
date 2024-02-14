@@ -7,12 +7,16 @@ from langchain_core.messages import BaseMessage
 from knowledge_base_gpt.libs.history.base import HistoryBase
 
 redis_host = os.environ.get("REDIS_HOST", 'localhost')
+redis_password = os.environ.get("REDIS_PASSWORD")
 
 
 class HistoryRedis(HistoryBase):
 
     def __init__(self, session_id):
-        self._history = RedisChatMessageHistory(session_id, url=f"redis://{redis_host}:6379/0", ttl=3000)
+        self._history = RedisChatMessageHistory(
+            session_id,
+            url=f"redis://{':' + redis_password + '@' if redis_password else '' }{redis_host}:6379/0",
+            ttl=3000)
 
     def get_messages(self) -> List[BaseMessage]:
         return self._history.messages
