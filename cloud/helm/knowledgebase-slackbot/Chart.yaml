@@ -28,3 +28,6 @@ dependencies:
 - name: prometheus
   version: "0.9.2"
   repository: "oci://registry-1.docker.io/bitnamicharts"
+- name: grafana
+  version: "9.8.3"
+  repository: "oci://registry-1.docker.io/bitnamicharts"
