@@ -114,7 +114,7 @@ Metrics Volume name
 Metrics Service name
 */}}
 {{- define "knowledgebase-slackbot.metrics-service" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "metrics" }}
+{{- printf "%s-knowledgebase-slackbot-metrics" .Release.Name }}
 {{- end }}
 
 {{/*

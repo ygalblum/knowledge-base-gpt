@@ -139,3 +139,18 @@ metricsBuckets:
 
 redis:
   architecture: standalone
+
+prometheus:
+# For now disable the alert manager
+  alertmanager:
+    enabled: false
+  server:
+    rbac:
+      create: False
+    service:
+      type: ClusterIP
+    extraScrapeConfigs:
+    - job_name: knowledgebase
+      static_configs:
+      - targets:
+        - '{{ printf "%s:2021" (include "knowledgebase-slackbot.metrics-service" .) }}'
