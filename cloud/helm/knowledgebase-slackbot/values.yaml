@@ -96,6 +96,8 @@ ingestFolderID: ""
 # Metrics Volume Parameters
 meticsVolumeSize: 1Gi
 
+# Address for Ollama Secure Service
+ollamaServerAddress: ""
 ollamaServerSecurePort: 11435
 
 # Slack Channel to forward unanswered conversations

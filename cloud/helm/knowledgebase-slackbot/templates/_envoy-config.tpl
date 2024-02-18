@@ -38,7 +38,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: cloudmarketplaceassistant.projects.ecosystem.sysdeseng.com
+                address: {{ .Values.ollamaServerAddress }}
                 port_value: {{ .Values.ollamaServerSecurePort }}
     transport_socket:
       name: envoy.transport_sockets.tls
