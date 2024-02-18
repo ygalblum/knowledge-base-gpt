@@ -13,6 +13,12 @@ spec:
       component: slackbot
   template:
     metadata:
+      annotations:
+        checksum/proxy-config: {{ include (print $.Template.BasePath "/ollama-proxy-configmap.yaml") . | sha256sum }}
+        checksum/proxy-certificates: {{ include (print $.Template.BasePath "/certificate.yaml") . | sha256sum }}
+        checksum/fluent-bit-config: {{ include (print $.Template.BasePath "/fluent-bit-configmap.yaml") . | sha256sum }}
+        checksum/slack-tokens: {{ include (print $.Template.BasePath "/slackbot-tokens-secret.yaml") . | sha256sum }}
+        checksum/slack-forward-channel: {{ include (print $.Template.BasePath "/forward-channel-secret.yaml") . | sha256sum }}
       labels:
         app: knowledgebase
         component: slackbot
