@@ -94,7 +94,7 @@ embeddingVolumeSize: 20Gi
 ingestFolderID: ""
 
 # Metrics Volume Parameters
-meticsVolumeSize: 1Gi
+logsVolumeSize: 1Gi
 
 # Address for Ollama Secure Service
 ollamaServerAddress: ""
@@ -110,49 +110,24 @@ slackBotToken: ""
 envoyProxyImageTag: v1.29-latest
 fluentbitImageTag: "2.2"
 
-metricsFields:
-- name: prompt_eval_count
-  type: count
-- name: eval_count
-  type: count
-- name: load_duration
-  type: duration
-- name: prompt_eval_duration
-  type: duration
-- name: eval_duration
-  type: duration
-- name: total_duration
-  type: duration
-metricsBuckets:
-  count:
-  - 50
-  - 100
-  - 300
-  - 500
-  - 1000
-  - 2000
-  - 5000
-  duration:
-  - 1000000000
-  - 5000000000
-  - 10000000000
-  - 30000000000
-  - 60000000000
-
 redis:
   architecture: standalone
 
-prometheus:
-# For now disable the alert manager
-  alertmanager:
+elasticsearch:
+  master:
+    masterOnly: false
+    replicaCount: 1
+    resources:
+      limits:
+        memory: "4Gi"
+    heapSize: 2G
+  data:
+    replicaCount: 0
+  coordinating:
+    replicaCount: 0
+  ingest:
+    replicaCount: 0
+  global:
+    kibanaEnabled: true
+  sysctlImage:
     enabled: false
-  server:
-    rbac:
-      create: False
-    service:
-      type: ClusterIP
-    extraScrapeConfigs:
-    - job_name: knowledgebase
-      static_configs:
-      - targets:
-        - '{{ printf "%s:2021" (include "knowledgebase-slackbot.metrics-service" .) }}'

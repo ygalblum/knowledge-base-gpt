@@ -18,36 +18,15 @@ FluentBit Configuration
 
 [INPUT]
     Name tail
-    Path /metrics/slackbot_metrics.log
-    Tag metrics_file
-
-[FILTER]
-    Name parser
-    Match metrics_file
-    Key_Name log
+    Path /logs/slackbot_chat_log.log
+    Tag chatlog
     Parser knowledgebase_metrics
 
-{{- range $.Values.metricsFields }}
-[FILTER]
-    Name log_to_metrics
-    Match metrics_file
-    Tag {{ printf "%s_metric" .name }}
-    metric_mode histogram
-    metric_name {{ .name }}
-    metric_description Number of token used to generate the answer
-    value_field {{ .name }}
-    label_field identifier
-    label_field stage
-{{- $buckets := get $.Values.metricsBuckets .type }}
-{{- range $buckets }}
-    bucket {{ . }}
-{{- end }}
-
-{{- end }}
-
 [OUTPUT]
-    name prometheus_exporter
-    match *metric
-    host 0.0.0.0
-    port 2021
+    name es
+    match chatlog
+    host {{ include "knowledgebase-slackbot.elasticsearch" .}}
+    Index chat-log
+    Suppress_Type_Name True
+
 {{- end }}

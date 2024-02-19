@@ -31,8 +31,8 @@ spec:
         - mountPath: "/db"
           name: embedding
           readOnly: true
-        - mountPath: /metrics
-          name: metrics
+        - mountPath: /logs
+          name: logs
         env:
         - name: PERSIST_DIRECTORY
           value: "/db"
@@ -58,8 +58,8 @@ spec:
             secretKeyRef:
               name: "{{ include "knowledgebase-slackbot.slackbot-tokens-secret" . }}"
               key: bot-token
-        - name: METRICS_FILE
-          value: /metrics/slackbot_metrics.log
+        - name: CHAT_LOGS_FILE
+          value: /logs/slackbot_chat_log.log
         securityContext:
           runAsUser: 0
         resources:
@@ -84,8 +84,8 @@ spec:
         image: "docker.io/fluent/fluent-bit:{{ .Values.fluentbitImageTag }}"
         command: ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit-config/fluent-bit.conf"]
         volumeMounts:
-        - mountPath: /metrics
-          name: metrics
+        - mountPath: /logs
+          name: logs
         - name: fluent-bit-config
           mountPath: /fluent-bit-config
         resources:
@@ -96,9 +96,9 @@ spec:
       - name: embedding
         persistentVolumeClaim:
           claimName: {{ include "knowledgebase-slackbot.embedding-pvc" . }}
-      - name: metrics
+      - name: logs
         persistentVolumeClaim:
-          claimName: {{ include "knowledgebase-slackbot.metrics-pvc" . }}
+          claimName: {{ include "knowledgebase-slackbot.logs-pvc" . }}
       - name: proxy-config
         configMap:
           name: {{ include "knowledgebase-slackbot.proxy-configmap" . }}

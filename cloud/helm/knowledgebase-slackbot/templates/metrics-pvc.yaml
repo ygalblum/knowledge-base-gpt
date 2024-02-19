@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "knowledgebase-slackbot.metrics-pvc" . }}
+  name: {{ include "knowledgebase-slackbot.logs-pvc" . }}
   labels:
     app: knowledgebase
     component: slackbot
@@ -10,4 +10,4 @@ spec:
   - ReadWriteMany
   resources:
     requests:
-      storage: {{ .Values.meticsVolumeSize }}
+      storage: {{ .Values.logsVolumeSize }}

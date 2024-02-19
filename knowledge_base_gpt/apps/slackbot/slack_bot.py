@@ -59,7 +59,7 @@ class KnowledgeBaseSlackBot():
             text="On it. Be back with your answer soon"
         )
         history = HistoryRedis(message['user'])
-        answer = self._private_chat.answer_query(history.get_messages(), message['text'])
+        answer = self._private_chat.answer_query(history.get_messages(), message['text'], chat_identifier=message['user'])
         history.add_to_history(answer)
         say(answer['answer'])
 

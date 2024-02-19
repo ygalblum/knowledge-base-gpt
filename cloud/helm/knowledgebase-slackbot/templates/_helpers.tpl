@@ -104,10 +104,10 @@ Ingest Folder ID secret name
 {{- end }}
 
 {{/*
-Metrics Volume name
+Logs Volume name
 */}}
-{{- define "knowledgebase-slackbot.metrics-pvc" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "metrics" }}
+{{- define "knowledgebase-slackbot.logs-pvc" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "logs" }}
 {{- end }}
 
 {{/*
@@ -147,4 +147,11 @@ Redis Service name
 
 {{- define "knowledgebase-slackbot.redis-password-secret" -}}
 {{- printf "%s-redis" .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Elasticsearch Service name
+*/}}
+{{- define "knowledgebase-slackbot.elasticsearch" -}}
+{{- printf "%s-elasticsearch" .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
