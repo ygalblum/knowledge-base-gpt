@@ -92,6 +92,20 @@ spec:
           limits:
             cpu: 1
             memory: 1Gi
+      - name: logrotate
+        image: "docker.io/blacklabelops/logrotate:{{ .Values.logrotate.imageTag }}"
+        volumeMounts:
+        - mountPath: /logs
+          name: logs
+        env:
+        - name: LOGS_DIRECTORIES
+          value: /logs
+        - name: LOGROTATE_SIZE
+          value: {{ .Values.logrotate.size | quote }}
+        - name: LOGROTATE_COMPRESSION
+          value: compress
+        - name: LOGROTATE_INTERVAL
+          value: {{ .Values.logrotate.interval | quote }}
       volumes:
       - name: embedding
         persistentVolumeClaim:
