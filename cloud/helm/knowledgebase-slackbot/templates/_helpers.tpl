@@ -111,13 +111,6 @@ Logs Volume name
 {{- end }}
 
 {{/*
-Metrics Service name
-*/}}
-{{- define "knowledgebase-slackbot.metrics-service" -}}
-{{- printf "%s-knowledgebase-slackbot-metrics" .Release.Name }}
-{{- end }}
-
-{{/*
 Forward Channel secret name
 */}}
 {{- define "knowledgebase-slackbot.forward-channel-secret" -}}
