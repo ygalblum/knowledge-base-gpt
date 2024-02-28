@@ -34,6 +34,8 @@ spec:
         - mountPath: /logs
           name: logs
         env:
+        - name: MODEL
+          value: {{ .Values.ollamaModel | quote }}
         - name: PERSIST_DIRECTORY
           value: "/db"
         - name: REDIS_HOST

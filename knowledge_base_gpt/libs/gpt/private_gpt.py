@@ -8,7 +8,7 @@ from langchain.vectorstores import Chroma
 
 from knowledge_base_gpt.libs.common import constants
 
-model = os.environ.get("MODEL", "llama2-uncensored")
+model = os.environ.get("MODEL", "mistral")
 target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))
 ollama_host = os.environ.get("OLLAMA_HOST", 'localhost')
 

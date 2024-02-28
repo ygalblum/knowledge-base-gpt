@@ -100,6 +100,8 @@ logsVolumeSize: 1Gi
 ollamaServerAddress: ""
 ollamaServerSecurePort: 11435
 
+ollamaModel: mistral
+
 # Slack Channel to forward unanswered conversations
 forwardChannel: ""
 
