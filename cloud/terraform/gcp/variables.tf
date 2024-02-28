@@ -50,18 +50,3 @@ variable "secured_ollama_port" {
     type = number
     default = 11435
 }
-
-variable "expose_webui" {
-    type = bool
-    default = false
-}
-
-variable "expose_prometheus" {
-    type = bool
-    default = false
-}
-
-variable "expose_grafana" {
-    type = bool
-    default = false
-}
