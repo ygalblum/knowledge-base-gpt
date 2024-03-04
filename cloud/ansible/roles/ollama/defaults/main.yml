@@ -1,7 +1,0 @@
-ollama_quadlet_directory: "{{ ansible_user_dir }}/.config/containers/systemd/"
-ollama_container_image_tag: "0.1.17"
-ollama_model: mistral
-ollama_expose_secured_port: False
-ollama_secured_port: 11435
-ollama_proxy_certs_dir: ollama-proxy-certs
-ollama_expose_insecure_port: False

@@ -170,3 +170,7 @@ cython_debug/
 #.idea/
 # Ignore the service key file
 *service_key.json
+
+# Ansible inventory and env
+*inventory*.yml
+*env*.yml
