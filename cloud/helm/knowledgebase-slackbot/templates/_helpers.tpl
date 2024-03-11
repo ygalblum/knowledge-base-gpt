@@ -148,3 +148,10 @@ Elasticsearch Service name
 {{- define "knowledgebase-slackbot.elasticsearch" -}}
 {{- printf "%s-elasticsearch" .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
+
+{{/*
+MetricBeat Pod name
+*/}}
+{{- define "knowledgebase-slackbot.metricbeat-pod-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "metricbeat" }}
+{{- end }}

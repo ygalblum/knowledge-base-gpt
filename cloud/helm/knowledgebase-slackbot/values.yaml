@@ -117,6 +117,9 @@ logrotate:
   size: 1M
   interval: hourly
 
+ollamaServerAdminSecurePort: 19901
+ollamaServerFluentBitSecurePort: 12021
+
 redis:
   architecture: standalone
 

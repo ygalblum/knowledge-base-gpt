@@ -6,7 +6,7 @@ module "ollama" {
     ssh_public_key = "${var.ssh_public_key}"
     service_account = "${var.service_account}"
     name = "${var.name}"
-    application_ports = [11435]
+    application_ports = [11435, 19901, 12021]
     additional_scopes = ["https://www.googleapis.com/auth/drive.readonly"]
     accelerator_count = 1
 }
