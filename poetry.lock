@@ -642,6 +642,20 @@ wrapt = ">=1.10,<2"
 dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "sphinx (<2)", "tox"]
 
 [[package]]
+name = "envyaml"
+version = "1.10.211231"
+description = "Simple YAML configuration file parser with easy access for structured data"
+optional = false
+python-versions = ">=2.7"
+files = [
+    {file = "envyaml-1.10.211231-py2.py3-none-any.whl", hash = "sha256:8d7a7a6be12587cc5da32a587067506b47b849f4643981099ad148015a72de52"},
+    {file = "envyaml-1.10.211231.tar.gz", hash = "sha256:88f8a076159e3c317d3450a5f404132b6ac91aecee4934ea72eac65f911f1244"},
+]
+
+[package.dependencies]
+PyYAML = "*"
+
+[[package]]
 name = "fastapi"
 version = "0.109.2"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
@@ -1401,6 +1415,20 @@ files = [
 [package.extras]
 docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (<7.2.5)", "sphinx (>=3.5)", "sphinx-lint"]
 testing = ["pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy (>=0.9.1)", "pytest-ruff", "zipp (>=3.17)"]
+
+[[package]]
+name = "injector"
+version = "0.21.0"
+description = "Injector - Python dependency injection framework, inspired by Guice"
+optional = false
+python-versions = "*"
+files = [
+    {file = "injector-0.21.0-py2.py3-none-any.whl", hash = "sha256:3942c5e4c501d390d5ad1b8d7d486ef93b844934afeeb17211acb6c4ca29eeb4"},
+    {file = "injector-0.21.0.tar.gz", hash = "sha256:919eb6b9f96f40bf98fda34c79762b217bd1544d9adc35805ff2948e92356c9c"},
+]
+
+[package.extras]
+dev = ["black (==23.3.0)", "build (==0.10.0)", "check-manifest (==0.49)", "click (==8.1.3)", "coverage (==7.2.7)", "exceptiongroup (==1.1.1)", "iniconfig (==2.0.0)", "mypy (==1.4.1)", "mypy-extensions (==1.0.0)", "packaging (==23.1)", "pathspec (==0.11.1)", "platformdirs (==3.8.0)", "pluggy (==1.2.0)", "pyproject-hooks (==1.0.0)", "pytest (==7.4.0)", "pytest-cov (==4.1.0)", "tomli (==2.0.1)", "typing-extensions (==4.7.0)"]
 
 [[package]]
 name = "jinja2"
@@ -4956,4 +4984,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "cb6edf86cdde42417c282d87b82e473f37d24f2679781b9f8b4515bf42d1e2f8"
+content-hash = "2d1894a4f93f41c5586db4fd407f3392476bfe8c7d7b9e6e7d0461a6e587255a"

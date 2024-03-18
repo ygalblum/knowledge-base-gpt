@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from chromadb.config import Settings
 
 persist_directory = os.environ.get('PERSIST_DIRECTORY', 'db')
@@ -10,3 +11,5 @@ CHROMA_SETTINGS = Settings(
     persist_directory=persist_directory,
     anonymized_telemetry=False
 )
+
+PROJECT_ROOT_PATH: Path = Path(__file__).parents[3]

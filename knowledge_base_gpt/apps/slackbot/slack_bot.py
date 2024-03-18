@@ -1,44 +1,49 @@
 #!/usr/bin/env python3
-import os
-
+from injector import inject, singleton
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.errors import SlackApiError
 
+from knowledge_base_gpt.libs.injector.di import global_injector
+from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.gpt.private_chat import PrivateChat
 from knowledge_base_gpt.libs.history.redis import HistoryRedis
-
-
-forward_question_channel_name = os.environ.get("FORWARD_QUESTION_CHANNEL_NAME")
 
 
 class KnowledgeBaseSlackBotException(Exception):
     pass
 
 
+@singleton
 class KnowledgeBaseSlackBot():
 
+    @inject
+    def __init__(self, settings: Settings) -> None:
+        self.app_token = settings.slackbot.app_token
+        self.bot_token = settings.slackbot.bot_token
+        self.forward_question_channel_name = settings.slackbot.forward_channel
+
     def run(self):
-        self._app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
+        self._app = App(token=self.bot_token)
         self._forward_question_channel_id = self._get_forward_question_channel_id()
         self._app.client.conversations_join(channel=self._forward_question_channel_id)
         self._app.message()(self._got_message)
         self._app.command('/conversation_reset')(self._reset_conversation)
         self._app.command('/conversation_forward')(self._forward_question)
         self._private_chat = PrivateChat()
-        SocketModeHandler(self._app, os.environ["SLACK_APP_TOKEN"]).start()
+        SocketModeHandler(self._app, self.app_token).start()
 
     def _get_forward_question_channel_id(self):
-        if forward_question_channel_name is None:
+        if self.forward_question_channel_name is None:
             raise KnowledgeBaseSlackBotException(f"FORWARD_QUESTION_CHANNEL_NAME was not set")
         try:
             for result in self._app.client.conversations_list():
                 for channel in result["channels"]:
-                    if channel["name"] == forward_question_channel_name:
+                    if channel["name"] == self.forward_question_channel_name:
                         return channel["id"]
         except SlackApiError as e:
             raise KnowledgeBaseSlackBotException(e)
-        raise KnowledgeBaseSlackBotException(f"The channel {forward_question_channel_name} does not exits")
+        raise KnowledgeBaseSlackBotException(f"The channel {self.forward_question_channel_name} does not exits")
 
     def _got_message(self, message, say):
         self._app.client.chat_postEphemeral(
@@ -94,7 +99,7 @@ class KnowledgeBaseSlackBot():
             msg = 'There is no active conversation'
         else:
             self._app.client.chat_postMessage(channel=self._forward_question_channel_id, text=self._messages_to_text(messages))
-            msg = f'The conversation was forwarded to {forward_question_channel_name}'
+            msg = f'The conversation was forwarded to {self.forward_question_channel_name}'
 
         self._app.client.chat_postEphemeral(
             channel=command['channel_id'],
@@ -105,7 +110,7 @@ class KnowledgeBaseSlackBot():
 
 def main():
     try:
-        KnowledgeBaseSlackBot().run()
+        global_injector.get(KnowledgeBaseSlackBot).run()
     except KnowledgeBaseSlackBotException as e:
         print(e)
         exit(-1)
