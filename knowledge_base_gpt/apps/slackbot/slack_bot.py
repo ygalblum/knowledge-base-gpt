@@ -16,35 +16,33 @@ class KnowledgeBaseSlackBotException(Exception):
 class KnowledgeBaseSlackBot():
 
     @inject
-    def __init__(self, settings: Settings) -> None:
-        self.app_token = settings.slackbot.app_token
-        self.bot_token = settings.slackbot.bot_token
-        self.forward_question_channel_name = settings.slackbot.forward_channel
+    def __init__(self, settings: Settings, private_chat: PrivateChat) -> None:
+        self._private_chat = private_chat
+        self._handler = SocketModeHandler(App(token=settings.slackbot.bot_token), settings.slackbot.app_token)
+        self._forward_question_channel_name = settings.slackbot.forward_channel
+        self._forward_question_channel_id = self._get_forward_question_channel_id()
+        self._handler.app.client.conversations_join(channel=self._forward_question_channel_id)
+        self._handler.app.message()(self._got_message)
+        self._handler.app.command('/conversation_reset')(self._reset_conversation)
+        self._handler.app.command('/conversation_forward')(self._forward_question)
 
     def run(self):
-        self._app = App(token=self.bot_token)
-        self._forward_question_channel_id = self._get_forward_question_channel_id()
-        self._app.client.conversations_join(channel=self._forward_question_channel_id)
-        self._app.message()(self._got_message)
-        self._app.command('/conversation_reset')(self._reset_conversation)
-        self._app.command('/conversation_forward')(self._forward_question)
-        self._private_chat = PrivateChat()
-        SocketModeHandler(self._app, self.app_token).start()
+        self._handler.start()
 
     def _get_forward_question_channel_id(self):
-        if self.forward_question_channel_name is None:
-            raise KnowledgeBaseSlackBotException(f"FORWARD_QUESTION_CHANNEL_NAME was not set")
+        if self._forward_question_channel_name is None:
+            raise KnowledgeBaseSlackBotException(f"Slackbot forward channel name was not set")
         try:
-            for result in self._app.client.conversations_list():
+            for result in self._handler.app.client.conversations_list():
                 for channel in result["channels"]:
-                    if channel["name"] == self.forward_question_channel_name:
+                    if channel["name"] == self._forward_question_channel_name:
                         return channel["id"]
         except SlackApiError as e:
             raise KnowledgeBaseSlackBotException(e)
-        raise KnowledgeBaseSlackBotException(f"The channel {self.forward_question_channel_name} does not exits")
+        raise KnowledgeBaseSlackBotException(f"The channel {self._forward_question_channel_name} does not exits")
 
     def _got_message(self, message, say):
-        self._app.client.chat_postEphemeral(
+        self._handler.app.client.chat_postEphemeral(
             channel=message['channel'],
             user=message['user'],
             text="On it. Be back with your answer soon"
@@ -57,7 +55,7 @@ class KnowledgeBaseSlackBot():
     def _is_direct_message_channel(self, command):
         if command['channel_name'] == 'directmessage':
             return True
-        self._app.client.chat_postEphemeral(
+        self._handler.app.client.chat_postEphemeral(
             channel=command['channel_id'],
             user=command['user_id'],
             text='This command can only be triggered on the direct messages channel'
@@ -72,7 +70,7 @@ class KnowledgeBaseSlackBot():
 
         HistoryRedis(command['user_id']).reset()
 
-        self._app.client.chat_postEphemeral(
+        self._handler.app.client.chat_postEphemeral(
             channel=command['channel_id'],
             user=command['user_id'],
             text='The previous conversation was cleared. You can start a new one now'
@@ -96,10 +94,10 @@ class KnowledgeBaseSlackBot():
         if len(messages) == 0:
             msg = 'There is no active conversation'
         else:
-            self._app.client.chat_postMessage(channel=self._forward_question_channel_id, text=self._messages_to_text(messages))
-            msg = f'The conversation was forwarded to {self.forward_question_channel_name}'
+            self._handler.app.client.chat_postMessage(channel=self._forward_question_channel_id, text=self._messages_to_text(messages))
+            msg = f'The conversation was forwarded to {self._forward_question_channel_name}'
 
-        self._app.client.chat_postEphemeral(
+        self._handler.app.client.chat_postEphemeral(
             channel=command['channel_id'],
             user=command['user_id'],
             text=msg
