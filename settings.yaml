@@ -8,3 +8,7 @@ llm:
 
 ollama:
   llm_model: $MODEL|mistral
+
+redis:
+  host: $REDIS_HOST|localhost
+  password: $REDIS_PASSWORD|""

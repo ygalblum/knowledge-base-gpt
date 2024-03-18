@@ -6,13 +6,13 @@ from langchain_core.messages import BaseMessage
 
 class HistoryBase(ABC):
     @abstractmethod
-    def get_messages(self) -> List[BaseMessage]:
+    def get_messages(self, session_id) -> List[BaseMessage]:
         pass
 
     @abstractmethod
-    def add_to_history(self, answer):
+    def add_to_history(self, session_id, answer):
         pass
 
     @abstractmethod
-    def reset(self):
+    def reset(self, session_id):
         pass

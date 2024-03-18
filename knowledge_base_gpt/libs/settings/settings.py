@@ -75,10 +75,25 @@ class OllamaSettings(BaseModel):
     )
 
 
+class RedisSettings(BaseModel):
+    host: str = Field(
+        'localhost',
+        description="FQDN for redis"
+    )
+    password: str = Field(
+        None,
+        description="Redis password if needed"
+    )
+    ttl: int = Field(
+        3000,
+        description="Time to Live for keys"
+    )
+
 class Settings(BaseModel):
     slackbot: SlackBotSettings
     llm: LLMSettings
     ollama: OllamaSettings
+    redis: RedisSettings
 
 
 """

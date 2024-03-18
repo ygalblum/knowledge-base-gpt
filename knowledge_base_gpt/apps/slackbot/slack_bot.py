@@ -16,8 +16,9 @@ class KnowledgeBaseSlackBotException(Exception):
 class KnowledgeBaseSlackBot():
 
     @inject
-    def __init__(self, settings: Settings, private_chat: PrivateChat) -> None:
+    def __init__(self, settings: Settings, private_chat: PrivateChat, history: HistoryRedis) -> None:
         self._private_chat = private_chat
+        self._history = history
         self._handler = SocketModeHandler(App(token=settings.slackbot.bot_token), settings.slackbot.app_token)
         self._forward_question_channel_name = settings.slackbot.forward_channel
         self._forward_question_channel_id = self._get_forward_question_channel_id()
@@ -47,9 +48,8 @@ class KnowledgeBaseSlackBot():
             user=message['user'],
             text="On it. Be back with your answer soon"
         )
-        history = HistoryRedis(message['user'])
-        answer = self._private_chat.answer_query(history.get_messages(), message['text'], chat_identifier=message['user'])
-        history.add_to_history(answer)
+        answer = self._private_chat.answer_query(self._history.get_messages(message['user']), message['text'], chat_identifier=message['user'])
+        self._history.add_to_history(message['user'], answer)
         say(answer['answer'])
 
     def _is_direct_message_channel(self, command):
@@ -68,7 +68,7 @@ class KnowledgeBaseSlackBot():
         if not self._is_direct_message_channel(command):
             return
 
-        HistoryRedis(command['user_id']).reset()
+        self._history.reset(command['user_id'])
 
         self._handler.app.client.chat_postEphemeral(
             channel=command['channel_id'],
@@ -90,7 +90,7 @@ class KnowledgeBaseSlackBot():
         if not self._is_direct_message_channel(command):
             return
 
-        messages = HistoryRedis(command['user_id']).get_messages()
+        messages = self._history.get_messages(command['user_id'])
         if len(messages) == 0:
             msg = 'There is no active conversation'
         else:
