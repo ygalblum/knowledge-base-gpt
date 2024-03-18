@@ -1,10 +1,8 @@
-#!/usr/bin/env python3
 from injector import inject, singleton
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.errors import SlackApiError
 
-from knowledge_base_gpt.libs.injector.di import global_injector
 from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.gpt.private_chat import PrivateChat
 from knowledge_base_gpt.libs.history.redis import HistoryRedis
@@ -106,15 +104,3 @@ class KnowledgeBaseSlackBot():
             user=command['user_id'],
             text=msg
         )
-
-
-def main():
-    try:
-        global_injector.get(KnowledgeBaseSlackBot).run()
-    except KnowledgeBaseSlackBotException as e:
-        print(e)
-        exit(-1)
-
-
-if __name__ == "__main__":
-    main()

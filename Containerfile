@@ -39,4 +39,4 @@ ENV BASH_ENV="${APP_ROOT}/venv/bin/activate" \
     PROMPT_COMMAND=". ${APP_ROOT}/venv/bin/activate" \
     PATH="${APP_ROOT}/venv/bin:${PATH}"
 
-CMD ["python", "-m", "knowledge_base_gpt.apps.slackbot.slack_bot"]
+CMD ["python", "-m", "knowledge_base_gpt.apps.slackbot"]

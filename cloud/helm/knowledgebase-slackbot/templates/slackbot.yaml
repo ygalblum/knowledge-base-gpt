@@ -26,7 +26,7 @@ spec:
       containers:
       - name: slackbot
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        command: ["python", "-m", "knowledge_base_gpt.apps.slackbot.slack_bot"]
+        command: ["python", "-m", "knowledge_base_gpt.apps.slackbot"]
         volumeMounts:
         - mountPath: "/db"
           name: embedding

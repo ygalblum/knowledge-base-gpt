@@ -85,5 +85,5 @@ TBD
 ### Run the Slack Bot backend
 
 ```bash
-./knowledge_base_gpt/apps/slackbot/slack_bot.py
+python -m knowledge_base_gpt.apps.slackbot
 ```
