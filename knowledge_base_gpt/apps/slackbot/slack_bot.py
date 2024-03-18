@@ -17,26 +17,14 @@ class KnowledgeBaseSlackBotException(Exception):
 
 
 class KnowledgeBaseSlackBot():
-    __instance = None
-
-    @staticmethod
-    def get_instance():
-        if KnowledgeBaseSlackBot.__instance is None:
-            KnowledgeBaseSlackBot()
-        return KnowledgeBaseSlackBot.__instance
-
-    def __init__(self):
-        if KnowledgeBaseSlackBot.__instance is not None:
-            raise KnowledgeBaseSlackBotException("This class is a singleton!")
-        KnowledgeBaseSlackBot.__instance = self
 
     def run(self):
         self._app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
         self._forward_question_channel_id = self._get_forward_question_channel_id()
         self._app.client.conversations_join(channel=self._forward_question_channel_id)
-        self._app.message()(KnowledgeBaseSlackBot.got_message)
-        self._app.command('/conversation_reset')(KnowledgeBaseSlackBot.reset_conversation)
-        self._app.command('/conversation_forward')(KnowledgeBaseSlackBot.forward_question)
+        self._app.message()(self._got_message)
+        self._app.command('/conversation_reset')(self._reset_conversation)
+        self._app.command('/conversation_forward')(self._forward_question)
         self._private_chat = PrivateChat()
         SocketModeHandler(self._app, os.environ["SLACK_APP_TOKEN"]).start()
 
@@ -114,22 +102,10 @@ class KnowledgeBaseSlackBot():
             text=msg
         )
 
-    @staticmethod
-    def got_message(message, say):
-        return KnowledgeBaseSlackBot.get_instance()._got_message(message, say)
-
-    @staticmethod
-    def reset_conversation(ack, say, command):
-        return KnowledgeBaseSlackBot.get_instance()._reset_conversation(ack, say, command)
-
-    @staticmethod
-    def forward_question(ack, say, command):
-        return KnowledgeBaseSlackBot.get_instance()._forward_question(ack, say, command)
-
 
 def main():
     try:
-        KnowledgeBaseSlackBot.get_instance().run()
+        KnowledgeBaseSlackBot().run()
     except KnowledgeBaseSlackBotException as e:
         print(e)
         exit(-1)
