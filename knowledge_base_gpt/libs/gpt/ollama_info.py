@@ -70,9 +70,11 @@ class OllamaCallbackHandler(BaseCallbackHandler):
     def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         """Collect token usage."""
         if len(response.generations) == 0 or len(response.generations[0]) == 0:
-            return None
+            return
 
         info = response.generations[0][0].generation_info
+        if info is None:
+            return
 
         metrics = OllamaMetrics()
         metrics.prompt_eval_count = info.get("prompt_eval_count", 0)
