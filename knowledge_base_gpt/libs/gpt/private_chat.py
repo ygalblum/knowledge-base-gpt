@@ -54,6 +54,6 @@ class PrivateChat():
 
     def answer_query(self, history, query, chat_identifier=None):
         with get_ollama_callback() as cb:
-            answer = self._chain({"question": query, "chat_history": history})
+            answer = self._chain.invoke({"question": query, "chat_history": history})
             self._logs_exporter.save_chat_log(OllamaChatFragment(answer, cb, chat_identifier=chat_identifier))
             return answer
