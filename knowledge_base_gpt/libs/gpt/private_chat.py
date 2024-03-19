@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from injector import inject, singleton
 from langchain.chains import ConversationalRetrievalChain
@@ -51,7 +52,7 @@ class PrivateChat():
             case _:
                 pass
 
-    def answer_query(self, history, query, chat_identifier=None):
+    def answer_query(self, history, query, chat_identifier: Optional[str]=None):
         with get_ollama_callback() as cb:
             answer = self._chain.invoke({"question": query, "chat_history": history})
             self._logs_exporter.save_chat_log(OllamaChatFragment(answer, cb, chat_identifier=chat_identifier))

@@ -1,5 +1,5 @@
 import json
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import uuid
 
 from langchain_core.documents.base import Document
@@ -8,7 +8,7 @@ from knowledge_base_gpt.libs.gpt.ollama_info import OllamaMetrics, OllamaCallbac
 
 
 class OllamaChatFragment():
-    def __init__(self, answer: Dict[str, Any], callback_handler: OllamaCallbackHandler, chat_identifier: str = None) -> None:
+    def __init__(self, answer: Dict[str, Any], callback_handler: OllamaCallbackHandler, chat_identifier: Optional[str] = None) -> None:
         if chat_identifier is None:
             chat_identifier = str(uuid.uuid4())
 
