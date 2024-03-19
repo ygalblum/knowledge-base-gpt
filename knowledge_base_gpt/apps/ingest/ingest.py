@@ -1,8 +1,8 @@
 import os
 from typing import List
 
+from chromadb.config import Settings as ChromaSettings
 from injector import inject, singleton
-
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -21,6 +21,7 @@ class Ingestor():
         self._loader = loader
         self._chunk_size = settings.text_splitter.chunk_size
         self._chunk_overlap = settings.text_splitter.chunk_overlap
+        self._persist_directory = settings.common.persist_directory
 
     def _process_documents(self, ignored_files: List[str] = []) -> List[Document]:
         """
@@ -48,10 +49,15 @@ class Ingestor():
         # Create embeddings
         embeddings = HuggingFaceEmbeddings(model_name=constants.embeddings_model_name)
 
-        if self._does_vectorstore_exist(constants.persist_directory):
+        if self._does_vectorstore_exist(self._persist_directory):
             # Update and store locally vectorstore
-            print(f"Appending to existing vectorstore at {constants.persist_directory}")
-            db = Chroma(persist_directory=constants.persist_directory, embedding_function=embeddings, client_settings=constants.CHROMA_SETTINGS)
+            print(f"Appending to existing vectorstore at {self._persist_directory}")
+            CHROMA_SETTINGS = ChromaSettings(
+                is_persistent=True,
+                persist_directory=self._persist_directory,
+                anonymized_telemetry=False
+            )
+            db = Chroma(persist_directory=self._persist_directory, embedding_function=embeddings, client_settings=CHROMA_SETTINGS)
             collection = db.get()
             texts = self._process_documents(list(set(metadata['source'] for metadata in collection['metadatas'])))
             print(f"Creating embeddings. May take some minutes...")
@@ -61,7 +67,7 @@ class Ingestor():
             print("Creating new vectorstore")
             texts = self._process_documents()
             print(f"Creating embeddings. May take some minutes...")
-            db = Chroma.from_documents(texts, embeddings, persist_directory=constants.persist_directory)
+            db = Chroma.from_documents(texts, embeddings, persist_directory=self._persist_directory)
         db.persist()
         db = None
 

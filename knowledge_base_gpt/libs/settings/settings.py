@@ -115,6 +115,13 @@ class ContentLoaderSettings(BaseModel):
     )
 
 
+class CommonSettings(BaseModel):
+    persist_directory: str = Field(
+        './db',
+        description="Path to store the embedding DB"
+    )
+
+
 class TextSpliterSettings(BaseModel):
     chunk_size: int = Field(
         500,
@@ -127,6 +134,7 @@ class TextSpliterSettings(BaseModel):
 
 
 class Settings(BaseModel):
+    common: CommonSettings
     slackbot: SlackBotSettings
     llm: LLMSettings
     ollama: OllamaSettings

@@ -27,7 +27,7 @@ class PrivateChat():
                 ollama_settings = settings.ollama
                 self._chat_log_exporter = chat_log_exporter
                 embeddings = HuggingFaceEmbeddings(model_name=constants.embeddings_model_name)
-                db = Chroma(persist_directory=constants.persist_directory, embedding_function=embeddings)
+                db = Chroma(persist_directory=settings.common.persist_directory, embedding_function=embeddings)
                 retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
                 chat = ChatOllama(
                     model=ollama_settings.llm_model,
