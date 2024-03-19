@@ -5,7 +5,7 @@ from injector import inject, singleton
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.chat_models import ChatOllama
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores.chroma import Chroma
 
 from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.common import constants

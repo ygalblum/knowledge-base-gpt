@@ -6,7 +6,7 @@ from injector import inject, singleton
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores.chroma import Chroma
 
 from knowledge_base_gpt.libs.common import constants
 from knowledge_base_gpt.libs.settings.settings import Settings
