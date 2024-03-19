@@ -36,6 +36,17 @@ class LLMSettings(BaseModel):
     )
 
 
+class GoogleDriveSettings(BaseModel):
+    service_key_file: str = Field(
+        None,
+        description="Path a the Google Service Key file"
+    )
+    folder_id: str = Field(
+        None,
+        description="ID of the Google Drive Folder to ingest"
+    )
+
+
 class OllamaSettings(BaseModel):
     api_base: str = Field(
         "http://localhost:11434",
@@ -96,6 +107,11 @@ class LogSettings(BaseModel):
         description="Path to store the chat logs"
     )
 
+class ContentLoaderSettings(BaseModel):
+    mode: Literal['google_drive', 'mock'] = Field(
+        'google_drive',
+        description="Type of Content Loader to use"
+    )
 
 class Settings(BaseModel):
     slackbot: SlackBotSettings
@@ -103,6 +119,8 @@ class Settings(BaseModel):
     ollama: OllamaSettings
     redis: RedisSettings
     log: LogSettings
+    content_loader: ContentLoaderSettings
+    google_drive: GoogleDriveSettings
 
 
 """
