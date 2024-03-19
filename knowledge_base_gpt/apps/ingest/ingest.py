@@ -13,16 +13,14 @@ from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.loaders.loaders import Loader
 
 
-# Load environment variables
-chunk_size = 500
-chunk_overlap = 50
-
 @singleton
 class Ingestor():
 
     @inject
     def __init__(self, settings: Settings, loader: Loader) -> None:
         self._loader = loader
+        self._chunk_size = settings.text_splitter.chunk_size
+        self._chunk_overlap = settings.text_splitter.chunk_overlap
 
     def _process_documents(self, ignored_files: List[str] = []) -> List[Document]:
         """
@@ -34,9 +32,9 @@ class Ingestor():
             print("No new documents to load")
             exit(0)
         print(f"Loaded {len(documents)} new documents")
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=self._chunk_size, chunk_overlap=self._chunk_overlap)
         texts = text_splitter.split_documents(documents)
-        print(f"Split into {len(texts)} chunks of text (max. {chunk_size} tokens each)")
+        print(f"Split into {len(texts)} chunks of text (max. {self._chunk_size} tokens each)")
         return texts
 
     @staticmethod

@@ -20,3 +20,5 @@ content_loader: {}
 google_drive:
   service_key_file: $SERVICE_KEY_FILE|""
   folder_id: $GOOGLE_DRIVE_FOLDER_ID|""
+
+text_splitter: {}

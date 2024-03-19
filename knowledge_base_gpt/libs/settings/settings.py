@@ -107,11 +107,24 @@ class LogSettings(BaseModel):
         description="Path to store the chat logs"
     )
 
+
 class ContentLoaderSettings(BaseModel):
     mode: Literal['google_drive', 'mock'] = Field(
         'google_drive',
         description="Type of Content Loader to use"
     )
+
+
+class TextSpliterSettings(BaseModel):
+    chunk_size: int = Field(
+        500,
+        description="Size of each chunk"
+    )
+    chunk_overlap: int = Field(
+        50,
+        description="Overlap between chunks"
+    )
+
 
 class Settings(BaseModel):
     slackbot: SlackBotSettings
@@ -121,6 +134,7 @@ class Settings(BaseModel):
     log: LogSettings
     content_loader: ContentLoaderSettings
     google_drive: GoogleDriveSettings
+    text_splitter: TextSpliterSettings
 
 
 """
