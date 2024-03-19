@@ -30,6 +30,10 @@ class LLMSettings(BaseModel):
         0.1,
         description="The temperature of the model. Increasing the temperature will make the model answer more creatively. A value of 0.1 would be more factual.",
     )
+    verbose: bool = Field(
+        False,
+        description="Verbosity flag for logging to stdout."
+    )
 
 
 class OllamaSettings(BaseModel):
@@ -68,10 +72,6 @@ class OllamaSettings(BaseModel):
     repeat_penalty: float = Field(
         1.1,
         description="Sets how strongly to penalize repetitions. A higher value (e.g., 1.5) will penalize repetitions more strongly, while a lower value (e.g., 0.9) will be more lenient. (Default: 1.1)",
-    )
-    verbose: bool = Field(
-        False,
-        description="Verbosity flag for logging to stdout."
     )
 
 
