@@ -12,3 +12,5 @@ ollama:
 redis:
   host: $REDIS_HOST|localhost
   password: $REDIS_PASSWORD|""
+
+log: {}

@@ -89,11 +89,20 @@ class RedisSettings(BaseModel):
         description="Time to Live for keys"
     )
 
+
+class LogSettings(BaseModel):
+    chat_log_path: str = Field(
+        "./chatlog.log",
+        description="Path to store the chat logs"
+    )
+
+
 class Settings(BaseModel):
     slackbot: SlackBotSettings
     llm: LLMSettings
     ollama: OllamaSettings
     redis: RedisSettings
+    log: LogSettings
 
 
 """
