@@ -28,14 +28,6 @@ class PrivateChat():
                 embeddings = HuggingFaceEmbeddings(model_name=constants.embeddings_model_name)
                 db = Chroma(persist_directory=constants.persist_directory, embedding_function=embeddings)
                 retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
-                settings_kwargs = {
-                    "tfs_z": ollama_settings.tfs_z,  # ollama and llama-cpp
-                    "num_predict": ollama_settings.num_predict,  # ollama only
-                    "top_k": ollama_settings.top_k,  # ollama and llama-cpp
-                    "top_p": ollama_settings.top_p,  # ollama and llama-cpp
-                    "repeat_last_n": ollama_settings.repeat_last_n,  # ollama
-                    "repeat_penalty": ollama_settings.repeat_penalty,  # ollama llama-cpp
-                }
                 chat = ChatOllama(
                     model=ollama_settings.llm_model,
                     base_url=ollama_settings.api_base,
