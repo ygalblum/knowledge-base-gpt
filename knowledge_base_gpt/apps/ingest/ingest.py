@@ -18,7 +18,6 @@ class Ingestor():
         self._loader = loader
         self._chunk_size = settings.text_splitter.chunk_size
         self._chunk_overlap = settings.text_splitter.chunk_overlap
-        self._persist_directory = settings.common.persist_directory
         self._vector_store = vector_store
 
     def _process_documents(self, ignored_files: List[str] = []) -> List[Document]:
