@@ -1,32 +1,26 @@
-import os
 from typing import Optional
 
 from injector import inject, singleton
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.chat_models import ChatOllama
-from langchain_community.vectorstores.chroma import Chroma
 
 from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.logs.chat_log_exporter import ChatLogExporter
 from knowledge_base_gpt.libs.logs.ollama import OllamaChatFragment
 from knowledge_base_gpt.libs.gpt.ollama_info import get_ollama_callback
-from knowledge_base_gpt.libs.embedding.embedding import Embedding
-
-target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))
+from knowledge_base_gpt.libs.vectorstore.vectorstore import VectorStore
 
 
 @singleton
 class PrivateChat():
 
     @inject
-    def __init__(self, settings: Settings, chat_log_exporter: ChatLogExporter, embedding: Embedding):
+    def __init__(self, settings: Settings, chat_log_exporter: ChatLogExporter, vector_store: VectorStore):
         llm_mode = settings.llm.mode
         match llm_mode:
             case 'ollama':
                 ollama_settings = settings.ollama
                 self._chat_log_exporter = chat_log_exporter
-                db = Chroma(persist_directory=settings.common.persist_directory, embedding_function=embedding.embeddings)
-                retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
                 chat = ChatOllama(
                     model=ollama_settings.llm_model,
                     base_url=ollama_settings.api_base,
@@ -46,7 +40,7 @@ class PrivateChat():
                 pass
         self._chain = ConversationalRetrievalChain.from_llm(
             llm=chat,
-            retriever=retriever,
+            retriever=vector_store.db.as_retriever(search_kwargs={"k": settings.llm.num_documents}),
             verbose=settings.llm.verbose,
             return_source_documents=True,
             return_generated_question=True

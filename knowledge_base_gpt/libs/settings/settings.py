@@ -34,6 +34,10 @@ class LLMSettings(BaseModel):
         False,
         description="Verbosity flag for logging to stdout."
     )
+    num_documents: int = Field(
+        4,
+        description="Amount of documents to retrieve"
+    )
 
 
 class EmbeddingSettings(BaseModel):
@@ -150,6 +154,17 @@ class TextSpliterSettings(BaseModel):
     )
 
 
+class VectorStoreSettings(BaseModel):
+    mode: Literal['chroma', 'mock'] = Field(
+        'chroma',
+        description="Type of vector store"
+    )
+    persist_directory: str = Field(
+        './db',
+        description="Path to store the embedding DB"
+    )
+
+
 class Settings(BaseModel):
     common: CommonSettings
     slackbot: SlackBotSettings
@@ -162,6 +177,7 @@ class Settings(BaseModel):
     text_splitter: TextSpliterSettings
     embedding: EmbeddingSettings
     hugging_face: HuggingFaceSettings
+    vectorstore: VectorStoreSettings
 
 
 """
