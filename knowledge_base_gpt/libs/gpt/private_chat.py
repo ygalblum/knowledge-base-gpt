@@ -3,15 +3,14 @@ from typing import Optional
 
 from injector import inject, singleton
 from langchain.chains import ConversationalRetrievalChain
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.chat_models import ChatOllama
 from langchain_community.vectorstores.chroma import Chroma
 
 from knowledge_base_gpt.libs.settings.settings import Settings
-from knowledge_base_gpt.libs.common import constants
 from knowledge_base_gpt.libs.logs.chat_log_exporter import ChatLogExporter
 from knowledge_base_gpt.libs.logs.ollama import OllamaChatFragment
 from knowledge_base_gpt.libs.gpt.ollama_info import get_ollama_callback
+from knowledge_base_gpt.libs.embedding.embedding import Embedding
 
 target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))
 
@@ -20,14 +19,13 @@ target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))
 class PrivateChat():
 
     @inject
-    def __init__(self, settings: Settings, chat_log_exporter: ChatLogExporter):
+    def __init__(self, settings: Settings, chat_log_exporter: ChatLogExporter, embedding: Embedding):
         llm_mode = settings.llm.mode
         match llm_mode:
             case 'ollama':
                 ollama_settings = settings.ollama
                 self._chat_log_exporter = chat_log_exporter
-                embeddings = HuggingFaceEmbeddings(model_name=constants.embeddings_model_name)
-                db = Chroma(persist_directory=settings.common.persist_directory, embedding_function=embeddings)
+                db = Chroma(persist_directory=settings.common.persist_directory, embedding_function=embedding.embeddings)
                 retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
                 chat = ChatOllama(
                     model=ollama_settings.llm_model,

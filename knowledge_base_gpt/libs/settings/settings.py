@@ -20,7 +20,7 @@ class SlackBotSettings(BaseModel):
 class LLMSettings(BaseModel):
     mode: Literal["ollama", "mock"] = Field(
         'ollama',
-        description="LLM Backend to use"
+        description="LLM Backend to use for chat"
     )
     context_window: int = Field(
         3900,
@@ -33,6 +33,17 @@ class LLMSettings(BaseModel):
     verbose: bool = Field(
         False,
         description="Verbosity flag for logging to stdout."
+    )
+
+
+class EmbeddingSettings(BaseModel):
+    mode: Literal["hugging_face", "ollama", "mock"] = Field(
+        'hugging_face',
+        description="LLM Backend to use for embedding"
+    )
+    temperature: float = Field(
+        0.1,
+        description="The temperature of the model. Increasing the temperature will make the model answer more creatively. A value of 0.1 would be more factual.",
     )
 
 
@@ -85,6 +96,12 @@ class OllamaSettings(BaseModel):
         description="Sets how strongly to penalize repetitions. A higher value (e.g., 1.5) will penalize repetitions more strongly, while a lower value (e.g., 0.9) will be more lenient. (Default: 1.1)",
     )
 
+
+class HuggingFaceSettings(BaseModel):
+    embedding_model: str = Field(
+        None,
+        description="Model to use. Example: 'nomic-embed-text'.",
+    )
 
 class RedisSettings(BaseModel):
     host: str = Field(
@@ -143,6 +160,8 @@ class Settings(BaseModel):
     content_loader: ContentLoaderSettings
     google_drive: GoogleDriveSettings
     text_splitter: TextSpliterSettings
+    embedding: EmbeddingSettings
+    hugging_face: HuggingFaceSettings
 
 
 """

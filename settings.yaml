@@ -10,6 +10,7 @@ llm:
 
 ollama:
   llm_model: $MODEL|mistral
+  embedding_model: $EMBEDDINGS_MODEL_NAME|nomic-embed-text
 
 redis:
   host: $REDIS_HOST|localhost
@@ -24,3 +25,8 @@ google_drive:
   folder_id: $GOOGLE_DRIVE_FOLDER_ID|""
 
 text_splitter: {}
+
+embedding: {}
+
+hugging_face:
+  embedding_model: $EMBEDDINGS_MODEL_NAME|all-MiniLM-L6-v2
