@@ -8,7 +8,7 @@ spec:
       containers:
       - name: ingest
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        command: ["python", "-m", "knowledge_base_gpt.apps.ingest.ingest"]
+        command: ["python", "-m", "knowledge_base_gpt.apps.ingest"]
         volumeMounts:
         - name: embedding
           mountPath: "/db"
