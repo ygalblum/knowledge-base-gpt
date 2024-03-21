@@ -88,7 +88,7 @@ certificateDNSNames:
 certificateDuration: 87600h
 
 # Embedding Volume Parameters
-embeddingVolumeSize: 20Gi
+embeddingVolumeSize: 2Gi
 
 # Google Folder ID to ingest
 ingestFolderID: ""
@@ -100,7 +100,8 @@ logsVolumeSize: 1Gi
 ollamaServerAddress: ""
 ollamaServerSecurePort: 11435
 
-ollamaModel: mistral
+ollamaChatModel: mistral
+ollamaEmbeddingModel: nomic-embed-text
 
 # Slack Channel to forward unanswered conversations
 forwardChannel: ""

@@ -14,6 +14,7 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/knowledgebase-config: {{ include (print $.Template.BasePath "/knowledgebase-configmap.yaml") . | sha256sum }}
         checksum/proxy-config: {{ include (print $.Template.BasePath "/ollama-proxy-configmap.yaml") . | sha256sum }}
         checksum/proxy-certificates: {{ include (print $.Template.BasePath "/certificate.yaml") . | sha256sum }}
         checksum/fluent-bit-config: {{ include (print $.Template.BasePath "/fluent-bit-configmap.yaml") . | sha256sum }}
@@ -33,13 +34,11 @@ spec:
           readOnly: true
         - mountPath: /logs
           name: logs
+        - mountPath: /etc/knowledgebase
+          name: knowledgebase-config
         env:
-        - name: MODEL
-          value: {{ .Values.ollamaModel | quote }}
-        - name: PERSIST_DIRECTORY
-          value: "/db"
-        - name: REDIS_HOST
-          value: "{{ include "knowledgebase-slackbot.redis-host" . }}"
+        - name: KNOWLEDGE_BASE_SETTINGS_FOLDER
+          value: /etc/knowledgebase
         - name: REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -60,8 +59,6 @@ spec:
             secretKeyRef:
               name: "{{ include "knowledgebase-slackbot.slackbot-tokens-secret" . }}"
               key: bot-token
-        - name: CHAT_LOGS_FILE
-          value: /logs/slackbot_chat_log.log
         securityContext:
           runAsUser: 0
         resources:
@@ -109,6 +106,9 @@ spec:
         - name: LOGROTATE_INTERVAL
           value: {{ .Values.logrotate.interval | quote }}
       volumes:
+      - name: knowledgebase-config
+        configMap:
+          name: {{ include "knowledgebase-slackbot.knowledgebase-configmap" . }}
       - name: embedding
         persistentVolumeClaim:
           claimName: {{ include "knowledgebase-slackbot.embedding-pvc" . }}
