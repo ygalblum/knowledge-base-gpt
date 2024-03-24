@@ -1,4 +1,7 @@
-from typing import Optional
+"""
+Module for handling the chat chain
+"""
+from typing import Optional, Dict, Any
 
 from injector import inject, singleton
 from langchain.chains import ConversationalRetrievalChain
@@ -12,8 +15,8 @@ from knowledge_base_gpt.libs.vectorstore.vectorstore import VectorStore
 
 
 @singleton
-class PrivateChat():
-
+class PrivateChat():  # pylint:disable=R0903
+    """ Handle the Chat chain """
     @inject
     def __init__(self, settings: Settings, chat_log_exporter: ChatLogExporter, vector_store: VectorStore):
         llm_mode = settings.llm.mode
@@ -46,7 +49,11 @@ class PrivateChat():
             return_generated_question=True
         )
 
-    def answer_query(self, history, query, chat_identifier: Optional[str]=None):
+    def answer_query(self, history, query, chat_identifier: Optional[str]=None) -> Dict[str, Any]:
+        """
+         Answer the query based on the history
+         Use the chat identifier for logging the chat
+        """
         with self._get_callback() as cb:
             answer = self._chain.invoke({"question": query, "chat_history": history})
             self._chat_log_exporter.save_chat_log(self._chat_fragment_cls(answer, cb, chat_identifier=chat_identifier))

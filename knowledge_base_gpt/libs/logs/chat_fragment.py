@@ -1,3 +1,4 @@
+""" Manage a Chat log fragment """
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 import uuid
@@ -6,9 +7,15 @@ from langchain_core.callbacks.base import BaseCallbackHandler
 from langchain_core.documents.base import Document
 
 
-class ChatFragment(ABC):
+class ChatFragment(ABC):  # pylint:disable=R0903
+    """ Manage a Chat log fragment """
 
-    def __init__(self, answer: Dict[str, Any], callback_handler: BaseCallbackHandler, chat_identifier: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        answer: Dict[str, Any],
+        callback_handler: BaseCallbackHandler,
+        chat_identifier: Optional[str] = None
+    ) -> None:
         super().__init__()
         if chat_identifier is None:
             chat_identifier = str(uuid.uuid4())
@@ -45,6 +52,7 @@ class ChatFragment(ABC):
         pass
 
     def to_json(self) -> dict:
+        """ Return a JSON representation of the chat log fragment """
         return {
             "chat_identifier": self.chat_identifier,
             "question": self.question,

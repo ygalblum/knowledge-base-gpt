@@ -53,6 +53,7 @@ disable=
 ;  duplicate-string-formatting-argument,  # TMP: will be fixed in close future
  consider-using-f-string,  # sorry, not gonna happen, still have to support py2
 ;  use-dict-literal
+ cyclic-import,
 
 [FORMAT]
 # Maximum number of characters on a single line.

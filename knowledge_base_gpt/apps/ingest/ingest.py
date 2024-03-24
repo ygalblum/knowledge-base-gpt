@@ -1,4 +1,4 @@
-import os
+""" Content ingest """
 from typing import List
 
 from injector import inject, singleton
@@ -11,7 +11,8 @@ from knowledge_base_gpt.libs.vectorstore.vectorstore import VectorStore
 
 
 @singleton
-class Ingestor():
+class Ingestor():  # pylint:disable=R0903
+    """ Content ingest """
 
     @inject
     def __init__(self, settings: Settings, loader: Loader, vector_store: VectorStore) -> None:
@@ -20,11 +21,11 @@ class Ingestor():
         self._chunk_overlap = settings.text_splitter.chunk_overlap
         self._vector_store = vector_store
 
-    def _process_documents(self, ignored_files: List[str] = []) -> List[Document]:
+    def _process_documents(self, ignored_files: List[str]) -> List[Document]:
         """
         Load documents and split in chunks
         """
-        print(f"Loading documents")
+        print("Loading documents")
         documents = self._loader.load_documents(ignored_files)
         if not documents:
             return []
@@ -36,12 +37,13 @@ class Ingestor():
         return documents
 
     def run(self):
+        """ Ingest the documents into the vector store based on the settings """
         collection = self._vector_store.db.get()
         documents = self._process_documents(list(set(metadata['source'] for metadata in collection['metadatas'])))
         if len(documents) == 0:
             print("No new documents to load")
         else:
-            print(f"Creating embeddings. May take some minutes...")
+            print("Creating embeddings. May take some minutes...")
             self._vector_store.db.add_documents(documents)
             self._vector_store.db.persist()
-        print(f"Ingestion complete! You can now run privateGPT.py to query your documents")
+        print("Ingestion complete! You can now run privateGPT.py to query your documents")

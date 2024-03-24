@@ -1,14 +1,21 @@
+"""
+Keep track of metrics provided by the Ollama API
+"""
+
 from contextlib import contextmanager
 from contextvars import ContextVar
 import threading
 from typing import Any, Dict, List, Optional, Generator
+from uuid import UUID
 
 from langchain_core.callbacks.base import BaseCallbackHandler
+from langchain_core.messages import BaseMessage
 from langchain_core.outputs import LLMResult
 from langchain_core.tracers.context import register_configure_hook
 
 
 class OllamaMetrics():
+    """ Metrics of a single Ollama request """
     prompt_eval_count: int = 0
     eval_count: int = 0
     load_duration: int = 0
@@ -28,6 +35,7 @@ class OllamaMetrics():
         )
 
     def to_json(self) -> dict:
+        """ Return a JSON representation of the tracked info """
         return {
             "prompt_eval_count": self.prompt_eval_count,
             "eval_count": self.eval_count,
@@ -61,13 +69,11 @@ class OllamaCallbackHandler(BaseCallbackHandler):
         self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
     ) -> None:
         """Print out the prompts."""
-        pass
 
     def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
         """Print out the token."""
-        pass
 
-    def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
+    def on_llm_end(self, response: LLMResult, **_kwargs: Any) -> None:
         """Collect token usage."""
         if len(response.generations) == 0 or len(response.generations[0]) == 0:
             return
@@ -87,6 +93,19 @@ class OllamaCallbackHandler(BaseCallbackHandler):
         # update shared state behind lock
         with self._lock:
             self.metrics.append(metrics)
+
+    def on_chat_model_start(
+        self,
+        serialized: Dict[str, Any],
+        messages: List[List[BaseMessage]],
+        *,
+        run_id: UUID,
+        parent_run_id: Optional[UUID] = None,
+        tags: Optional[List[str]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Run when a chat model starts running. """
 
     def __copy__(self) -> "OllamaCallbackHandler":
         """Return a copy of the callback handler."""
