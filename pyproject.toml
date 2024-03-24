@@ -17,7 +17,6 @@ google-auth-oauthlib = "1.2.0"
 PyPDF2 = "3.0.1"
 slack_bolt = "1.18.1"
 redis = "5.0.1"
-gradio = "4.14.0"
 injector = "^0.21.0"
 envyaml = "^1.10.211231"
 
