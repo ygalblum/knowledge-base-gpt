@@ -112,8 +112,12 @@ class RedisSettings(BaseModel):
         'localhost',
         description="FQDN for redis"
     )
+    username: str = Field(
+        '',
+        description="Redis username if needed"
+    )
     password: str = Field(
-        None,
+        '',
         description="Redis password if needed"
     )
     ttl: int = Field(
