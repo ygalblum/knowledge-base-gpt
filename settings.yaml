@@ -24,7 +24,8 @@ google_drive:
 
 text_splitter: {}
 
-embedding: {}
+embedding:
+  mode: ollama
 
 hugging_face:
   embedding_model: $EMBEDDINGS_MODEL_NAME|all-MiniLM-L6-v2
