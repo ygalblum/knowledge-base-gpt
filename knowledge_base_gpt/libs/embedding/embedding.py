@@ -1,12 +1,14 @@
+""" Create and abstract the embedding """
 from injector import inject, singleton
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.embeddings import OllamaEmbeddings
+from langchain_core.embeddings import Embeddings as LangChainEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings, OllamaEmbeddings
 
 from knowledge_base_gpt.libs.settings.settings import Settings
 
 
 @singleton
-class Embedding():
+class Embedding():  # pylint:disable=R0903
+    """ Create and abstract the embedding """
     @inject
     def __init__(self, settings: Settings) -> None:
         mode = settings.embedding.mode
@@ -31,5 +33,6 @@ class Embedding():
                 pass
 
     @property
-    def embeddings(self):
+    def embeddings(self) -> LangChainEmbeddings:
+        """ Return the embedding implementation """
         return self._embeddings

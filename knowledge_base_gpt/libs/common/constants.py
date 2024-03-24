@@ -1,3 +1,4 @@
+""" Hold application constants """
 from pathlib import Path
 
 

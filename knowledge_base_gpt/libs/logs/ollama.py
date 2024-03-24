@@ -1,8 +1,10 @@
+""" Ollama Chat log fragment """
 from knowledge_base_gpt.libs.logs.chat_fragment import ChatFragment
 from knowledge_base_gpt.libs.gpt.ollama_info import OllamaCallbackHandler
 
 
-class OllamaChatFragment(ChatFragment):
+class OllamaChatFragment(ChatFragment):  # pylint:disable=R0903
+    """ Ollama Chat log fragment """
 
     def _calculate_metrics(self, callback_handler: OllamaCallbackHandler):
         metrics = callback_handler.metrics

@@ -1,3 +1,4 @@
+""" Module for loading settings. """
 import functools
 import logging
 import os
@@ -29,11 +30,11 @@ active_profiles: list[str] = unique_list(
 )
 
 
-def merge_settings(settings: Iterable[dict[str, Any]]) -> dict[str, Any]:
+def _merge_settings(settings: Iterable[dict[str, Any]]) -> dict[str, Any]:
     return functools.reduce(deep_update, settings, {})
 
 
-def load_settings_from_profile(profile: str) -> dict[str, Any]:
+def _load_settings_from_profile(profile: str) -> dict[str, Any]:
     if profile == "default":
         profile_file_name = "settings.yaml"
     else:
@@ -50,7 +51,7 @@ def load_active_settings() -> dict[str, Any]:
     """Load active profiles and merge them."""
     logger.info("Starting application with profiles=%s", active_profiles)
     loaded_profiles = [
-        load_settings_from_profile(profile) for profile in active_profiles
+        _load_settings_from_profile(profile) for profile in active_profiles
     ]
-    merged: dict[str, Any] = merge_settings(loaded_profiles)
+    merged: dict[str, Any] = _merge_settings(loaded_profiles)
     return merged

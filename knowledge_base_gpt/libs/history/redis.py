@@ -1,3 +1,4 @@
+""" Manage history in Redis """
 from typing import List, Dict, Any
 
 from injector import inject, singleton
@@ -10,7 +11,7 @@ from knowledge_base_gpt.libs.settings.settings import RedisSettings, Settings
 
 @singleton
 class HistoryRedis(HistoryBase):
-
+    """ Manage history in Redis """
     @inject
     def __init__(self, settings: Settings):
         redis_settings = settings.redis

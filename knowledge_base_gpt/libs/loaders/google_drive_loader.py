@@ -1,3 +1,4 @@
+""" Content loader from Google Drive """
 from typing import List
 
 from injector import inject, singleton
@@ -8,14 +9,16 @@ from knowledge_base_gpt.libs.settings.settings import Settings
 
 
 @singleton
-class GDriveLoader():
+class GDriveLoader():  # pylint:disable=R0903
+    """ Content loader from Google Drive """
 
     @inject
     def __init__(self, settings: Settings) -> None:
         self._service_key_file = settings.google_drive.service_key_file
         self._folder_id = settings.google_drive.folder_id
 
-    def load_documents(self, ignored_files: List[str] = []) -> List[Document]:
+    def load_documents(self, ignored_files: List[str]) -> List[Document]:
+        """ Load the documents based on the settings and the ignore list """
         if not self._folder_id:
             return []
 

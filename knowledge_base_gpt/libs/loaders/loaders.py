@@ -1,3 +1,4 @@
+""" Abstract all content loaders """
 from typing import List
 
 from injector import inject, singleton
@@ -9,7 +10,8 @@ from knowledge_base_gpt.libs.loaders.google_drive_loader import GDriveLoader
 
 
 @singleton
-class Loader():
+class Loader():  # pylint:disable=R0903
+    """ Abstract all content loaders """
 
     @inject
     def __init__(self, settings: Settings) -> None:
@@ -22,5 +24,6 @@ class Loader():
             case _:
                 pass
 
-    def load_documents(self, ignored_files: List[str] = []) -> List[Document]:
+    def load_documents(self, ignored_files: List[str]) -> List[Document]:
+        """ Load all the documents based on the settings and the ignore list """
         return self._content_loader.load_documents(ignored_files=ignored_files)

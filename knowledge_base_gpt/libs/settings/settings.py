@@ -1,3 +1,5 @@
+# pylint:disable=R0903
+""" Settings for the application """
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -6,6 +8,7 @@ from knowledge_base_gpt.libs.settings.settings_loader import load_active_setting
 
 
 class SlackBotSettings(BaseModel):
+    """ Slackbot Settings """
     app_token: str = Field(
         description="Slack App Token"
     )
@@ -18,6 +21,7 @@ class SlackBotSettings(BaseModel):
 
 
 class LLMSettings(BaseModel):
+    """ LLM Settings """
     mode: Literal["ollama", "mock"] = Field(
         'ollama',
         description="LLM Backend to use for chat"
@@ -28,7 +32,9 @@ class LLMSettings(BaseModel):
     )
     temperature: float = Field(
         0.1,
-        description="The temperature of the model. Increasing the temperature will make the model answer more creatively. A value of 0.1 would be more factual.",
+        description="The temperature of the model. "\
+            "Increasing the temperature will make the model answer more creatively. "\
+            "A value of 0.1 would be more factual.",
     )
     verbose: bool = Field(
         False,
@@ -41,17 +47,21 @@ class LLMSettings(BaseModel):
 
 
 class EmbeddingSettings(BaseModel):
+    """ Embedding Settings """
     mode: Literal["hugging_face", "ollama", "mock"] = Field(
         'hugging_face',
         description="LLM Backend to use for embedding"
     )
     temperature: float = Field(
         0.1,
-        description="The temperature of the model. Increasing the temperature will make the model answer more creatively. A value of 0.1 would be more factual.",
+        description="The temperature of the model. "\
+            "Increasing the temperature will make the model answer more creatively. "\
+            "A value of 0.1 would be more factual.",
     )
 
 
 class GoogleDriveSettings(BaseModel):
+    """ Google Drive Settings """
     service_key_file: str = Field(
         None,
         description="Path a the Google Service Key file"
@@ -63,6 +73,7 @@ class GoogleDriveSettings(BaseModel):
 
 
 class OllamaSettings(BaseModel):
+    """ Ollama Settings """
     api_base: str = Field(
         "http://localhost:11434",
         description="Base URL of Ollama API. Example: 'https://localhost:11434'.",
@@ -77,37 +88,48 @@ class OllamaSettings(BaseModel):
     )
     tfs_z: float = Field(
         1.0,
-        description="Tail free sampling is used to reduce the impact of less probable tokens from the output. A higher value (e.g., 2.0) will reduce the impact more, while a value of 1.0 disables this setting.",
+        description="Tail free sampling is used to reduce the impact of less probable tokens from the output. "\
+            "A higher value (e.g., 2.0) will reduce the impact more, while a value of 1.0 disables this setting.",
     )
     num_predict: int = Field(
         None,
-        description="Maximum number of tokens to predict when generating text. (Default: 128, -1 = infinite generation, -2 = fill context)",
+        description="Maximum number of tokens to predict when generating text. "\
+            "(Default: 128, -1 = infinite generation, -2 = fill context)",
     )
     top_k: int = Field(
         40,
-        description="Reduces the probability of generating nonsense. A higher value (e.g. 100) will give more diverse answers, while a lower value (e.g. 10) will be more conservative. (Default: 40)",
+        description="Reduces the probability of generating nonsense. "\
+            "A higher value (e.g. 100) will give more diverse answers, "\
+            "while a lower value (e.g. 10) will be more conservative. (Default: 40)",
     )
     top_p: float = Field(
         0.9,
-        description="Works together with top-k. A higher value (e.g., 0.95) will lead to more diverse text, while a lower value (e.g., 0.5) will generate more focused and conservative text. (Default: 0.9)",
+        description="Works together with top-k. "\
+            "A higher value (e.g., 0.95) will lead to more diverse text, "\
+            "while a lower value (e.g., 0.5) will generate more focused and conservative text. (Default: 0.9)",
     )
     repeat_last_n: int = Field(
         64,
-        description="Sets how far back for the model to look back to prevent repetition. (Default: 64, 0 = disabled, -1 = num_ctx)",
+        description="Sets how far back for the model to look back to prevent repetition. "\
+            "(Default: 64, 0 = disabled, -1 = num_ctx)",
     )
     repeat_penalty: float = Field(
         1.1,
-        description="Sets how strongly to penalize repetitions. A higher value (e.g., 1.5) will penalize repetitions more strongly, while a lower value (e.g., 0.9) will be more lenient. (Default: 1.1)",
+        description="Sets how strongly to penalize repetitions. "\
+            "A higher value (e.g., 1.5) will penalize repetitions more strongly, "\
+            "while a lower value (e.g., 0.9) will be more lenient. (Default: 1.1)",
     )
 
 
 class HuggingFaceSettings(BaseModel):
+    """ Hugging Face Settings """
     embedding_model: str = Field(
         None,
         description="Model to use. Example: 'nomic-embed-text'.",
     )
 
 class RedisSettings(BaseModel):
+    """ Redis Settings """
     host: str = Field(
         'localhost',
         description="FQDN for redis"
@@ -127,6 +149,7 @@ class RedisSettings(BaseModel):
 
 
 class LogSettings(BaseModel):
+    """ Logging Settings """
     chat_log_path: str = Field(
         "./chatlog.log",
         description="Path to store the chat logs"
@@ -134,6 +157,7 @@ class LogSettings(BaseModel):
 
 
 class ContentLoaderSettings(BaseModel):
+    """ Content Loader Settings """
     mode: Literal['google_drive', 'mock'] = Field(
         'google_drive',
         description="Type of Content Loader to use"
@@ -141,6 +165,7 @@ class ContentLoaderSettings(BaseModel):
 
 
 class TextSpliterSettings(BaseModel):
+    """ Text Splitter Settings """
     chunk_size: int = Field(
         500,
         description="Size of each chunk"
@@ -152,6 +177,7 @@ class TextSpliterSettings(BaseModel):
 
 
 class VectorStoreSettings(BaseModel):
+    """ Vector Store Settings """
     mode: Literal['chroma', 'mock'] = Field(
         'chroma',
         description="Type of vector store"
@@ -163,6 +189,7 @@ class VectorStoreSettings(BaseModel):
 
 
 class Settings(BaseModel):
+    """ Application Settings """
     slackbot: SlackBotSettings
     llm: LLMSettings
     ollama: OllamaSettings
@@ -176,18 +203,12 @@ class Settings(BaseModel):
     vectorstore: VectorStoreSettings
 
 
-"""
-This is visible just for DI or testing purposes.
-
-Use dependency injection or `settings()` method instead.
-"""
+# This is visible just for DI or testing purposes.
+# Use dependency injection or `settings()` method instead.
 unsafe_settings = load_active_settings()
 
-"""
-This is visible just for DI or testing purposes.
-
-Use dependency injection or `settings()` method instead.
-"""
+# This is visible just for DI or testing purposes.
+# Use dependency injection or `settings()` method instead.
 unsafe_typed_settings = Settings(**unsafe_settings)
 
 
@@ -199,6 +220,6 @@ def settings() -> Settings:
 
     For regular components use dependency injection instead.
     """
-    from knowledge_base_gpt.libs.injector.di import global_injector
+    from knowledge_base_gpt.libs.injector.di import global_injector  # pylint:disable=C0415
 
     return global_injector.get(Settings)
