@@ -69,7 +69,6 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         )
         return False
 
-
     def _reset_conversation(self, ack, say, command):  # pylint:disable=unused-argument
         ack()
         if not self._is_direct_message_channel(command):

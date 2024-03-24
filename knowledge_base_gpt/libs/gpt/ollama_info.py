@@ -19,7 +19,7 @@ class OllamaMetrics():
     prompt_eval_count: int = 0
     eval_count: int = 0
     load_duration: int = 0
-    prompt_eval_duration: int =0
+    prompt_eval_duration: int = 0
     eval_duration: int = 0
     total_duration: int = 0
 
@@ -121,6 +121,7 @@ ollama_callback_var: ContextVar[Optional[OllamaCallbackHandler]] = ContextVar(
 )
 
 register_configure_hook(ollama_callback_var, True)
+
 
 @contextmanager
 def get_ollama_callback() -> Generator[OllamaCallbackHandler, None, None]:

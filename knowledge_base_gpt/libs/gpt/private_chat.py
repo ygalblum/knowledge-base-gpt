@@ -49,7 +49,7 @@ class PrivateChat():  # pylint:disable=R0903
             return_generated_question=True
         )
 
-    def answer_query(self, history, query, chat_identifier: Optional[str]=None) -> Dict[str, Any]:
+    def answer_query(self, history, query, chat_identifier: Optional[str] = None) -> Dict[str, Any]:
         """
          Answer the query based on the history
          Use the chat identifier for logging the chat
