@@ -1,0 +1,6 @@
+certificateIssuer: dummy-ca-issuer
+ingestFolderID: dummy-folder-id
+forwardChannel: dummy-channel
+slackAppToken: xapp-dummy
+slackBotToken: xoxb-dummy
+ollamaServerAddress: dummy.example.com
