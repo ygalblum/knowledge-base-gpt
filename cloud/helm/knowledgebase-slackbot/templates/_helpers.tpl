@@ -51,17 +51,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Create the name of the service account to use
-*/}}
-{{- define "knowledgebase-slackbot.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "knowledgebase-slackbot.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
-
-{{/*
 Proxy Certificate secret name
 */}}
 {{- define "knowledgebase-slackbot.proxy-certificate-secret" -}}
