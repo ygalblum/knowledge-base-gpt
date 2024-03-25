@@ -139,6 +139,13 @@ Elasticsearch Service name
 {{- end }}
 
 {{/*
+Kibana Service name
+*/}}
+{{- define "knowledgebase-slackbot.kibana" -}}
+{{- printf "%s-kibana" .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
 MetricBeat Pod name
 */}}
 {{- define "knowledgebase-slackbot.metricbeat-pod-name" -}}
