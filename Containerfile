@@ -1,6 +1,6 @@
 ARG APP_ROOT=/app-root
 
-FROM registry.fedoraproject.org/fedora:37 as build
+FROM registry.fedoraproject.org/fedora:39 as build
 
 ARG APP_ROOT
 
@@ -19,7 +19,7 @@ RUN python3 -m venv ${APP_ROOT}/venv \
     && poetry install --no-root --no-directory --directory=${APP_ROOT}  \
     && echo "unset BASH_ENV PROMPT_COMMAND ENV" >> ${APP_ROOT}/venv/bin/activate
 
-FROM registry.fedoraproject.org/fedora:37
+FROM registry.fedoraproject.org/fedora:39
 
 ARG APP_ROOT
 
