@@ -1,4 +1,6 @@
 """ Ollama Chat log fragment """
+from typing import Dict, Any
+
 from knowledge_base_gpt.libs.logs.chat_fragment import ChatFragment
 from knowledge_base_gpt.libs.gpt.ollama_info import OllamaCallbackHandler
 
@@ -6,7 +8,7 @@ from knowledge_base_gpt.libs.gpt.ollama_info import OllamaCallbackHandler
 class OllamaChatFragment(ChatFragment):  # pylint:disable=R0903
     """ Ollama Chat log fragment """
 
-    def _calculate_metrics(self, callback_handler: OllamaCallbackHandler):
+    def _calculate_metrics(self, callback_handler: OllamaCallbackHandler) -> Dict[str, Any]:
         metrics = callback_handler.metrics
         ret = {}
         answer_index = 0

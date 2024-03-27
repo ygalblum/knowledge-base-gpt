@@ -1,15 +1,18 @@
 """
 Module for handling the chat chain
 """
-from typing import Optional, Dict, Any
+from contextlib import nullcontext
+import json
+from typing import Optional, Dict, Any, List
 
 from injector import inject, singleton
 from langchain.chains import ConversationalRetrievalChain
-from langchain_community.chat_models import ChatOllama
+from langchain_community.chat_models import ChatOllama, FakeListChatModel
 
 from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.logs.chat_log_exporter import ChatLogExporter
 from knowledge_base_gpt.libs.logs.ollama import OllamaChatFragment
+from knowledge_base_gpt.libs.logs.fake import FakeChatFragment
 from knowledge_base_gpt.libs.gpt.ollama_info import get_ollama_callback
 from knowledge_base_gpt.libs.vectorstore.vectorstore import VectorStore
 
@@ -23,7 +26,6 @@ class PrivateChat():  # pylint:disable=R0903
         match llm_mode:
             case 'ollama':
                 ollama_settings = settings.ollama
-                self._chat_log_exporter = chat_log_exporter
                 chat = ChatOllama(
                     model=ollama_settings.llm_model,
                     base_url=ollama_settings.api_base,
@@ -37,10 +39,13 @@ class PrivateChat():  # pylint:disable=R0903
                 )
                 self._get_callback = get_ollama_callback
                 self._chat_fragment_cls = OllamaChatFragment
-            case 'mock':
-                pass
+            case 'fake':
+                chat = FakeListChatModel(responses=self._load_fake_responses(settings.fake_model.response_path))
+                self._get_callback = nullcontext
+                self._chat_fragment_cls = FakeChatFragment
             case _:
                 pass
+        self._chat_log_exporter = chat_log_exporter
         self._chain = ConversationalRetrievalChain.from_llm(
             llm=chat,
             retriever=vector_store.db.as_retriever(search_kwargs={"k": settings.llm.num_documents}),
@@ -48,6 +53,11 @@ class PrivateChat():  # pylint:disable=R0903
             return_source_documents=True,
             return_generated_question=True
         )
+
+    @staticmethod
+    def _load_fake_responses(path: str) -> List[str]:
+        with open(path, "r", encoding="utf-8") as fd:
+            return json.load(fd)
 
     def answer_query(self, history, query, chat_identifier: Optional[str] = None) -> Dict[str, Any]:
         """
