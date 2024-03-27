@@ -10,6 +10,8 @@ ollama:
   llm_model: $MODEL|mistral
   embedding_model: $EMBEDDINGS_MODEL_NAME|nomic-embed-text
 
+history: {}
+
 redis:
   host: $REDIS_HOST|localhost
   password: $REDIS_PASSWORD|""

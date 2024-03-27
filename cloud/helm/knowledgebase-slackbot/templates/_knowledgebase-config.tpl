@@ -21,6 +21,9 @@ ollama:
   llm_model: {{ .Values.ollamaChatModel | quote }}
   embedding_model: {{ .Values.ollamaEmbeddingModel | quote }}
 
+history:
+  mode: redis
+
 redis:
   host: "{{ include "knowledgebase-slackbot.redis-host" . }}"
   password: $REDIS_PASSWORD|""

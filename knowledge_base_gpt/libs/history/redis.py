@@ -1,20 +1,16 @@
 """ Manage history in Redis """
 from typing import List, Dict, Any
 
-from injector import inject, singleton
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from langchain_core.messages import BaseMessage
 
 from knowledge_base_gpt.libs.history.base import HistoryBase
-from knowledge_base_gpt.libs.settings.settings import RedisSettings, Settings
+from knowledge_base_gpt.libs.settings.settings import RedisSettings
 
 
-@singleton
 class HistoryRedis(HistoryBase):
     """ Manage history in Redis """
-    @inject
-    def __init__(self, settings: Settings):
-        redis_settings = settings.redis
+    def __init__(self, redis_settings: RedisSettings):
         self._url = self._build_url_string(redis_settings)
         self._ttl = redis_settings.ttl
 
