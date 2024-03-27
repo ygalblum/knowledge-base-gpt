@@ -22,7 +22,7 @@ class SlackBotSettings(BaseModel):
 
 class LLMSettings(BaseModel):
     """ LLM Settings """
-    mode: Literal["ollama", "mock"] = Field(
+    mode: Literal["ollama", "fake"] = Field(
         'ollama',
         description="LLM Backend to use for chat"
     )
@@ -121,6 +121,14 @@ class OllamaSettings(BaseModel):
     )
 
 
+class FakeModelSettings(BaseModel):
+    """ Settings for fake model - used for testing """
+    response_path: str = Field(
+        None,
+        description="Path to a json file with an array of fake responses"
+    )
+
+
 class HuggingFaceSettings(BaseModel):
     """ Hugging Face Settings """
     embedding_model: str = Field(
@@ -159,6 +167,11 @@ class RedisSettings(BaseModel):
 
 class LogSettings(BaseModel):
     """ Logging Settings """
+    chat_log_enabled: bool = Field(
+        True,
+        description="Enable/Disable chat logs"
+    )
+
     chat_log_path: str = Field(
         "./chatlog.log",
         description="Path to store the chat logs"
@@ -211,6 +224,7 @@ class Settings(BaseModel):
     embedding: EmbeddingSettings
     hugging_face: HuggingFaceSettings
     vectorstore: VectorStoreSettings
+    fake_model: FakeModelSettings
 
 
 # This is visible just for DI or testing purposes.

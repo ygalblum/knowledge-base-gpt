@@ -47,4 +47,6 @@ hugging_face:
 
 vectorstore:
   persist_directory: "/db"
+
+fake_model: {}
 {{- end }}
