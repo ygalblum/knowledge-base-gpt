@@ -129,6 +129,14 @@ class HuggingFaceSettings(BaseModel):
     )
 
 
+class HistorySettings(BaseModel):
+    """ History Settings """
+    mode: Literal['memory', 'redis'] = Field(
+        'memory',
+        description="Mode of History manager"
+    )
+
+
 class RedisSettings(BaseModel):
     """ Redis Settings """
     host: str = Field(
@@ -194,6 +202,7 @@ class Settings(BaseModel):
     slackbot: SlackBotSettings
     llm: LLMSettings
     ollama: OllamaSettings
+    history: HistorySettings
     redis: RedisSettings
     log: LogSettings
     content_loader: ContentLoaderSettings

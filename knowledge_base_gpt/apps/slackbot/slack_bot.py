@@ -6,7 +6,7 @@ from slack_sdk.errors import SlackApiError
 
 from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.gpt.private_chat import PrivateChat
-from knowledge_base_gpt.libs.history.redis import HistoryRedis
+from knowledge_base_gpt.libs.history.history import History
 
 
 class KnowledgeBaseSlackBotException(Exception):
@@ -18,7 +18,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
     """ Slackbot application backend """
 
     @inject
-    def __init__(self, settings: Settings, private_chat: PrivateChat, history: HistoryRedis) -> None:
+    def __init__(self, settings: Settings, private_chat: PrivateChat, history: History) -> None:
         self._private_chat = private_chat
         self._history = history
         self._handler = SocketModeHandler(App(token=settings.slackbot.bot_token), settings.slackbot.app_token)
@@ -52,11 +52,11 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
             text="On it. Be back with your answer soon"
         )
         answer = self._private_chat.answer_query(
-            self._history.get_messages(message['user']),
+            self._history.history.get_messages(message['user']),
             message['text'],
             chat_identifier=message['user']
         )
-        self._history.add_to_history(message['user'], answer)
+        self._history.history.add_to_history(message['user'], answer)
         say(answer['answer'])
 
     def _is_direct_message_channel(self, command):
@@ -74,7 +74,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         if not self._is_direct_message_channel(command):
             return
 
-        self._history.reset(command['user_id'])
+        self._history.history.reset(command['user_id'])
 
         self._handler.app.client.chat_postEphemeral(
             channel=command['channel_id'],
@@ -96,7 +96,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         if not self._is_direct_message_channel(command):
             return
 
-        messages = self._history.get_messages(command['user_id'])
+        messages = self._history.history.get_messages(command['user_id'])
         if len(messages) == 0:
             msg = 'There is no active conversation'
         else:
