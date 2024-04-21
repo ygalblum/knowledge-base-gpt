@@ -1,8 +1,6 @@
-ollama_expose_insecure_port: false
-ollama_expose_secured_port: true
-ollama_proxy_admin_expose_secure: true
-ollama_fluentbit_enable: true
-ollama_fluentbit_expose_secure: true
+install_nvidia: true
+proxy_admin_expose_secure: true
+proxy_fluentbit_expose_secure: true
 ollama_models:
 - mistral
 - nomic-embed-text
