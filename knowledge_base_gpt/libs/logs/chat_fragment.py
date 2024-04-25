@@ -34,16 +34,19 @@ class ChatFragment(ABC):  # pylint:disable=R0903
             source_fragments = metadata['source'].split('/')
             file_id = source_fragments[-2] if len(source_fragments) > 2 else metadata['source']
             source_document = scanned_documents.get('file_id')
+            page = metadata.get('page')
             if source_document:
-                existing_pages = set(source_document['pages'])
-                existing_pages.add(metadata['page'])
-                source_document['pages'] = list(existing_pages)
+                if page:
+                    existing_pages = set(source_document['pages'])
+                    existing_pages.add(page)
+                    source_document['pages'] = list(existing_pages)
             else:
                 source_document = {
                     "source": metadata['source'],
                     "title": metadata['title'],
-                    "pages": [metadata['page']]
                 }
+                if page:
+                    source_document["pages"] = [page]
             scanned_documents[file_id] = source_document
         return list(scanned_documents.values())
 
