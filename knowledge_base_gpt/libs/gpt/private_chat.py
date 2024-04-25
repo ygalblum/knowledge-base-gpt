@@ -6,7 +6,7 @@ import json
 from typing import Optional, Dict, Any, List
 
 from injector import inject, singleton
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains.conversational_retrieval.base import ConversationalRetrievalChain
 from langchain_community.chat_models import ChatOllama, FakeListChatModel
 from langchain_community.callbacks import get_openai_callback
 from langchain_openai.chat_models import ChatOpenAI
