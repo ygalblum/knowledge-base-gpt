@@ -35,3 +35,6 @@ hugging_face:
 vectorstore: {}
 
 fake_model: {}
+
+vllm:
+  llm_model: $MODEL|instructlab/granite-7b-lab

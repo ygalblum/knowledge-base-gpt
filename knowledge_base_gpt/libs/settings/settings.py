@@ -22,7 +22,7 @@ class SlackBotSettings(BaseModel):
 
 class LLMSettings(BaseModel):
     """ LLM Settings """
-    mode: Literal["ollama", "fake"] = Field(
+    mode: Literal["ollama", "vllm", "fake"] = Field(
         'ollama',
         description="LLM Backend to use for chat"
     )
@@ -129,6 +129,18 @@ class FakeModelSettings(BaseModel):
     )
 
 
+class VLLMSettings(BaseModel):
+    """ vLLM Settings """
+    api_base: str = Field(
+        "http://localhost:8000/v1",
+        description="Base URL of vLLM OpenAI API. Example: 'http://localhost:8000/v1'.",
+    )
+    llm_model: str = Field(
+        None,
+        description="Model to use. Example: 'mistralai/Mistral-7B-Instruct-v0.2'.",
+    )
+
+
 class HuggingFaceSettings(BaseModel):
     """ Hugging Face Settings """
     embedding_model: str = Field(
@@ -225,6 +237,7 @@ class Settings(BaseModel):
     hugging_face: HuggingFaceSettings
     vectorstore: VectorStoreSettings
     fake_model: FakeModelSettings
+    vllm: VLLMSettings
 
 
 # This is visible just for DI or testing purposes.

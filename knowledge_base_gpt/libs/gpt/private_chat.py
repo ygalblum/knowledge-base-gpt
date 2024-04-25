@@ -8,10 +8,13 @@ from typing import Optional, Dict, Any, List
 from injector import inject, singleton
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.chat_models import ChatOllama, FakeListChatModel
+from langchain_community.callbacks import get_openai_callback
+from langchain_openai.chat_models import ChatOpenAI
 
 from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.logs.chat_log_exporter import ChatLogExporter
 from knowledge_base_gpt.libs.logs.ollama import OllamaChatFragment
+from knowledge_base_gpt.libs.logs.openai import OpenAIChatFragment
 from knowledge_base_gpt.libs.logs.fake import FakeChatFragment
 from knowledge_base_gpt.libs.gpt.ollama_info import get_ollama_callback
 from knowledge_base_gpt.libs.vectorstore.vectorstore import VectorStore
@@ -43,6 +46,15 @@ class PrivateChat():  # pylint:disable=R0903
                 chat = FakeListChatModel(responses=self._load_fake_responses(settings.fake_model.response_path))
                 self._get_callback = nullcontext
                 self._chat_fragment_cls = FakeChatFragment
+            case 'vllm':
+                vllm_settings = settings.vllm
+                chat = ChatOpenAI(
+                    model=vllm_settings.llm_model,
+                    base_url=vllm_settings.api_base,
+                    temperature=settings.llm.temperature,
+                )
+                self._get_callback = get_openai_callback
+                self._chat_fragment_cls = OpenAIChatFragment
             case _:
                 pass
         self._chat_log_exporter = chat_log_exporter
