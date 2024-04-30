@@ -51,13 +51,21 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
             user=message['user'],
             text="On it. Be back with your answer soon"
         )
-        answer = self._private_chat.answer_query(
-            self._history.history.get_messages(message['user']),
-            message['text'],
-            chat_identifier=message['user']
-        )
-        self._history.history.add_to_history(message['user'], answer)
-        say(answer['answer'])
+        try:
+            answer = self._private_chat.answer_query(
+                self._history.history.get_messages(message['user']),
+                message['text'],
+                chat_identifier=message['user']
+            )
+        except:  # pylint:disable=W0702
+            self._handler.app.client.chat_postEphemeral(
+                channel=message['channel'],
+                user=message['user'],
+                text="I have encountered an error. Please try again later"
+            )
+        else:
+            self._history.history.add_to_history(message['user'], answer)
+            say(answer['answer'])
 
     def _is_direct_message_channel(self, command):
         if command['channel_name'] == 'directmessage':
