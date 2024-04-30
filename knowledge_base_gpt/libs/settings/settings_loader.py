@@ -19,14 +19,15 @@ _settings_folder = os.environ.get("KNOWLEDGE_BASE_SETTINGS_FOLDER", PROJECT_ROOT
 # if running in unittest, use the test profile
 _test_profile = ["test"] if "tests.fixtures" in sys.modules else []
 
+# Calculate the additional profiles from the environment variable
+_additional_profiles = [
+    item.strip()
+    for item in os.environ.get("KNOWLEDGE_BASE_PROFILES", "").split(",")
+    if item.strip()
+]
+
 active_profiles: list[str] = unique_list(
-    ["default"]
-    + [
-        item.strip()
-        for item in os.environ.get("KNOWLEDGE_BASE_PROFILES", "").split(",")
-        if item.strip()
-    ]
-    + _test_profile
+    ["default"] + _additional_profiles + _test_profile
 )
 
 
