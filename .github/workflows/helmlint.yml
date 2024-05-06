@@ -26,7 +26,7 @@ jobs:
         helm dependency build cloud/helm/knowledgebase-slackbot
 
     - name: helm-check
-      uses: igabaydulin/helm-check-action@0.2.0
+      uses: igabaydulin/helm-check-action@0.2.1
       env:
         CHART_LOCATION: cloud/helm/knowledgebase-slackbot
         CHART_VALUES: tests/helmlint/dummy-values.yml
