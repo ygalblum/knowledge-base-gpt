@@ -5,7 +5,11 @@ metadata:
   labels:
     app: knowledgebase
     component: slackbot
+    paas.redhat.com/appcode: CMPA-001
+  annotations:
+    kubernetes.io/reclaimPolicy: Delete
 spec:
+  storageClassName: aws-efs-tier-c4
   accessModes:
   - ReadWriteMany
   resources:

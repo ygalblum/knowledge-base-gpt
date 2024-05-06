@@ -8,14 +8,7 @@ spec:
       containers:
       - name: ingest
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        command:
-        - /bin/sh
-        - -c
-        - |
-          until curl -fsI http://localhost:9901/ready; do echo \"Waiting for Sidecar...\"; sleep 3; done
-          echo \"Sidecar available. Running the command...\";
-          python -m "knowledge_base_gpt.apps.ingest";
-          x=$(echo $?); curl -fsI -X POST http://localhost:9901/quitquitquit && exit $x
+        command: ["python", "-m", "knowledge_base_gpt.apps.ingest"]
         volumeMounts:
         - name: embedding
           mountPath: "/db"
@@ -23,6 +16,8 @@ spec:
           mountPath: /usr/app/
         - mountPath: /etc/knowledgebase
           name: knowledgebase-config
+        - mountPath: /.cache
+          name: cache
         env:
         - name: KNOWLEDGE_BASE_SETTINGS_FOLDER
           value: /etc/knowledgebase
@@ -33,22 +28,10 @@ spec:
               key: folder-id
         - name: SERVICE_KEY_FILE
           value: /usr/app/service.json
-        securityContext:
-          runAsUser: 0
-      - name: proxy
-        image: "docker.io/envoyproxy/envoy:{{ .Values.envoyProxyImageTag }}"
-        volumeMounts:
-        - name: proxy-config
-          mountPath: /etc/envoy
-        - name: proxy-certificates
-          mountPath: /etc/envoy-certificates
-        env:
-        - name: ENVOY_UID
-          value: "0"
         resources:
           limits:
             cpu: 1
-            memory: 1Gi
+            memory: 2Gi
       volumes:
       - name: knowledgebase-config
         configMap:
@@ -59,12 +42,9 @@ spec:
       - name: service-json
         secret:
           secretName: {{ include "knowledgebase-slackbot.service-json-secret" . }}
-      - name: proxy-config
-        configMap:
-          name: {{ include "knowledgebase-slackbot.proxy-configmap" . }}
-      - name: proxy-certificates
-        secret:
-          secretName: {{ include "knowledgebase-slackbot.proxy-certificate-secret" . }}
+      - name: cache
+        emptyDir:
+          sizeLimit: 1Gi
       restartPolicy: Never
   backoffLimit: 4
 {{- end }}

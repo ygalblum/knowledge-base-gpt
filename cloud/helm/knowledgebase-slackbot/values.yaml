@@ -81,6 +81,8 @@ forwardChannel: ""
 slackAppToken: ""
 slackBotToken: ""
 
+openaiToken: ""
+
 envoyProxyImageTag: v1.29-latest
 fluentbitImageTag: "2.2"
 
@@ -94,6 +96,13 @@ ollamaServerFluentBitSecurePort: 12021
 
 redis:
   architecture: standalone
+  master:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 300Mi
+    persistence:
+      existingClaim: redis
 
 elasticsearch:
   master:
@@ -101,8 +110,11 @@ elasticsearch:
     replicaCount: 1
     resources:
       limits:
+        cpu: 1
         memory: "4Gi"
     heapSize: 2G
+    persistence:
+      existingClaim: elastic
   data:
     replicaCount: 0
   coordinating:
@@ -113,3 +125,10 @@ elasticsearch:
     kibanaEnabled: true
   sysctlImage:
     enabled: false
+  kibana:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    persistence:
+      existingClaim: kibana
