@@ -4,3 +4,4 @@ forwardChannel: dummy-channel
 slackAppToken: xapp-dummy
 slackBotToken: xoxb-dummy
 ollamaServerAddress: dummy.example.com
+openaiToken: dummy-openai-token

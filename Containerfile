@@ -1,42 +1,30 @@
-ARG APP_ROOT=/app-root
-
-FROM registry.fedoraproject.org/fedora:39 as build
-
-ARG APP_ROOT
+FROM registry.fedoraproject.org/fedora:39 as builder
 
 RUN dnf groupinstall --nodocs -y 'Development Tools' && \
-    dnf install --nodocs -y python-pip python-devel g++ &&\
+    dnf install --nodocs -y python-pip python-devel g++ && \
     dnf clean all -y
 
-WORKDIR ${APP_ROOT}
+RUN pip install poetry
 
-COPY pyproject.toml poetry.lock ${APP_ROOT}
+ENV POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
 
-RUN python3 -m venv ${APP_ROOT}/venv \
-    && source ${APP_ROOT}/venv/bin/activate \
-    && pip install --no-cache-dir -U pip wheel \
-    && pip install poetry \
-    && poetry install --no-root --no-directory --directory=${APP_ROOT}  \
-    && echo "unset BASH_ENV PROMPT_COMMAND ENV" >> ${APP_ROOT}/venv/bin/activate
+WORKDIR /app
 
-FROM registry.fedoraproject.org/fedora:39
+COPY pyproject.toml poetry.lock ./
+RUN touch README.md
 
-ARG APP_ROOT
+RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
 
-WORKDIR ${APP_ROOT}
+FROM registry.fedoraproject.org/fedora:39 as runtime
 
-COPY --from=build ${APP_ROOT}/venv ${APP_ROOT}/venv
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
 
-COPY README.md pyproject.toml poetry.lock ${APP_ROOT}
-COPY knowledge_base_gpt/ ${APP_ROOT}/knowledge_base_gpt
+COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
-RUN source ${APP_ROOT}/venv/bin/activate \
-    && poetry install --directory=${APP_ROOT}
+COPY knowledge_base_gpt/ ./knowledge_base_gpt
 
-# activate virtualenv with workaround RHEL/CentOS 8+
-ENV BASH_ENV="${APP_ROOT}/venv/bin/activate" \
-    ENV="${APP_ROOT}/venv/bin/activate" \
-    PROMPT_COMMAND=". ${APP_ROOT}/venv/bin/activate" \
-    PATH="${APP_ROOT}/venv/bin:${PATH}"
-
-CMD ["python", "-m", "knowledge_base_gpt.apps.slackbot"]
+ENTRYPOINT ["python", "-m", "knowledge_base_gpt.apps.slackbot"]
