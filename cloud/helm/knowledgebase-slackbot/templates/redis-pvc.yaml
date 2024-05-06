@@ -1,18 +1,17 @@
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "knowledgebase-slackbot.embedding-pvc" . }}
+  name: redis
   labels:
     app: knowledgebase
-    component: embedding
+    component: redis
     paas.redhat.com/appcode: CMPA-001
   annotations:
     kubernetes.io/reclaimPolicy: Delete
 spec:
-  storageClassName: aws-efs-tier-c4
+  storageClassName: aws-ebs
   accessModes:
-  - ReadWriteMany
+  - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.embeddingVolumeSize }}
+      storage: 8Gi

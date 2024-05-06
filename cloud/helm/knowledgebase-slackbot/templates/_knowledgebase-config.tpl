@@ -15,7 +15,7 @@ slackbot:
   forward_channel: $FORWARD_QUESTION_CHANNEL_NAME|""
 
 llm:
-  mode: ollama
+  mode: vllm
 
 ollama:
   llm_model: {{ .Values.ollamaChatModel | quote }}
@@ -40,7 +40,7 @@ google_drive:
 text_splitter: {}
 
 embedding:
-  mode: ollama
+  mode: hugging_face
 
 hugging_face:
   embedding_model: $EMBEDDINGS_MODEL_NAME|all-MiniLM-L6-v2
@@ -49,4 +49,9 @@ vectorstore:
   persist_directory: "/db"
 
 fake_model: {}
+
+vllm:
+  api_base: http://llm-service:8000/v1
+  llm_model: $MODEL|instructlab/granite-7b-lab
+
 {{- end }}

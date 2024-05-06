@@ -151,3 +151,10 @@ MetricBeat Pod name
 {{- define "knowledgebase-slackbot.metricbeat-pod-name" -}}
 {{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "metricbeat" }}
 {{- end }}
+
+{{/*
+OpenAI or vLLM API Token secret name
+*/}}
+{{- define "knowledgebase-slackbot.openai-secret" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "openai" }}
+{{- end }}
