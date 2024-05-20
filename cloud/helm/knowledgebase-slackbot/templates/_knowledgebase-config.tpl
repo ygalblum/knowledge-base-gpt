@@ -17,10 +17,6 @@ slackbot:
 llm:
   mode: vllm
 
-ollama:
-  llm_model: {{ .Values.ollamaChatModel | quote }}
-  embedding_model: {{ .Values.ollamaEmbeddingModel | quote }}
-
 history:
   mode: redis
 
@@ -51,7 +47,7 @@ vectorstore:
 fake_model: {}
 
 vllm:
-  api_base: http://llm-service:8000/v1
+  api_base: http://vllm:8000/v1
   llm_model: $MODEL|instructlab/granite-7b-lab
 
 {{- end }}
