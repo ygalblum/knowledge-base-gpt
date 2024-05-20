@@ -51,13 +51,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Proxy Certificate secret name
-*/}}
-{{- define "knowledgebase-slackbot.proxy-certificate-secret" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "certificate" }}
-{{- end }}
-
-{{/*
 Embedding DB Volume name
 */}}
 {{- define "knowledgebase-slackbot.embedding-pvc" -}}
@@ -79,38 +72,10 @@ Ingest Job name
 {{- end }}
 
 {{/*
-Service JSON secret name
-*/}}
-{{- define "knowledgebase-slackbot.service-json-secret" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "service-json" }}
-{{- end }}
-
-{{/*
-Ingest Folder ID secret name
-*/}}
-{{- define "knowledgebase-slackbot.folder-id-secret" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "folder-id" }}
-{{- end }}
-
-{{/*
 Logs Volume name
 */}}
 {{- define "knowledgebase-slackbot.logs-pvc" -}}
 {{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "logs" }}
-{{- end }}
-
-{{/*
-Forward Channel secret name
-*/}}
-{{- define "knowledgebase-slackbot.forward-channel-secret" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "forward-channel" }}
-{{- end }}
-
-{{/*
-Slack Tokens secret name
-*/}}
-{{- define "knowledgebase-slackbot.slackbot-tokens-secret" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "slackbot-tokens" }}
 {{- end }}
 
 {{/*
@@ -153,8 +118,15 @@ MetricBeat Pod name
 {{- end }}
 
 {{/*
-OpenAI or vLLM API Token secret name
+vLLM Cache Volume name
 */}}
-{{- define "knowledgebase-slackbot.openai-secret" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "openai" }}
+{{- define "knowledgebase-slackbot.vllm-pvc" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "vllm-cache" }}
+{{- end }}
+
+{{/*
+vLLM Deployment name
+*/}}
+{{- define "knowledgebase-slackbot.vllm-deployment-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "vllm" }}
 {{- end }}

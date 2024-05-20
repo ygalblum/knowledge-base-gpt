@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "knowledgebase-slackbot.vault-template-vllm-configmap" . }}
+data:
+  vars.env.tmpl: |-
+{{ include "knowledgebase-slackbot.vault-template-vllm" . | indent 4 }}

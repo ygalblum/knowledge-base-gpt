@@ -17,6 +17,8 @@ slackbot:
 llm:
   mode: vllm
 
+ollama: {}
+
 history:
   mode: redis
 

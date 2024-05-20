@@ -55,20 +55,8 @@ affinity: {}
 # Embedding Volume Parameters
 embeddingVolumeSize: 2Gi
 
-# Google Folder ID to ingest
-ingestFolderID: ""
-
 # Metrics Volume Parameters
 logsVolumeSize: 1Gi
-
-# Slack Channel to forward unanswered conversations
-forwardChannel: ""
-
-# Slack App and Bot tokens
-slackAppToken: ""
-slackBotToken: ""
-
-openaiToken: ""
 
 fluentbitImageTag: "2.2"
 
@@ -76,6 +64,11 @@ logrotate:
   imageTag: latest
   size: 1M
   interval: hourly
+
+# Name of the config map holding the Vault server address (under address) and CA Token (under ca.crt)
+vaultServerConfigMap: ""
+# Name of the secret holding the credentials to the Vault server (role-id and secret-id)
+vaultCredentialsSecret: ""
 
 redis:
   architecture: standalone

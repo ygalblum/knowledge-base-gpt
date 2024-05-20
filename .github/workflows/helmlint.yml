@@ -17,10 +17,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Create symlink to dummy service file
-      run: |
-        ln -s ../../../tests/helmlint/dummy-service.json cloud/helm/knowledgebase-slackbot/service.json
-
     - name: Download dependencies
       run: |
         helm dependency build cloud/helm/knowledgebase-slackbot
