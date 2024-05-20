@@ -52,12 +52,6 @@ tolerations: []
 
 affinity: {}
 
-# Certificate Parameters
-certificateIssuer: ""
-certificateDNSNames:
-- slackbot.knowledgebase
-certificateDuration: 87600h
-
 # Embedding Volume Parameters
 embeddingVolumeSize: 2Gi
 
@@ -66,13 +60,6 @@ ingestFolderID: ""
 
 # Metrics Volume Parameters
 logsVolumeSize: 1Gi
-
-# Address for Ollama Secure Service
-ollamaServerAddress: ""
-ollamaServerSecurePort: 11435
-
-ollamaChatModel: mistral
-ollamaEmbeddingModel: nomic-embed-text
 
 # Slack Channel to forward unanswered conversations
 forwardChannel: ""
@@ -83,16 +70,12 @@ slackBotToken: ""
 
 openaiToken: ""
 
-envoyProxyImageTag: v1.29-latest
 fluentbitImageTag: "2.2"
 
 logrotate:
   imageTag: latest
   size: 1M
   interval: hourly
-
-ollamaServerAdminSecurePort: 19901
-ollamaServerFluentBitSecurePort: 12021
 
 redis:
   architecture: standalone

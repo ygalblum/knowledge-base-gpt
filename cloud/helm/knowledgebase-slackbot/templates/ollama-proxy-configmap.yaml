@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "knowledgebase-slackbot.proxy-configmap" . }}
-data:
-  envoy.yaml: |-
-{{ include "knowledgebase-slackbot.envoy-proxy-config" . | indent 4 }}
