@@ -1,7 +1,2 @@
-certificateIssuer: dummy-ca-issuer
-ingestFolderID: dummy-folder-id
-forwardChannel: dummy-channel
-slackAppToken: xapp-dummy
-slackBotToken: xoxb-dummy
-ollamaServerAddress: dummy.example.com
-openaiToken: dummy-openai-token
+vaultServerConfigMap: "dummy-vault-server-details"
+vaultCredentialsSecret: "dummy-vault-server-credentials"

@@ -16,8 +16,6 @@ spec:
       annotations:
         checksum/knowledgebase-config: {{ include (print $.Template.BasePath "/knowledgebase-configmap.yaml") . | sha256sum }}
         checksum/fluent-bit-config: {{ include (print $.Template.BasePath "/fluent-bit-configmap.yaml") . | sha256sum }}
-        checksum/slack-tokens: {{ include (print $.Template.BasePath "/slackbot-tokens-secret.yaml") . | sha256sum }}
-        checksum/slack-forward-channel: {{ include (print $.Template.BasePath "/forward-channel-secret.yaml") . | sha256sum }}
       labels:
         app: knowledgebase
         component: slackbot
@@ -25,7 +23,12 @@ spec:
       containers:
       - name: slackbot
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        command: ["python", "-m", "knowledge_base_gpt.apps.slackbot"]
+        command:
+        - "/bin/sh"
+        - "-c"
+        - "--"
+        args:
+        - "source /vault-output/vars.env && python -m knowledge_base_gpt.apps.slackbot"
         volumeMounts:
         - mountPath: "/db"
           name: embedding
@@ -36,6 +39,9 @@ spec:
           name: knowledgebase-config
         - mountPath: /.cache
           name: cache
+        - name: vault-output
+          mountPath: /vault-output
+          readOnly: true
         env:
         - name: KNOWLEDGE_BASE_SETTINGS_FOLDER
           value: /etc/knowledgebase
@@ -44,26 +50,6 @@ spec:
             secretKeyRef:
               name: "{{ include "knowledgebase-slackbot.redis-password-secret" . }}"
               key: redis-password
-        - name: FORWARD_QUESTION_CHANNEL_NAME
-          valueFrom:
-            secretKeyRef:
-              name: "{{ include "knowledgebase-slackbot.forward-channel-secret" . }}"
-              key: channel
-        - name: SLACK_APP_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: "{{ include "knowledgebase-slackbot.slackbot-tokens-secret" . }}"
-              key: app-token
-        - name: SLACK_BOT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: "{{ include "knowledgebase-slackbot.slackbot-tokens-secret" . }}"
-              key: bot-token
-        - name: OPENAI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: "{{ include "knowledgebase-slackbot.openai-secret" . }}"
-              key: api_key
         resources:
           limits:
             cpu: 1
@@ -98,6 +84,8 @@ spec:
           limits:
             cpu: 100m
             memory: 128Mi
+      initContainers:
+      {{- include "knowledgebase-slackbot.vault-init-container" . | nindent 6 }}
       volumes:
       - name: knowledgebase-config
         configMap:
@@ -114,3 +102,4 @@ spec:
       - name: fluent-bit-config
         configMap:
           name: {{ include "knowledgebase-slackbot.fluent-bit-config" . }}
+      {{- include "knowledgebase-slackbot.vault-volumes" (dict "root" . "configMapName" (include "knowledgebase-slackbot.vault-template-slackbot-configmap" .)) | nindent 6 }}

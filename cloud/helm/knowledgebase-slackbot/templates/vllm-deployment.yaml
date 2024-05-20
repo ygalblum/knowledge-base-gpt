@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "knowledgebase-slackbot.vllm-deployment-name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm
+  template:
+    metadata:
+      labels:
+        app: vllm
+    spec:
+      containers:
+      - resources:
+          limits:
+            cpu: "1"
+            memory: "6Gi"
+            ephemeral-storage: "5Gi"
+            nvidia.com/gpu: "1"
+          requests:
+            cpu: "1"
+            memory: "6Gi"
+            ephemeral-storage: "5Gi"
+            nvidia.com/gpu: "1"
+        readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+        name: server
+        livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            timeoutSeconds: 8
+            periodSeconds: 100
+            successThreshold: 1
+            failureThreshold: 3
+        env:
+        - name: MODEL_ID
+          value: instructlab/granite-7b-lab
+        command:
+        - "/bin/sh"
+        - "-c"
+        - "--"
+        args:
+        - "source /vault-output/vars.env && python3 -m vllm.entrypoints.openai.api_server --model=$(MODEL_ID) --download-dir=/models-cache --dtype=float16 --tensor-parallel-size=1 --api-key=$VLLM_APP_TOKEN"
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+        startupProbe:
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          timeoutSeconds: 1
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 24
+        volumeMounts:
+        - name: dshm
+          mountPath: /dev/shm
+        - name: cache
+          mountPath: /models-cache
+        - name: vault-output
+          mountPath: /vault-output
+          readOnly: true
+        image: quay.io/rh-aiservices-bu/vllm-openai-ubi9:0.4.2
+      initContainers:
+      {{- include "knowledgebase-slackbot.vault-init-container" . | nindent 6 }}
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
+      - name: cache
+        persistentVolumeClaim:
+          claimName: {{ include "knowledgebase-slackbot.vllm-pvc" . }}
+      {{- include "knowledgebase-slackbot.vault-volumes" (dict "root" . "configMapName" (include "knowledgebase-slackbot.vault-template-vllm-configmap" .)) | nindent 6 }}
+...

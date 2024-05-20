@@ -23,6 +23,9 @@ FROM registry.fedoraproject.org/fedora:39 as runtime
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
 
+RUN dnf install --nodocs -y jq && \
+    dnf clean all -y
+
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 COPY knowledge_base_gpt/ ./knowledge_base_gpt

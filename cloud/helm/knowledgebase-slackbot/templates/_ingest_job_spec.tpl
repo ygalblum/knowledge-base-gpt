@@ -8,7 +8,12 @@ spec:
       containers:
       - name: ingest
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-        command: ["python", "-m", "knowledge_base_gpt.apps.ingest"]
+        command:
+        - "/bin/sh"
+        - "-c"
+        - "--"
+        args:
+        - "source /vault-output/vars.env && echo $SERVICE_JSON | jq -r > /usr/app/service.json && python -m knowledge_base_gpt.apps.ingest"
         volumeMounts:
         - name: embedding
           mountPath: "/db"
@@ -18,20 +23,20 @@ spec:
           name: knowledgebase-config
         - mountPath: /.cache
           name: cache
+        - name: vault-output
+          mountPath: /vault-output
+          readOnly: true
         env:
         - name: KNOWLEDGE_BASE_SETTINGS_FOLDER
           value: /etc/knowledgebase
-        - name: GOOGLE_DRIVE_FOLDER_ID
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "knowledgebase-slackbot.folder-id-secret" . }}
-              key: folder-id
         - name: SERVICE_KEY_FILE
           value: /usr/app/service.json
         resources:
           limits:
             cpu: 1
             memory: 2Gi
+      initContainers:
+      {{- include "knowledgebase-slackbot.vault-init-container" . | nindent 6 }}
       volumes:
       - name: knowledgebase-config
         configMap:
@@ -40,11 +45,12 @@ spec:
         persistentVolumeClaim:
           claimName: {{ include "knowledgebase-slackbot.embedding-pvc" . }}
       - name: service-json
-        secret:
-          secretName: {{ include "knowledgebase-slackbot.service-json-secret" . }}
+        emptyDir:
+          sizeLimit: 1Mi
       - name: cache
         emptyDir:
           sizeLimit: 1Gi
+      {{- include "knowledgebase-slackbot.vault-volumes" (dict "root" . "configMapName" (include "knowledgebase-slackbot.vault-template-ingest-configmap" .)) | nindent 6 }}
       restartPolicy: Never
   backoffLimit: 4
 {{- end }}
