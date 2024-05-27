@@ -13,7 +13,7 @@ spec:
         - "-c"
         - "--"
         args:
-        - "source /vault-output/vars.env && echo $SERVICE_JSON | jq -r > /usr/app/service.json && python -m knowledge_base_gpt.apps.ingest"
+        - "source /vault-output/output && echo $SERVICE_JSON | jq -r > /usr/app/service.json && python -m knowledge_base_gpt.apps.ingest"
         volumeMounts:
         - name: embedding
           mountPath: "/db"
@@ -36,7 +36,7 @@ spec:
             cpu: 1
             memory: 2Gi
       initContainers:
-      {{- include "knowledgebase-slackbot.vault-init-container" . | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-init-container" (dict "root" .) | nindent 6 }}
       volumes:
       - name: knowledgebase-config
         configMap:
@@ -50,7 +50,8 @@ spec:
       - name: cache
         emptyDir:
           sizeLimit: 1Gi
-      {{- include "knowledgebase-slackbot.vault-volumes" (dict "root" . "configMapName" (include "knowledgebase-slackbot.vault-template-ingest-configmap" .)) | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-base-volumes" . | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-instance-volumes" (dict "templateConfigMapName" (include "knowledgebase-slackbot.vault-template-ingest-configmap" .)) | nindent 6 }}
       restartPolicy: Never
   backoffLimit: 4
 {{- end }}

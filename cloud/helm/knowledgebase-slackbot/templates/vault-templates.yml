@@ -1,0 +1,11 @@
+{{ $root := .}}
+{{- range list "vllm" "slackbot" "fluent-bit" "ingest" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include (printf "knowledgebase-slackbot.vault-template-%s-configmap" .) $root }}
+data:
+  template: |-
+{{ include (printf "knowledgebase-slackbot.vault-template-%s" .) $root | indent 4 }}
+---
+{{- end }}

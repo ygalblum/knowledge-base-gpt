@@ -2,13 +2,13 @@
 Init container to fetch secrets from Vault
 */}}
 {{- define "knowledgebase-slackbot.vault-init-container" -}}
-- name: vault
+- name: {{printf "vault-%s" (.name | default "env") }}
   image: docker.io/hashicorp/vault:latest
   args:
   - "agent"
   - "-config=/vault/config/vault.hcl"
   volumeMounts:
-  - name: vault-output
+  - name: {{ printf "vault-%s" (.outputVolumeName | default "output") }}
     mountPath: /vault-output
     readOnly: false
   - name: vault-credentials
@@ -17,8 +17,8 @@ Init container to fetch secrets from Vault
   - name: vault-agent-config
     mountPath: /vault/config
     readOnly: true
-  - name: vault-template
-    mountPath: /vault/template
+  - name: {{ printf "vault-%s" (.templateVolumeName | default "template") }}
+    mountPath: /vault-template
     readOnly: true
   - name: vault-ca-cert
     mountPath: /etc/vault-ca
@@ -29,36 +29,42 @@ Init container to fetch secrets from Vault
   - name: VAULT_ADDR
     valueFrom:
       configMapKeyRef:
-        name: {{ required "vaultServerConfigMap must be set" .Values.vaultServerConfigMap }}
+        name: {{ required "vaultServerConfigMap must be set" .root.Values.vaultServerConfigMap }}
         key: address
   - name: VAULT_CACERT
     value: "/etc/vault-ca/ca.crt"
 {{- end }}
 
-
 {{/*
-List of volumes added to Pod spec for Vault
+List of base volumes added to Pod spec for the Vault retriever (need to add only once)
 */}}
-{{- define "knowledgebase-slackbot.vault-volumes" -}}
-- name: vault-output
-  emptyDir:
-    medium: Memory
-    sizeLimit: 10Mi
+{{- define "knowledgebase-slackbot.vault-base-volumes" -}}
 - name: vault-ca-cert
   configMap:
-    name: {{ required "vaultServerConfigMap must be set" .root.Values.vaultServerConfigMap }}
+    name: {{ required "vaultServerConfigMap must be set" .Values.vaultServerConfigMap }}
     items:
     - key: ca.crt
       path: ca.crt
 - name: vault-credentials
   secret:
-    secretName: {{ required "vaultCredentialsSecret must be set" .root.Values.vaultCredentialsSecret }}
+    secretName: {{ required "vaultCredentialsSecret must be set" .Values.vaultCredentialsSecret }}
 - name: vault-agent-config
   configMap:
-    name: {{ printf "%s" (include "knowledgebase-slackbot.vault-agent-config-configmap" .root) }}
-- name: vault-template
+    name: {{ printf "%s" (include "knowledgebase-slackbot.vault-agent-config-configmap" .) }}
+{{- end }}
+
+
+{{/*
+List of volumes added to Pod spec for a specific instance of the Vault retriever
+*/}}
+{{- define "knowledgebase-slackbot.vault-instance-volumes" -}}
+- name: {{ printf "vault-%s" (.outputVolumeName | default "output") }}
+  emptyDir:
+    medium: Memory
+    sizeLimit: {{ .outputVolumeSizeLimit | default "10Mi"}}
+- name: {{ printf "vault-%s" (.templateVolumeName | default "template") }}
   configMap:
-    name: {{ .configMapName }}
+    name: {{ .templateConfigMapName }}
 {{- end }}
 
 {{/*
@@ -103,8 +109,8 @@ listener "tcp" {
 }
 
 template {
-  source      = "/vault/template/vars.env.tmpl"
-  destination = "/vault-output/vars.env"
+  source      = "/vault-template/template"
+  destination = "/vault-output/output"
 }
 {{- end }}
 
@@ -171,5 +177,43 @@ Vault Template for Ingest
   export GOOGLE_DRIVE_FOLDER_ID='{{ .Data.data.ingest_folder_id }}'
   export SERVICE_JSON='{{ .Data.data.service_json }}'
   {{ end }}
+`}}
+{{- end }}
+
+{{/*
+Vault Template for Fluent-Bit ConfigMap Name
+*/}}
+{{- define "knowledgebase-slackbot.vault-template-fluent-bit-configmap" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "vault-template-fluent-bit-configmap" }}
+{{- end }}
+
+{{/*
+Vault Template for Fluent-Bit Configuration file
+*/}}
+{{- define "knowledgebase-slackbot.vault-template-fluent-bit" -}}
+{{`
+  {{- with secret "apps/cloud-marketplace-chatbot-admin/splunk" }}
+  [SERVICE]
+    Flush              1
+
+  [INPUT]
+    Name tail
+    Path /logs/slackbot_chat_log.log
+    multiline.parser    go, python, java
+    skip_empty_lines    On
+    refresh_interval    5
+    Tag chatlog
+
+  [OUTPUT]
+    name splunk
+    match chatlog
+    host {{ .Data.data.host }}
+    port 8088
+    tls on
+    TLS.Debug           Off
+    tls.verify off
+    splunk_token {{ .Data.data.token }}
+    event_key           $log
+    {{ end }}
 `}}
 {{- end }}

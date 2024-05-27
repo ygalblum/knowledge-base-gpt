@@ -58,13 +58,6 @@ Embedding DB Volume name
 {{- end }}
 
 {{/*
-Fluent-Bit Configuration ConfigMap name
-*/}}
-{{- define "knowledgebase-slackbot.fluent-bit-config" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "fluent-bit-config" }}
-{{- end }}
-
-{{/*
 Ingest Job name
 */}}
 {{- define "knowledgebase-slackbot.ingest" -}}
