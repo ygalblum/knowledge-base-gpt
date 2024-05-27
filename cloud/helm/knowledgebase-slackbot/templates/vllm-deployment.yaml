@@ -51,7 +51,7 @@ spec:
         - "-c"
         - "--"
         args:
-        - "source /vault-output/vars.env && python3 -m vllm.entrypoints.openai.api_server --model=$(MODEL_ID) --download-dir=/models-cache --dtype=float16 --tensor-parallel-size=1 --api-key=$VLLM_APP_TOKEN"
+        - "source /vault-output/output && python3 -m vllm.entrypoints.openai.api_server --model=$(MODEL_ID) --download-dir=/models-cache --dtype=float16 --tensor-parallel-size=1 --api-key=$VLLM_APP_TOKEN"
         securityContext:
           capabilities:
             drop:
@@ -83,7 +83,7 @@ spec:
           readOnly: true
         image: quay.io/rh-aiservices-bu/vllm-openai-ubi9:0.4.2
       initContainers:
-      {{- include "knowledgebase-slackbot.vault-init-container" . | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-init-container" (dict "root" .) | nindent 6 }}
       volumes:
       - name: dshm
         emptyDir:
@@ -92,5 +92,6 @@ spec:
       - name: cache
         persistentVolumeClaim:
           claimName: {{ include "knowledgebase-slackbot.vllm-pvc" . }}
-      {{- include "knowledgebase-slackbot.vault-volumes" (dict "root" . "configMapName" (include "knowledgebase-slackbot.vault-template-vllm-configmap" .)) | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-base-volumes" . | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-instance-volumes" (dict "templateConfigMapName" (include "knowledgebase-slackbot.vault-template-vllm-configmap" .)) | nindent 6 }}
 ...

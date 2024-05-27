@@ -79,32 +79,3 @@ redis:
         memory: 300Mi
     persistence:
       existingClaim: redis
-
-elasticsearch:
-  master:
-    masterOnly: false
-    replicaCount: 1
-    resources:
-      limits:
-        cpu: 1
-        memory: "4Gi"
-    heapSize: 2G
-    persistence:
-      existingClaim: elastic
-  data:
-    replicaCount: 0
-  coordinating:
-    replicaCount: 0
-  ingest:
-    replicaCount: 0
-  global:
-    kibanaEnabled: true
-  sysctlImage:
-    enabled: false
-  kibana:
-    resources:
-      limits:
-        cpu: 500m
-        memory: 1Gi
-    persistence:
-      existingClaim: kibana

@@ -15,7 +15,6 @@ spec:
     metadata:
       annotations:
         checksum/knowledgebase-config: {{ include (print $.Template.BasePath "/knowledgebase-configmap.yaml") . | sha256sum }}
-        checksum/fluent-bit-config: {{ include (print $.Template.BasePath "/fluent-bit-configmap.yaml") . | sha256sum }}
       labels:
         app: knowledgebase
         component: slackbot
@@ -28,7 +27,7 @@ spec:
         - "-c"
         - "--"
         args:
-        - "source /vault-output/vars.env && python -m knowledge_base_gpt.apps.slackbot"
+        - "source /vault-output/output && python -m knowledge_base_gpt.apps.slackbot"
         volumeMounts:
         - mountPath: "/db"
           name: embedding
@@ -56,11 +55,11 @@ spec:
             memory: 1Gi
       - name: fluent-bit
         image: "docker.io/fluent/fluent-bit:{{ .Values.fluentbitImageTag }}"
-        command: ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit-config/fluent-bit.conf"]
+        command: ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit-config/output"]
         volumeMounts:
         - mountPath: /logs
           name: logs
-        - name: fluent-bit-config
+        - name: vault-fluent-bit-config
           mountPath: /fluent-bit-config
         resources:
           limits:
@@ -85,7 +84,8 @@ spec:
             cpu: 100m
             memory: 128Mi
       initContainers:
-      {{- include "knowledgebase-slackbot.vault-init-container" . | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-init-container" (dict "root" . "name" "slackbot") | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-init-container" (dict "root" . "name" "fluent-bit" "outputVolumeName" "fluent-bit-config" "templateVolumeName" "fluent-bit-template") | nindent 6 }}
       volumes:
       - name: knowledgebase-config
         configMap:
@@ -99,7 +99,6 @@ spec:
       - name: cache
         emptyDir:
           sizeLimit: 1Gi
-      - name: fluent-bit-config
-        configMap:
-          name: {{ include "knowledgebase-slackbot.fluent-bit-config" . }}
-      {{- include "knowledgebase-slackbot.vault-volumes" (dict "root" . "configMapName" (include "knowledgebase-slackbot.vault-template-slackbot-configmap" .)) | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-base-volumes" . | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-instance-volumes" (dict "templateConfigMapName" (include "knowledgebase-slackbot.vault-template-slackbot-configmap" .)) | nindent 6 }}
+      {{- include "knowledgebase-slackbot.vault-instance-volumes" (dict "outputVolumeName" "fluent-bit-config" "templateVolumeName" "fluent-bit-template" "templateConfigMapName" (include "knowledgebase-slackbot.vault-template-fluent-bit-configmap" .)) | nindent 6 }}
