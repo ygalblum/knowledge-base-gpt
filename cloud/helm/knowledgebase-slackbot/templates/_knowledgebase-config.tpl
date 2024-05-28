@@ -49,7 +49,7 @@ vectorstore:
 fake_model: {}
 
 vllm:
-  api_base: http://vllm:8000/v1
+  api_base: "{{ include "knowledgebase-slackbot.vllm-endpoint" . }}"
   llm_model: $MODEL|instructlab/granite-7b-lab
 
 {{- end }}

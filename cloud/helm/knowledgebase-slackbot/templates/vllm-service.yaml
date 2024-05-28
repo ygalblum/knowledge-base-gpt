@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: vllm
+  name: "{{ include "knowledgebase-slackbot.vllm-service-name" . }}"
 spec:
   selector:
     app: vllm
