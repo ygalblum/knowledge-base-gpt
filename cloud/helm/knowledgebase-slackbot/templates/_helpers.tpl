@@ -123,3 +123,17 @@ vLLM Deployment name
 {{- define "knowledgebase-slackbot.vllm-deployment-name" -}}
 {{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "vllm" }}
 {{- end }}
+
+{{/*
+vLLM Service name
+*/}}
+{{- define "knowledgebase-slackbot.vllm-service-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "vllm" }}
+{{- end }}
+
+{{/*
+vLLM Endpoint
+*/}}
+{{- define "knowledgebase-slackbot.vllm-endpoint" -}}
+{{- printf "http://%s:8000/v1" (include "knowledgebase-slackbot.vllm-service-name" .) }}
+{{- end }}
