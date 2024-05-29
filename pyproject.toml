@@ -8,7 +8,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-langchain = "0.1.16"
+langchain = "0.2.1"
 langchain-community = "0.0.34"
 chromadb = "0.4.22"
 google-api-python-client = "2.116.0"
