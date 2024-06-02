@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora:39 as builder
+FROM registry.fedoraproject.org/fedora:41 as builder
 
 RUN dnf groupinstall --nodocs -y 'Development Tools' && \
     dnf install --nodocs -y python-pip python-devel g++ && \
@@ -18,7 +18,7 @@ RUN touch README.md
 
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
 
-FROM registry.fedoraproject.org/fedora:39 as runtime
+FROM registry.fedoraproject.org/fedora:41 as runtime
 
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
