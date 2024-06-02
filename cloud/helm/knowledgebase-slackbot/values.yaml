@@ -78,4 +78,4 @@ redis:
         cpu: 500m
         memory: 300Mi
     persistence:
-      existingClaim: redis
+      existingClaim: changeme-redis # The actual name will be set using a post-install hook

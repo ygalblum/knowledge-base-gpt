@@ -90,6 +90,14 @@ Redis Service name
 {{- end }}
 
 {{/*
+Redis StatefulSet name
+*/}}
+{{- define "knowledgebase-slackbot.redis-statefulset-name" -}}
+{{- printf "%s-redis-master" .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+
+{{/*
 Elasticsearch Service name
 */}}
 {{- define "knowledgebase-slackbot.elasticsearch" -}}
@@ -136,4 +144,46 @@ vLLM Endpoint
 */}}
 {{- define "knowledgebase-slackbot.vllm-endpoint" -}}
 {{- printf "http://%s:8000/v1" (include "knowledgebase-slackbot.vllm-service-name" .) }}
+{{- end }}
+
+{{/*
+Redis PVC Name
+*/}}
+{{- define "knowledgebase-slackbot.redis-pvc-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis" }}
+{{- end }}
+
+{{/*
+Redis PVC Patcher Job Name
+*/}}
+{{- define "knowledgebase-slackbot.redis-patcher-job-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
+{{- end }}
+
+{{/*
+Redis PVC Patcher ServiceAccount Name
+*/}}
+{{- define "knowledgebase-slackbot.redis-patcher-serviceaccount-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
+{{- end }}
+
+{{/*
+Redis PVC Patcher Role Name
+*/}}
+{{- define "knowledgebase-slackbot.redis-patcher-role-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
+{{- end }}
+
+{{/*
+Redis PVC Patcher RoleBinding Name
+*/}}
+{{- define "knowledgebase-slackbot.redis-patcher-rolebinding-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
+{{- end }}
+
+{{/*
+Redis PVC Patcher Fix ConfigMap Name
+*/}}
+{{- define "knowledgebase-slackbot.redis-patcher-configmap-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
 {{- end }}
