@@ -189,6 +189,16 @@ class LogSettings(BaseModel):
         description="Path to store the chat logs"
     )
 
+    chat_log_max_bytes: int = Field(
+        1024 * 1024,
+        description="Maximal size of the chat log file before rotation"
+    )
+
+    chat_log_backup_count: int = Field(
+        3,
+        description="Number of rotated chat log files to keep"
+    )
+
 
 class ContentLoaderSettings(BaseModel):
     """ Content Loader Settings """
