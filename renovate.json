@@ -15,5 +15,6 @@
         "patch"
       ]
     }
-  ]
+  ],
+  "commitBody": "Signed-off-by: {{{gitAuthor}}}"
 }
