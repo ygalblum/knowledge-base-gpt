@@ -60,11 +60,6 @@ logsVolumeSize: 1Gi
 
 fluentbitImageTag: "2.2"
 
-logrotate:
-  imageTag: latest
-  size: 1M
-  interval: hourly
-
 # Name of the config map holding the Vault server address (under address) and CA Token (under ca.crt)
 vaultServerConfigMap: ""
 # Name of the secret holding the credentials to the Vault server (role-id and secret-id)

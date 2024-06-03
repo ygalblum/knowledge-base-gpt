@@ -65,24 +65,6 @@ spec:
           limits:
             cpu: 100m
             memory: 512Mi
-      - name: logrotate
-        image: "ghcr.io/ygalblum/logrotate-sidecar:{{ .Values.logrotate.imageTag }}"
-        volumeMounts:
-        - mountPath: /logs
-          name: logs
-        env:
-        - name: LOGS_DIRECTORIES
-          value: /logs
-        - name: LOGROTATE_SIZE
-          value: {{ .Values.logrotate.size | quote }}
-        - name: LOGROTATE_COMPRESSION
-          value: compress
-        - name: LOGROTATE_INTERVAL
-          value: {{ .Values.logrotate.interval | quote }}
-        resources:
-          limits:
-            cpu: 100m
-            memory: 128Mi
       initContainers:
       {{- include "knowledgebase-slackbot.vault-init-container" (dict "root" . "name" "slackbot") | nindent 6 }}
       {{- include "knowledgebase-slackbot.vault-init-container" (dict "root" . "name" "fluent-bit" "outputVolumeName" "fluent-bit-config" "templateVolumeName" "fluent-bit-template") | nindent 6 }}
