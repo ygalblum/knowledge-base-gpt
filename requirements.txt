@@ -11,3 +11,5 @@ injector==0.21.0
 envyaml==1.10.211231
 sentence-transformers==2.7.0
 langchain-openai==0.1.8
+langchain-huggingface==0.0.3
+langchain-google-community==1.0.5
