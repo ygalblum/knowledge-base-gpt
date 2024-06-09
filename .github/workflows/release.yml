@@ -79,7 +79,7 @@ jobs:
           commit-message: Update Helm Chart to use appVersion ${{ github.ref_name }}
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: false
+          signoff: true
           base: main
           branch: changelog-patches
           delete-branch: true
