@@ -175,6 +175,10 @@ class RedisSettings(BaseModel):
         3000,
         description="Time to Live for keys"
     )
+    chat_identifier_key_prefix: str = Field(
+        "chat:",
+        description="Prefix for the chat identifier key"
+    )
 
 
 class LogSettings(BaseModel):
