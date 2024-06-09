@@ -1,7 +1,8 @@
 """ Create and abstract the embedding """
 from injector import inject, singleton
 from langchain_core.embeddings import Embeddings as LangChainEmbeddings
-from langchain_community.embeddings import HuggingFaceEmbeddings, OllamaEmbeddings
+from langchain_community.embeddings import OllamaEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 from knowledge_base_gpt.libs.settings.settings import Settings
 

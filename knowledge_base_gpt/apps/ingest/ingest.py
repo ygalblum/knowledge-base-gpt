@@ -45,5 +45,4 @@ class Ingestor():  # pylint:disable=R0903
         else:
             print("Creating embeddings. May take some minutes...")
             self._vector_store.db.add_documents(documents)
-            self._vector_store.db.persist()
         print("Ingestion complete! You can now run privateGPT.py to query your documents")

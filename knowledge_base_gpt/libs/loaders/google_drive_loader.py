@@ -3,7 +3,7 @@ from typing import List
 
 from injector import inject, singleton
 from langchain.docstore.document import Document
-from langchain_community.document_loaders import GoogleDriveLoader
+from langchain_google_community import GoogleDriveLoader
 
 from knowledge_base_gpt.libs.settings.settings import Settings
 
