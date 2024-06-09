@@ -76,8 +76,8 @@ spec:
         persistentVolumeClaim:
           claimName: {{ include "knowledgebase-slackbot.embedding-pvc" . }}
       - name: logs
-        persistentVolumeClaim:
-          claimName: {{ include "knowledgebase-slackbot.logs-pvc" . }}
+        emptyDir:
+          sizeLimit: 128Mi
       - name: cache
         emptyDir:
           sizeLimit: 1Gi

@@ -65,13 +65,6 @@ Ingest Job name
 {{- end }}
 
 {{/*
-Logs Volume name
-*/}}
-{{- define "knowledgebase-slackbot.logs-pvc" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "logs" }}
-{{- end }}
-
-{{/*
 Slackbot Pod name
 */}}
 {{- define "knowledgebase-slackbot.slackbot-pod-name" -}}
