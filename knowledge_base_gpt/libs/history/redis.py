@@ -1,7 +1,8 @@
 """ Manage history in Redis """
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 
 from langchain_community.chat_message_histories import RedisChatMessageHistory
+from langchain_community.utilities.redis import get_client
 from langchain_core.messages import BaseMessage
 
 from knowledge_base_gpt.libs.history.base import HistoryBase
@@ -13,6 +14,8 @@ class HistoryRedis(HistoryBase):
     def __init__(self, redis_settings: RedisSettings):
         self._url = self._build_url_string(redis_settings)
         self._ttl = redis_settings.ttl
+        self._chat_identifier_key_prefix = redis_settings.chat_identifier_key_prefix
+        self._client = get_client(self._url)
 
     def get_messages(self, session_id: str) -> List[BaseMessage]:
         return RedisChatMessageHistory(session_id, url=self._url, ttl=self._ttl).messages
@@ -34,3 +37,15 @@ class HistoryRedis(HistoryBase):
             url += f"{username}:{password}@"
         url += f"{redis_settings.host}:6379/0"
         return url
+
+    def _chat_identifier_key(self, user_id: str) -> str:
+        return f"{self._chat_identifier_key_prefix}{user_id}"
+
+    def _fetch_chat_identifier(self, user_id: str) -> Union[str, None]:
+        v = self._client.get(self._chat_identifier_key(user_id))
+        if v is None:
+            return None
+        return bytes(v).decode("utf-8")
+
+    def _store_chat_identifier(self, user_id: str, chat_identifier: str):
+        self._client.set(self._chat_identifier_key(user_id), chat_identifier)

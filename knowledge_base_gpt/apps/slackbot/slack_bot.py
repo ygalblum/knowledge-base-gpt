@@ -51,11 +51,12 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
             user=message['user'],
             text="On it. Be back with your answer soon"
         )
+        session_id = self._history.history.get_chat_identifier(message['user'])
         try:
             answer = self._private_chat.answer_query(
-                self._history.history.get_messages(message['user']),
+                self._history.history.get_messages(session_id),
                 message['text'],
-                chat_identifier=message['user']
+                chat_identifier=session_id
             )
         except:  # pylint:disable=W0702
             self._handler.app.client.chat_postEphemeral(
@@ -64,7 +65,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
                 text="I have encountered an error. Please try again later"
             )
         else:
-            self._history.history.add_to_history(message['user'], answer)
+            self._history.history.add_to_history(session_id, answer)
             say(answer['answer'])
 
     def _is_direct_message_channel(self, command):
@@ -82,7 +83,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         if not self._is_direct_message_channel(command):
             return
 
-        self._history.history.reset(command['user_id'])
+        self._history.history.reset(self._history.history.get_chat_identifier(command['user_id']))
 
         self._handler.app.client.chat_postEphemeral(
             channel=command['channel_id'],
@@ -104,7 +105,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         if not self._is_direct_message_channel(command):
             return
 
-        messages = self._history.history.get_messages(command['user_id'])
+        messages = self._history.history.get_messages(self._history.history.get_chat_identifier(command['user_id']))
         if len(messages) == 0:
             msg = 'There is no active conversation'
         else:

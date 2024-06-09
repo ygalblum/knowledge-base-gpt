@@ -10,6 +10,7 @@ class HistoryMemory(HistoryBase):
     """ Manage history in memory """
     def __init__(self):
         self._messages: Dict[str, List[BaseMessage]] = {}
+        self._chat_identifiers: Dict[str, str] = {}
 
     def get_messages(self, session_id: str) -> List[BaseMessage]:
         return self._messages.get(session_id, [])
@@ -40,3 +41,9 @@ class HistoryMemory(HistoryBase):
         if not isinstance(message, AIMessage):
             message = AIMessage(content=message)
         return message
+
+    def _fetch_chat_identifier(self, user_id: str) -> Union[str, None]:
+        return self._chat_identifiers.get(user_id)
+
+    def _store_chat_identifier(self, user_id: str, chat_identifier: str):
+        self._chat_identifiers[user_id] = chat_identifier
