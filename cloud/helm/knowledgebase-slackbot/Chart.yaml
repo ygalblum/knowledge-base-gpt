@@ -23,5 +23,5 @@ maintainers:
 
 dependencies:
 - name: redis
-  version: "19.1.5"
+  version: "19.5.2"
   repository: "oci://registry-1.docker.io/bitnamicharts"
