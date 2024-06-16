@@ -147,30 +147,30 @@ Redis PVC Name
 {{- end }}
 
 {{/*
+Helm Hooks ServiceAccount Name
+*/}}
+{{- define "knowledgebase-slackbot.helm-hooks-serviceaccount-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "helm-hooks" }}
+{{- end }}
+
+{{/*
+Helm Hooks Role Name
+*/}}
+{{- define "knowledgebase-slackbot.helm-hooks-role-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "helm-hooks" }}
+{{- end }}
+
+{{/*
+Helm Hooks RoleBinding Name
+*/}}
+{{- define "knowledgebase-slackbot.helm-hooks-rolebinding-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "helm-hooks" }}
+{{- end }}
+
+{{/*
 Redis PVC Patcher Job Name
 */}}
 {{- define "knowledgebase-slackbot.redis-patcher-job-name" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
-{{- end }}
-
-{{/*
-Redis PVC Patcher ServiceAccount Name
-*/}}
-{{- define "knowledgebase-slackbot.redis-patcher-serviceaccount-name" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
-{{- end }}
-
-{{/*
-Redis PVC Patcher Role Name
-*/}}
-{{- define "knowledgebase-slackbot.redis-patcher-role-name" -}}
-{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
-{{- end }}
-
-{{/*
-Redis PVC Patcher RoleBinding Name
-*/}}
-{{- define "knowledgebase-slackbot.redis-patcher-rolebinding-name" -}}
 {{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
 {{- end }}
 
@@ -179,4 +179,18 @@ Redis PVC Patcher Fix ConfigMap Name
 */}}
 {{- define "knowledgebase-slackbot.redis-patcher-configmap-name" -}}
 {{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "redis-patcher" }}
+{{- end }}
+
+{{/*
+Ingest Job hook ConfigMap Name
+*/}}
+{{- define "knowledgebase-slackbot.ingest-job-hook-configmap-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "ingest-job-hook" }}
+{{- end }}
+
+{{/*
+Ingest Job hook Job Name
+*/}}
+{{- define "knowledgebase-slackbot.ingest-job-hook-job-name" -}}
+{{- printf "%s-%s" (include "knowledgebase-slackbot.fullname" .) "ingest-job-hook" }}
 {{- end }}
