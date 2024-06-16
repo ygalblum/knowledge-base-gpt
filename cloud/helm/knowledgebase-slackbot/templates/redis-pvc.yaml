@@ -5,13 +5,18 @@ metadata:
   labels:
     app: knowledgebase
     component: redis
-    paas.redhat.com/appcode: CMPA-001
-  annotations:
-    kubernetes.io/reclaimPolicy: Delete
+    {{- if .Values.redisPVC.labels }}
+    {{- toYaml .Values.redisPVC.labels | nindent 4 }}
+    {{- end }}
+  {{- if .Values.redisPVC.annotations }}
+  annotations: {{- toYaml .Values.redisPVC.annotations | nindent 4 }}
+  {{- end }}
 spec:
-  storageClassName: aws-ebs
+  {{- if .Values.redisPVC.storageClassName }}
+  storageClassName: {{ .Values.redisPVC.storageClassName }}
+  {{- end }}
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 8Gi
+      storage: {{ .Values.redisPVC.size | quote }}

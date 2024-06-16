@@ -6,13 +6,18 @@ metadata:
   labels:
     app: knowledgebase
     component: embedding
-    paas.redhat.com/appcode: CMPA-001
-  annotations:
-    kubernetes.io/reclaimPolicy: Delete
+    {{- if .Values.embeddingPVC.labels }}
+    {{- toYaml .Values.embeddingPVC.labels | nindent 4 }}
+    {{- end }}
+  {{- if .Values.embeddingPVC.annotations }}
+  annotations: {{- toYaml .Values.embeddingPVC.annotations | nindent 4 }}
+  {{- end }}
 spec:
-  storageClassName: aws-efs-tier-c4
+  {{- if .Values.embeddingPVC.storageClassName }}
+  storageClassName: {{ .Values.embeddingPVC.storageClassName }}
+  {{- end }}
   accessModes:
   - ReadWriteMany
   resources:
     requests:
-      storage: {{ .Values.embeddingVolumeSize }}
+      storage: {{ .Values.embeddingPVC.size }}

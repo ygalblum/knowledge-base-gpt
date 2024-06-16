@@ -65,6 +65,25 @@ vaultServerConfigMap: ""
 # Name of the secret holding the credentials to the Vault server (role-id and secret-id)
 vaultCredentialsSecret: ""
 
+embeddingPVC:
+  storageClassName: ""
+  labels: {}
+  annotations: {}
+  size: 2Gi
+
+redisPVC:
+  storageClassName: ""
+  labels: {}
+  annotations: {}
+  size: 8Gi
+
+vllm:
+  pvc:
+    storageClassName: ""
+    labels: {}
+    annotations: {}
+    size: 50Gi
+
 redis:
   architecture: standalone
   master:
