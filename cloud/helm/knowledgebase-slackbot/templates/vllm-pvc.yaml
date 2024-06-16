@@ -5,13 +5,18 @@ metadata:
   name: {{ include "knowledgebase-slackbot.vllm-pvc" . }}
   labels:
     app: vllm
-    paas.redhat.com/appcode: CMPA-001
-  annotations:
-    kubernetes.io/reclaimPolicy: Delete
+    {{- if .Values.vllm.pvc.labels }}
+    {{- toYaml .Values.vllm.pvc.labels | nindent 4 }}
+    {{- end }}
+  {{- if .Values.vllm.pvc.annotations }}
+  annotations: {{- toYaml .Values.vllm.pvc.annotations | nindent 4 }}
+  {{- end }}
 spec:
-  storageClassName: aws-ebs
+  {{- if .Values.vllm.pvc.storageClassName }}
+  storageClassName: {{ .Values.vllm.pvc.storageClassName }}
+  {{- end }}
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 50Gi
+      storage: {{ .Values.vllm.pvc.size | quote }}
