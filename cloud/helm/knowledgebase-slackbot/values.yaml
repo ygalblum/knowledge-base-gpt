@@ -83,6 +83,7 @@ vllm:
     labels: {}
     annotations: {}
     size: 50Gi
+  model: instructlab/granite-7b-lab
 
 redis:
   architecture: standalone

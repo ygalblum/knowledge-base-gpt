@@ -45,7 +45,7 @@ spec:
             failureThreshold: 3
         env:
         - name: MODEL_ID
-          value: instructlab/granite-7b-lab
+          value: {{ .Values.vllm.model }}
         command:
         - "/bin/sh"
         - "-c"
