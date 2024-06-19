@@ -50,6 +50,6 @@ fake_model: {}
 
 vllm:
   api_base: "{{ include "knowledgebase-slackbot.vllm-endpoint" . }}"
-  llm_model: $MODEL|instructlab/granite-7b-lab
+  llm_model: $MODEL|{{ .Values.vllm.model }}
 
 {{- end }}
