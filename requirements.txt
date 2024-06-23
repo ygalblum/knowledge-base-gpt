@@ -1,7 +1,7 @@
 langchain==0.2.5
 langchain-community==0.2.5
-chromadb==0.5.0
-google-api-python-client==2.133.0
+chromadb==0.5.3
+google-api-python-client==2.134.0
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.0
 PyPDF2==3.0.1
@@ -10,6 +10,6 @@ redis==5.0.6
 injector==0.21.0
 envyaml==1.10.211231
 sentence-transformers==3.0.1
-langchain-openai==0.1.8
+langchain-openai==0.1.9
 langchain-huggingface==0.0.3
 langchain-google-community==1.0.5
