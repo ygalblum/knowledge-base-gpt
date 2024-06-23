@@ -126,9 +126,6 @@ Vault Template for Slackbot
 */}}
 {{- define "knowledgebase-slackbot.vault-template-slackbot" -}}
 {{`
-  {{- with secret "apps/cloud-marketplace-chatbot-admin/huggingface" }}
-  export HUGGING_FACE_HUB_TOKEN='{{ .Data.data.token }}'
-  {{ end }}
   {{- with secret "apps/cloud-marketplace-chatbot-admin/vllm" }}
   export OPENAI_API_KEY='{{ .Data.data.token }}'
   {{ end }}
