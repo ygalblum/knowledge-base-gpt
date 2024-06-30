@@ -41,6 +41,8 @@ RUN dnf install --nodocs -y \
 
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
+COPY LICENSE /licenses/LICENSE
+
 COPY knowledge_base_gpt/ ./knowledge_base_gpt
 
 # For RHEL/Centos 8+ scl_enable isn't sourced automatically in s2i-core
