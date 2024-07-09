@@ -1,6 +1,7 @@
 """ Create and abstract the embedding """
 from injector import inject, singleton
 from langchain_core.embeddings import Embeddings as LangChainEmbeddings
+from langchain_core.embeddings.fake import FakeEmbeddings
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
 
@@ -31,8 +32,8 @@ class Embedding():  # pylint:disable=R0903
                     repeat_last_n=ollama_settings.repeat_last_n,
                     repeat_penalty=ollama_settings.repeat_penalty,
                 )
-            case 'mock':
-                pass
+            case 'fake':
+                self._embeddings = FakeEmbeddings(size=128)
             case _:
                 pass
 
