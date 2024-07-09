@@ -48,7 +48,7 @@ class LLMSettings(BaseModel):
 
 class EmbeddingSettings(BaseModel):
     """ Embedding Settings """
-    mode: Literal["hugging_face", "ollama", "mock"] = Field(
+    mode: Literal["hugging_face", "ollama", "fake"] = Field(
         'hugging_face',
         description="LLM Backend to use for embedding"
     )
