@@ -29,8 +29,10 @@ class VectorStore():  # pylint:disable=R0903,C0415
                         anonymized_telemetry=False
                     )
                 )
-            case 'mock':
-                pass
+            case 'memory':
+                from langchain_community.vectorstores.inmemory import InMemoryVectorStore
+
+                self._db = InMemoryVectorStore(embedding=embedding.embeddings)
             case _:
                 pass
 

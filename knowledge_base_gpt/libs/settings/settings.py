@@ -252,7 +252,7 @@ class TextSpliterSettings(BaseModel):
 
 class VectorStoreSettings(BaseModel):
     """ Vector Store Settings """
-    mode: Literal['chroma', 'mock'] = Field(
+    mode: Literal['chroma', 'memory'] = Field(
         'chroma',
         description="Type of vector store"
     )
