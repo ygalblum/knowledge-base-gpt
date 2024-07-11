@@ -1,0 +1,92 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: slack-server-mock-settings
+data:
+  settings.yaml: |
+    slack_server:
+      channels_path: /server-settings/channels.json
+    actor: {}
+  channels.json: |
+    [
+      {
+        "id": "DEADBEEF",
+        "name": "forward-questions"
+      }
+    ]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slack-server-mock
+  labels:
+    app: slack-server-mock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slack-server-mock
+  template:
+    metadata:
+      labels:
+        app: slack-server-mock
+    spec:
+      containers:
+      - name: server
+        image: "quay.io/yblum/slack_server_mock:0.0.4"
+        volumeMounts:
+        - name: settings
+          mountPath: /server-settings
+        env:
+        - name: SLACK_MOCK_SERVER_SETTINGS_FOLDER
+          value: /server-settings
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+        ports:
+        - name: http
+          containerPort: 8888
+        - name: websocket
+          containerPort: 3001
+        - name: actor
+          containerPort: 8080
+      volumes:
+      - name: settings
+        configMap:
+          name: slack-server-mock-settings
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: slack-server-mock
+spec:
+  selector:
+    app: slack-server-mock
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8888
+    targetPort: http
+  - name: websocket
+    protocol: TCP
+    port: 3001
+    targetPort: websocket
+  - name: actor
+    protocol: TCP
+    port: 8080
+    targetPort: actor
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: slack-server-mock
+spec:
+  port:
+    targetPort: actor
+  to:
+    kind: Service
+    name: slack-server-mock
+    weight: 100
+  wildcardPolicy: None
