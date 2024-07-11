@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: slackbot-settings
+data:
+  settings.yaml: |
+    slackbot:
+      app_token: xapp-test
+      bot_token: xoxb-test
+      forward_channel: forward-questions
+      base_url: http://slack-server-mock:8888
+    llm:
+      mode: fake
+    ollama: {}
+    history: {}
+    redis: {}
+    log:
+      chat_log_enabled: false
+    content_loader: {}
+    google_drive: {}
+    text_splitter: {}
+    embedding:
+      mode: fake
+    hugging_face: {}
+    vectorstore:
+      mode: memory
+    fake_model:
+      response_path: /etc/knowledgebase/fake_responses.json
+    vllm: {}
+  fake_responses.json: |
+    [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: knowledgebase
+  labels:
+    app: knowledgebase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: knowledgebase
+  template:
+    metadata:
+      labels:
+        app: knowledgebase
+    spec:
+      containers:
+      - name: slackbot
+        image: ${KNOWLEDGE_BASE_GPT_IMAGE}
+        command:
+        - "python"
+        - "-m"
+        - "knowledge_base_gpt.apps.slackbot"
+        volumeMounts:
+        - mountPath: /etc/knowledgebase
+          name: knowledgebase-config
+        env:
+        - name: KNOWLEDGE_BASE_SETTINGS_FOLDER
+          value: /etc/knowledgebase
+        resources:
+          limits:
+            cpu: 1
+            memory: 1Gi
+      volumes:
+      - name: knowledgebase-config
+        configMap:
+          name: slackbot-settings

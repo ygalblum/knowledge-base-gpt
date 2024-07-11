@@ -1,0 +1,165 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: knowledge-base-gpt-simple-test
+spec:
+  params:
+  - description: 'Snapshot of the application'
+    name: SNAPSHOT
+    default: '{"components": [{"name":"knowledge-base-gpt", "containerImage": "quay.io/yblum/knowledge_base_gpt:latest", "source":{"git":{"url": "https://github.com/ygalblum/knowledge-base-gpt.git", "revision": "main"}}}]}'
+    type: string
+  workspaces:
+  - name: shared-workspace
+  tasks:
+  - name: read-snapshot
+    params:
+    - name: SNAPSHOT
+      value: "$(params.SNAPSHOT)"
+    taskSpec:
+      params:
+      - name: SNAPSHOT
+      results:
+      - name: git-url
+        description: URL of the GIT repository
+      - name: git-revision
+        description: GIT revision to use
+      - name: container-name
+        description: FQDN of the container image for the test
+      steps:
+      - name: store-container-image
+        image: quay.io/redhat-appstudio/konflux-test:stable
+        env:
+        - name: SNAPSHOT
+          value: "$(params.SNAPSHOT)"
+        - name: COMPONENT_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['appstudio.openshift.io/component']
+        script: |
+          #!/bin/bash
+          set -ex
+          COMPONENT_CONTAINER_IMAGE=$(jq -r --arg component_name "${COMPONENT_NAME}" '.components[] | select(.name == $component_name) | .containerImage' <<< "${SNAPSHOT}")
+          GIT_URL=$(jq -r --arg component_name "${COMPONENT_NAME}" '.components[] | select(.name == $component_name) | .source.git.url' <<< "${SNAPSHOT}")
+          GIT_REVISION=$(jq -r --arg component_name "${COMPONENT_NAME}" '.components[] | select(.name == $component_name) | .source.git.revision' <<< "${SNAPSHOT}")
+          echo -n "$COMPONENT_CONTAINER_IMAGE" > "$(results.container-name.path)"
+          echo -n "$GIT_URL" > "$(results.git-url.path)"
+          echo -n "$GIT_REVISION" > "$(results.git-revision.path)"
+
+  - name: clone-repo
+    runAfter:
+    - read-snapshot
+    taskRef:
+      resolver: hub
+      params:
+      - name: catalog
+        value: tekton-catalog-tasks
+      - name: type
+        value: artifact
+      - name: kind
+        value: task
+      - name: name
+        value: git-clone
+      - name: version
+        value: "0.9"
+    workspaces:
+    - name: output
+      workspace: shared-workspace
+    params:
+    - name: url
+      value: $(tasks.read-snapshot.results.git-url)
+    - name: revision
+      value: $(tasks.read-snapshot.results.git-revision)
+    - name: subdirectory
+      value: knowledge-base-gpt
+
+  - name: provision-env
+    runAfter:
+    - read-snapshot
+    taskRef:
+      resolver: git
+      params:
+      - name: url
+        value: https://github.com/ygalblum/knowledge-base-gpt
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: tests/sub-system/simple_test/tekton/provision-env-with-ephemeral-namespace.yaml
+    params:
+    - name: KONFLUXNAMESPACE
+      value: $(context.pipelineRun.namespace)
+    - name: PIPELINERUN_NAME
+      value: $(context.pipelineRun.name)
+    - name: PIPELINERUN_UID
+      value: $(context.pipelineRun.uid)
+
+  - name: setup-resources
+    runAfter:
+    - read-snapshot
+    - clone-repo
+    - provision-env
+    workspaces:
+    - name: output
+      workspace: shared-workspace
+    params:
+    - name: KNOWLEDGE_BASE_GPT_IMAGE
+      value: "$(tasks.read-snapshot.results.container-name)"
+    taskSpec:
+      params:
+      - name: KNOWLEDGE_BASE_GPT_IMAGE
+      workspaces:
+      - name: output
+      steps:
+      - name: setup-resources
+        image: quay.io/redhat-appstudio/konflux-test:stable
+        env:
+        - name: KNOWLEDGE_BASE_GPT_IMAGE
+          value: "$(params.KNOWLEDGE_BASE_GPT_IMAGE)"
+        - name: KUBECONFIG_VALUE
+          valueFrom:
+            secretKeyRef:
+              name: "$(tasks.provision-env.results.secretRef)"
+              key: kubeconfig
+        script: |
+          #!/bin/bash
+          set -ex
+          # Install envsubst
+          microdnf install -y gettext
+          # Store the kubeconfig into a file and use it
+          cat <<< "$KUBECONFIG_VALUE" > /tmp/kubeconfig
+          export KUBECONFIG=/tmp/kubeconfig
+          # Change to the resources directory
+          cd /workspace/output/knowledge-base-gpt/tests/sub-system/simple_test/resources
+          # Create the Slack Server Mock and wait for it
+          oc apply -f slack-server-mock.yml
+          oc wait --for=condition=available deployment slack-server-mock
+          # Create the Application using the image under test and wait for it
+          cat slackbot.yml | envsubst | kubectl apply -f -
+          oc wait --for=condition=available deployment knowledgebase
+          # Store the FQDN of the mock server
+          oc get route slack-server-mock -o jsonpath={.status.ingress[0].host} > /workspace/output/knowledge-base-gpt/slack_server_url
+
+  - name: run-test
+    runAfter:
+    - setup-resources
+    taskRef:
+      resolver: hub
+      params:
+      - name: catalog
+        value: tekton-catalog-tasks
+      - name: type
+        value: artifact
+      - name: kind
+        value: task
+      - name: name
+        value: pytest
+      - name: version
+        value: "0.2"
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    params:
+    - name: SOURCE_PATH
+      value: knowledge-base-gpt/tests/sub-system/simple_test
+    - name: REQUIREMENTS_FILE
+      value: knowledge-base-gpt/tests/sub-system/simple_test/requirements.txt
