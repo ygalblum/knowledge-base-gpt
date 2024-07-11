@@ -18,6 +18,10 @@ class SlackBotSettings(BaseModel):
     forward_channel: str = Field(
         description="Name of the channel to forward unresolved conversations to"
     )
+    base_url: str = Field(
+        "",
+        description="Base URL of the Slack server - used for testing"
+    )
 
 
 class LLMSettings(BaseModel):

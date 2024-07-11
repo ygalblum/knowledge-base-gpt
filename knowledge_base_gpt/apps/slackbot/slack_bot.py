@@ -1,8 +1,11 @@
 """ Slackbot application backend """
+from typing import Any
+
 from injector import inject, singleton
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.errors import SlackApiError
+from slack_sdk.web import WebClient
 
 from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.gpt.private_chat import PrivateChat
@@ -26,13 +29,27 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         history: History,
         application_logger: ApplicationLogger
     ) -> None:
+        # Store references to other singletons
         self._private_chat = private_chat
         self._history = history
         self._logger = application_logger.logger
-        self._handler = SocketModeHandler(App(token=settings.slackbot.bot_token), settings.slackbot.app_token)
+
+        # Create the socket mode handler
+        client_params: dict[str, Any] = {"token": settings.slackbot.bot_token}
+        # Override Base URL for testing against a mock server
+        if settings.slackbot.base_url:
+            client_params['base_url'] = settings.slackbot.base_url
+        self._handler = SocketModeHandler(
+            app=App(client=WebClient(**client_params)),
+            app_token=settings.slackbot.app_token
+        )
+
+        # Handle forward channel
         self._forward_question_channel_name = settings.slackbot.forward_channel
         self._forward_question_channel_id = self._get_forward_question_channel_id()
         self._handler.app.client.conversations_join(channel=self._forward_question_channel_id)
+
+        # Register message and command handlers
         self._handler.app.message()(self._got_message)
         self._handler.app.command('/conversation_reset')(self._reset_conversation)
         self._handler.app.command('/conversation_forward')(self._forward_question)
