@@ -9,7 +9,10 @@ $(error "Neither docker nor podman are available in PATH")
 endif
 endif
 
-IMG_TAG ?= latest
+LATEST_TAG := $(shell git describe --tags `git rev-list --tags --max-count=1`)
+SHORT_HASH := $(shell git rev-parse --short HEAD)
+
+IMG_TAG ?= ${LATEST_TAG}-${SHORT_HASH}
 IMG ?= quay.io/yblum/knowledge_base_gpt:${IMG_TAG}
 
 .PHONY: image-build
