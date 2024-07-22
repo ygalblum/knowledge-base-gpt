@@ -203,6 +203,32 @@ class LogSettings(BaseModel):
         description="Number of rotated chat log files to keep"
     )
 
+    application_log_level: str = Field(
+        "INFO",
+        description="Application logs debug level"
+    )
+
+    application_log_path: str = Field(
+        "",
+        description="Path to store the application logs. When not set, log to stdout"
+    )
+
+    application_log_max_bytes: int = Field(
+        1024 * 1024,
+        description=(
+            "Maximal size of the application log file before rotation. "
+            "Relevant only if application_log_path is set."
+        )
+    )
+
+    application_log_backup_count: int = Field(
+        3,
+        description=(
+            "Number of rotated application log files to keep. "
+            "Relevant only if application_log_path is set."
+        )
+    )
+
 
 class ContentLoaderSettings(BaseModel):
     """ Content Loader Settings """
