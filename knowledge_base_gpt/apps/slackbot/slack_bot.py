@@ -7,6 +7,7 @@ from slack_sdk.errors import SlackApiError
 from knowledge_base_gpt.libs.settings.settings import Settings
 from knowledge_base_gpt.libs.gpt.private_chat import PrivateChat
 from knowledge_base_gpt.libs.history.history import History
+from knowledge_base_gpt.libs.logs.logger import ApplicationLogger
 
 
 class KnowledgeBaseSlackBotException(Exception):
@@ -18,9 +19,16 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
     """ Slackbot application backend """
 
     @inject
-    def __init__(self, settings: Settings, private_chat: PrivateChat, history: History) -> None:
+    def __init__(
+        self,
+        settings: Settings,
+        private_chat: PrivateChat,
+        history: History,
+        application_logger: ApplicationLogger
+    ) -> None:
         self._private_chat = private_chat
         self._history = history
+        self._logger = application_logger.logger
         self._handler = SocketModeHandler(App(token=settings.slackbot.bot_token), settings.slackbot.app_token)
         self._forward_question_channel_name = settings.slackbot.forward_channel
         self._forward_question_channel_id = self._get_forward_question_channel_id()
@@ -31,6 +39,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
 
     def run(self):
         """ Start the Slackbot backend application """
+        self._logger.info("Connecting to the Slack Server")
         self._handler.start()
 
     def _get_forward_question_channel_id(self):
@@ -46,6 +55,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         raise KnowledgeBaseSlackBotException(f"The channel {self._forward_question_channel_name} does not exits")
 
     def _got_message(self, message, say):
+        self._logger.debug("Got a new message")
         self._handler.app.client.chat_postEphemeral(
             channel=message['channel'],
             user=message['user'],
@@ -58,7 +68,8 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
                 message['text'],
                 chat_identifier=session_id
             )
-        except:  # pylint:disable=W0702
+        except Exception as e:  # pylint:disable=W0718
+            self._logger.error("Failed to answer the query", e)
             self._handler.app.client.chat_postEphemeral(
                 channel=message['channel'],
                 user=message['user'],
@@ -83,6 +94,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         if not self._is_direct_message_channel(command):
             return
 
+        self._logger.debug("Resetting the conversation")
         self._history.history.reset(self._history.history.get_chat_identifier(command['user_id']))
 
         self._handler.app.client.chat_postEphemeral(
@@ -109,6 +121,8 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         if len(messages) == 0:
             msg = 'There is no active conversation'
         else:
+            # Do not log the channel name
+            self._logger.debug("Forwarding the conversion to the predefined channel")
             self._handler.app.client.chat_postMessage(
                 channel=self._forward_question_channel_id,
                 text=self._messages_to_text(messages)

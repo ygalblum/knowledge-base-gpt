@@ -57,7 +57,7 @@ class OllamaCallbackHandler(BaseCallbackHandler):
     def __repr__(self) -> str:
         ret_str = ""
         for i, metric in enumerate(self.metrics):
-            ret_str += f"Request #{i+1}:\n" + metric.__repr__() + "\n"
+            ret_str += f"Request #{i + 1}:\n" + metric.__repr__() + "\n"
         return ret_str
 
     @property
