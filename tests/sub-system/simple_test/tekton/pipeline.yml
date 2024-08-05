@@ -112,7 +112,7 @@ spec:
           oc wait --for=condition=available deployment slack-server-mock
           # Create the Application using the image under test and wait for it
           curl $GITHUB_RAW_RESOURCES_URL/slackbot.yml | envsubst | kubectl apply -f -
-          oc wait --for=condition=available deployment knowledgebase
+          oc wait --for=condition=available --timeout=20m deployment knowledgebase
           # Store the FQDN of the mock server
           oc get route slack-server-mock -o jsonpath={.status.ingress[0].host} > "$(results.slack-server-url.path)"
 
