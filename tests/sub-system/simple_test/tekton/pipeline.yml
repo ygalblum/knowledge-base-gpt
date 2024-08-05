@@ -9,8 +9,6 @@ spec:
     name: SNAPSHOT
     default: '{"components": [{"name":"knowledge-base-gpt", "containerImage": "quay.io/yblum/knowledge_base_gpt:latest", "source":{"git":{"url": "https://github.com/ygalblum/knowledge-base-gpt.git", "revision": "main"}}}]}'
     type: string
-  workspaces:
-  - name: shared-workspace
   tasks:
   - name: read-snapshot
     params:
@@ -46,33 +44,6 @@ spec:
           echo -n "$GIT_URL" > "$(results.git-url.path)"
           echo -n "$GIT_REVISION" > "$(results.git-revision.path)"
 
-  - name: clone-repo
-    runAfter:
-    - read-snapshot
-    taskRef:
-      resolver: hub
-      params:
-      - name: catalog
-        value: tekton-catalog-tasks
-      - name: type
-        value: artifact
-      - name: kind
-        value: task
-      - name: name
-        value: git-clone
-      - name: version
-        value: "0.9"
-    workspaces:
-    - name: output
-      workspace: shared-workspace
-    params:
-    - name: url
-      value: $(tasks.read-snapshot.results.git-url)
-    - name: revision
-      value: $(tasks.read-snapshot.results.git-revision)
-    - name: subdirectory
-      value: knowledge-base-gpt
-
   - name: provision-env
     runAfter:
     - read-snapshot
@@ -96,25 +67,31 @@ spec:
   - name: setup-resources
     runAfter:
     - read-snapshot
-    - clone-repo
     - provision-env
-    workspaces:
-    - name: output
-      workspace: shared-workspace
     params:
     - name: KNOWLEDGE_BASE_GPT_IMAGE
       value: "$(tasks.read-snapshot.results.container-name)"
+    - name: GIT_URL
+      value: "$(tasks.read-snapshot.results.git-url)"
+    - name: GIT_REVISION
+      value: "$(tasks.read-snapshot.results.git-revision)"
     taskSpec:
       params:
       - name: KNOWLEDGE_BASE_GPT_IMAGE
-      workspaces:
-      - name: output
+      - name: GIT_URL
+      - name: GIT_REVISION
+      results:
+        - name: slack-server-url
       steps:
       - name: setup-resources
         image: quay.io/redhat-appstudio/konflux-test:stable
         env:
         - name: KNOWLEDGE_BASE_GPT_IMAGE
           value: "$(params.KNOWLEDGE_BASE_GPT_IMAGE)"
+        - name: GIT_URL
+          value: "$(params.GIT_URL)"
+        - name: GIT_REVISION
+          value: "$(params.GIT_REVISION)"
         - name: KUBECONFIG_VALUE
           valueFrom:
             secretKeyRef:
@@ -128,38 +105,54 @@ spec:
           # Store the kubeconfig into a file and use it
           cat <<< "$KUBECONFIG_VALUE" > /tmp/kubeconfig
           export KUBECONFIG=/tmp/kubeconfig
-          # Change to the resources directory
-          cd /workspace/output/knowledge-base-gpt/tests/sub-system/simple_test/resources
+          # Calcualte base URL
+          GITHUB_RAW_RESOURCES_URL=$(echo -n $GIT_URL | awk -v revision="$GIT_REVISION" -v path="tests/sub-system/simple_test/resources" '{ gsub("https://github.com/", "https://raw.githubusercontent.com/"); gsub(".git$", ""); print $0 "/" revision "/" path}')
           # Create the Slack Server Mock and wait for it
-          oc apply -f slack-server-mock.yml
+          oc apply -f $GITHUB_RAW_RESOURCES_URL/slack-server-mock.yml
           oc wait --for=condition=available deployment slack-server-mock
           # Create the Application using the image under test and wait for it
-          cat slackbot.yml | envsubst | kubectl apply -f -
+          curl $GITHUB_RAW_RESOURCES_URL/slackbot.yml | envsubst | kubectl apply -f -
           oc wait --for=condition=available deployment knowledgebase
           # Store the FQDN of the mock server
-          oc get route slack-server-mock -o jsonpath={.status.ingress[0].host} > /workspace/output/knowledge-base-gpt/slack_server_url
+          oc get route slack-server-mock -o jsonpath={.status.ingress[0].host} > "$(results.slack-server-url.path)"
 
-  - name: run-test
+  - name: tests
     runAfter:
     - setup-resources
-    taskRef:
-      resolver: hub
-      params:
-      - name: catalog
-        value: tekton-catalog-tasks
-      - name: type
-        value: artifact
-      - name: kind
-        value: task
-      - name: name
-        value: pytest
-      - name: version
-        value: "0.2"
-    workspaces:
-    - name: source
-      workspace: shared-workspace
     params:
-    - name: SOURCE_PATH
-      value: knowledge-base-gpt/tests/sub-system/simple_test
-    - name: REQUIREMENTS_FILE
-      value: knowledge-base-gpt/tests/sub-system/simple_test/requirements.txt
+    - name: GIT_URL
+      value: "$(tasks.read-snapshot.results.git-url)"
+    - name: GIT_REVISION
+      value: "$(tasks.read-snapshot.results.git-revision)"
+    - name: SLACK_SERVER_URL
+      value: "$(tasks.setup-resources.results.slack-server-url)"
+    taskSpec:
+      params:
+      - name: GIT_URL
+      - name: GIT_REVISION
+      - name: SLACK_SERVER_URL
+      steps:
+      - name: clone-repo
+        image: docker.io/alpine/git:latest
+        env:
+        - name: GIT_URL
+          value: "$(params.GIT_URL)"
+        - name: GIT_REVISION
+          value: "$(params.GIT_REVISION)"
+        script: |
+          git clone "$GIT_URL" /workspace
+          cd /workspace
+          git checkout "$GIT_REVISION"
+      - name: store-slack-server-url
+        image: quay.io/redhat-appstudio/konflux-test:stable
+        env:
+        - name: SLACK_SERVER_URL
+          value: "$(params.SLACK_SERVER_URL)"
+        script: |
+          echo -n "$SLACK_SERVER_URL" > /workspace/slack_server_url
+      - name: run-tests
+        image: docker.io/python:3.11.1-bullseye
+        script: |
+          pip install -r /workspace/tests/sub-system/simple_test/requirements.txt
+          pip install pytest
+          pytest /workspace/tests/sub-system/simple_test
