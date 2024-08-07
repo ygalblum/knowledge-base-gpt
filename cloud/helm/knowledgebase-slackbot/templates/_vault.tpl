@@ -188,29 +188,29 @@ Vault Template for Fluent-Bit ConfigMap Name
 Vault Template for Fluent-Bit Configuration file
 */}}
 {{- define "knowledgebase-slackbot.vault-template-fluent-bit" -}}
+[SERVICE]
+  Flush 1
+
+[INPUT]
+  Name tail
+  Path /logs/slackbot_chat_log.log
+  multiline.parser    go, python, java
+  skip_empty_lines    On
+  refresh_interval    5
+  Tag chatlog
+
+[OUTPUT]
+  name splunk
+  match chatlog
+  port 8088
+  tls on
+  tls.verify off
+  event_sourcetype {{ required "splunk.sourceType must be set" .Values.splunk.sourceType }}
+  event_key $log
 {{`
-  {{- with secret "apps/cloud-marketplace-chatbot-admin/splunk" }}
-  [SERVICE]
-    Flush              1
-
-  [INPUT]
-    Name tail
-    Path /logs/slackbot_chat_log.log
-    multiline.parser    go, python, java
-    skip_empty_lines    On
-    refresh_interval    5
-    Tag chatlog
-
-  [OUTPUT]
-    name splunk
-    match chatlog
-    host {{ .Data.data.host }}
-    port 8088
-    tls on
-    TLS.Debug           Off
-    tls.verify off
-    splunk_token {{ .Data.data.token }}
-    event_key           $log
-    {{ end }}
+{{- with secret "apps/cloud-marketplace-chatbot-admin/splunk" }}
+  host {{ .Data.data.host }}
+  splunk_token {{ .Data.data.token }}
+{{ end }}
 `}}
 {{- end }}
