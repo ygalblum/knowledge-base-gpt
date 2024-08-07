@@ -85,6 +85,9 @@ vllm:
     size: 50Gi
   model: instructlab/granite-7b-lab
 
+splunk:
+  sourceType: ""
+
 redis:
   architecture: standalone
   master:

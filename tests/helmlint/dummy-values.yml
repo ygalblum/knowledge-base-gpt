@@ -1,2 +1,4 @@
 vaultServerConfigMap: "dummy-vault-server-details"
 vaultCredentialsSecret: "dummy-vault-server-credentials"
+splunk:
+  sourceType: test
