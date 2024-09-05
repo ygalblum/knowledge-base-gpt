@@ -1,5 +1,5 @@
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: knowledge-base-gpt-simple-test
@@ -10,79 +10,125 @@ spec:
     default: '{"components": [{"name":"knowledge-base-gpt", "containerImage": "quay.io/yblum/knowledge_base_gpt:latest", "source":{"git":{"url": "https://github.com/ygalblum/knowledge-base-gpt.git", "revision": "main"}}}]}'
     type: string
   tasks:
-  - name: read-snapshot
-    params:
-    - name: SNAPSHOT
-      value: "$(params.SNAPSHOT)"
-    taskSpec:
-      params:
-      - name: SNAPSHOT
-      results:
-      - name: git-url
-        description: URL of the GIT repository
-      - name: git-revision
-        description: GIT revision to use
-      - name: container-name
-        description: FQDN of the container image for the test
-      steps:
-      - name: store-container-image
-        image: quay.io/redhat-appstudio/konflux-test:stable
-        env:
-        - name: SNAPSHOT
-          value: "$(params.SNAPSHOT)"
-        - name: COMPONENT_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['appstudio.openshift.io/component']
-        script: |
-          #!/bin/bash
-          set -ex
-          COMPONENT_CONTAINER_IMAGE=$(jq -r --arg component_name "${COMPONENT_NAME}" '.components[] | select(.name == $component_name) | .containerImage' <<< "${SNAPSHOT}")
-          GIT_URL=$(jq -r --arg component_name "${COMPONENT_NAME}" '.components[] | select(.name == $component_name) | .source.git.url' <<< "${SNAPSHOT}")
-          GIT_REVISION=$(jq -r --arg component_name "${COMPONENT_NAME}" '.components[] | select(.name == $component_name) | .source.git.revision' <<< "${SNAPSHOT}")
-          echo -n "$COMPONENT_CONTAINER_IMAGE" > "$(results.container-name.path)"
-          echo -n "$GIT_URL" > "$(results.git-url.path)"
-          echo -n "$GIT_REVISION" > "$(results.git-revision.path)"
-
-  - name: provision-env
-    runAfter:
-    - read-snapshot
+  - name: parse-metadata
     taskRef:
       resolver: git
       params:
       - name: url
-        value: https://github.com/ygalblum/knowledge-base-gpt
+        value: https://github.com/konflux-ci/integration-examples
       - name: revision
         value: main
       - name: pathInRepo
-        value: tests/sub-system/simple_test/tekton/provision-env-with-ephemeral-namespace.yaml
+        value: tasks/test_metadata.yaml
     params:
-    - name: KONFLUXNAMESPACE
-      value: $(context.pipelineRun.namespace)
-    - name: PIPELINERUN_NAME
+    - name: SNAPSHOT
+      value: $(params.SNAPSHOT)
+
+  - name: provision-eaas-space
+    taskRef:
+      resolver: git
+      params:
+      - name: url
+        value: https://github.com/konflux-ci/build-definitions.git
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: task/eaas-provision-space/0.1/eaas-provision-space.yaml
+    params:
+    - name: ownerName
       value: $(context.pipelineRun.name)
-    - name: PIPELINERUN_UID
+    - name: ownerUid
       value: $(context.pipelineRun.uid)
+
+  - name: provision-cluster
+    runAfter:
+    - provision-eaas-space
+    taskSpec:
+      results:
+      - name: clusterName
+        value: "$(steps.create-cluster.results.clusterName)"
+      steps:
+      - name: get-supported-versions
+        ref:
+          resolver: git
+          params:
+          - name: url
+            value: https://github.com/konflux-ci/build-definitions.git
+          - name: revision
+            value: main
+          - name: pathInRepo
+            value: stepactions/eaas-get-supported-ephemeral-cluster-versions/0.1/eaas-get-supported-ephemeral-cluster-versions.yaml
+        params:
+        - name: eaasSpaceSecretRef
+          value: $(tasks.provision-eaas-space.results.secretRef)
+      - name: pick-version
+        ref:
+          resolver: git
+          params:
+          - name: url
+            value: https://github.com/konflux-ci/build-definitions.git
+          - name: revision
+            value: main
+          - name: pathInRepo
+            value: stepactions/eaas-get-latest-openshift-version-by-prefix/0.1/eaas-get-latest-openshift-version-by-prefix.yaml
+        params:
+        - name: prefix
+          value: "$(steps.get-supported-versions.results.versions[0])."
+      - name: create-cluster
+        ref:
+          resolver: git
+          params:
+          - name: url
+            value: https://github.com/konflux-ci/build-definitions.git
+          - name: revision
+            value: main
+          - name: pathInRepo
+            value: stepactions/eaas-create-ephemeral-cluster-hypershift-aws/0.1/eaas-create-ephemeral-cluster-hypershift-aws.yaml
+        params:
+        - name: eaasSpaceSecretRef
+          value: $(tasks.provision-eaas-space.results.secretRef)
+        - name: version
+          value: "$(steps.pick-version.results.version)"
 
   - name: setup-resources
     runAfter:
-    - read-snapshot
-    - provision-env
+    - parse-metadata
+    - provision-cluster
     params:
     - name: KNOWLEDGE_BASE_GPT_IMAGE
-      value: "$(tasks.read-snapshot.results.container-name)"
+      value: "$(tasks.parse-metadata.results.component-container-image)"
     - name: GIT_URL
-      value: "$(tasks.read-snapshot.results.git-url)"
+      value: "$(tasks.parse-metadata.results.source-git-url)"
     - name: GIT_REVISION
-      value: "$(tasks.read-snapshot.results.git-revision)"
+      value: "$(tasks.parse-metadata.results.source-git-revision)"
     taskSpec:
       params:
       - name: KNOWLEDGE_BASE_GPT_IMAGE
       - name: GIT_URL
       - name: GIT_REVISION
+      volumes:
+      - name: credentials
+        emptyDir: {}
       results:
         - name: slack-server-url
       steps:
+      - name: get-kubeconfig
+        ref:
+          resolver: git
+          params:
+            - name: url
+              value: https://github.com/konflux-ci/build-definitions.git
+            - name: revision
+              value: main
+            - name: pathInRepo
+              value: stepactions/eaas-get-ephemeral-cluster-credentials/0.1/eaas-get-ephemeral-cluster-credentials.yaml
+        params:
+          - name: eaasSpaceSecretRef
+            value: $(tasks.provision-eaas-space.results.secretRef)
+          - name: clusterName
+            value: "$(tasks.provision-cluster.results.clusterName)"
+          - name: credentials
+            value: credentials
       - name: setup-resources
         image: quay.io/redhat-appstudio/konflux-test:stable
         env:
@@ -92,19 +138,13 @@ spec:
           value: "$(params.GIT_URL)"
         - name: GIT_REVISION
           value: "$(params.GIT_REVISION)"
-        - name: KUBECONFIG_VALUE
-          valueFrom:
-            secretKeyRef:
-              name: "$(tasks.provision-env.results.secretRef)"
-              key: kubeconfig
+        - name: KUBECONFIG
+          value: "/credentials/$(steps.get-kubeconfig.results.kubeconfig)"
         script: |
           #!/bin/bash
           set -ex
           # Install envsubst
           microdnf install -y gettext
-          # Store the kubeconfig into a file and use it
-          cat <<< "$KUBECONFIG_VALUE" > /tmp/kubeconfig
-          export KUBECONFIG=/tmp/kubeconfig
           # Calcualte base URL
           GITHUB_RAW_RESOURCES_URL=$(echo -n $GIT_URL | awk -v revision="$GIT_REVISION" -v path="tests/sub-system/simple_test/resources" '{ gsub("https://github.com/", "https://raw.githubusercontent.com/"); gsub(".git$", ""); print $0 "/" revision "/" path}')
           # Create the Slack Server Mock and wait for it
@@ -121,9 +161,9 @@ spec:
     - setup-resources
     params:
     - name: GIT_URL
-      value: "$(tasks.read-snapshot.results.git-url)"
+      value: "$(tasks.parse-metadata.results.source-git-url)"
     - name: GIT_REVISION
-      value: "$(tasks.read-snapshot.results.git-revision)"
+      value: "$(tasks.parse-metadata.results.source-git-revision)"
     - name: SLACK_SERVER_URL
       value: "$(tasks.setup-resources.results.slack-server-url)"
     taskSpec:
