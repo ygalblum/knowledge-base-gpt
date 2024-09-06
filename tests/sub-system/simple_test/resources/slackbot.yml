@@ -72,8 +72,8 @@ spec:
           value: /etc/knowledgebase
         resources:
           limits:
-            cpu: 1
-            memory: 1Gi
+            cpu: 500m
+            memory: 512Mi
       volumes:
       - name: knowledgebase-config
         configMap:

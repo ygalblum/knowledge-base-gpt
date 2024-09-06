@@ -89,6 +89,8 @@ spec:
           value: $(tasks.provision-eaas-space.results.secretRef)
         - name: version
           value: "$(steps.pick-version.results.version)"
+        - name: instanceType
+          value: m5.large
 
   - name: setup-resources
     runAfter:
@@ -145,17 +147,35 @@ spec:
           mountPath: /credentials
         script: |
           #!/bin/bash
-          set -ex
+          set -x
+          moreInfo() {
+            local label=$1
+            echo "Getting more information"
+            oc describe deployment -l $label
+            oc describe replicasets.apps -l $label
+            oc describe pods -l $label
+            oc logs -l $label
+          }
           # Install envsubst
           microdnf install -y gettext
           # Calcualte base URL
           GITHUB_RAW_RESOURCES_URL=$(echo -n $GIT_URL | awk -v revision="$GIT_REVISION" -v path="tests/sub-system/simple_test/resources" '{ gsub("https://github.com/", "https://raw.githubusercontent.com/"); gsub(".git$", ""); print $0 "/" revision "/" path}')
           # Create the Slack Server Mock and wait for it
           oc apply -f $GITHUB_RAW_RESOURCES_URL/slack-server-mock.yml
-          oc wait --for=condition=available deployment slack-server-mock
+          oc wait --for=condition=available --timeout=1m deployment slack-server-mock
+          ret=$?
+          if [ $ret -ne 0 ]; then
+            moreInfo app=slack-server-mock
+            exit $ret
+          fi
           # Create the Application using the image under test and wait for it
           curl $GITHUB_RAW_RESOURCES_URL/slackbot.yml | envsubst | kubectl apply -f -
           oc wait --for=condition=available --timeout=20m deployment knowledgebase
+          ret=$?
+          if [ $ret -ne 0 ]; then
+            moreInfo app=knowledgebase
+            exit $ret
+          fi
           # Store the FQDN of the mock server
           oc get route slack-server-mock -o jsonpath={.status.ingress[0].host} > "$(results.slack-server-url.path)"
 
