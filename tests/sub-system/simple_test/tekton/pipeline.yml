@@ -140,6 +140,9 @@ spec:
           value: "$(params.GIT_REVISION)"
         - name: KUBECONFIG
           value: "/credentials/$(steps.get-kubeconfig.results.kubeconfig)"
+        volumeMounts:
+        - name: credentials
+          mountPath: /credentials
         script: |
           #!/bin/bash
           set -ex
