@@ -25,6 +25,15 @@ spec:
     value: quay.io/redhat-user-workloads/yblum-tenant/cloud-marketplace-chatbot/knowledge-base-gpt:{{revision}}
   - name: dockerfile
     value: Containerfile
+  taskRunSpecs:
+  - pipelineTaskName: ecosystem-cert-preflight-checks
+    stepSpecs:
+    - name: check-container
+      computeResources:
+        requests:
+          memory: 4Gi
+        limits:
+          memory: 4Gi
   pipelineSpec:
     finally:
     - name: show-sbom
