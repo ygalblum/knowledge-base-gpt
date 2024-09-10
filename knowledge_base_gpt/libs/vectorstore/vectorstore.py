@@ -14,8 +14,10 @@ class VectorStore():  # pylint:disable=R0903,C0415
         match mode:
             case 'chroma':
                 # Override the sqlite3 module with pysqlite3 which used a newer version of SQLite
-                import sys
-                sys.modules['sqlite3'] = __import__('pysqlite3')
+                import os
+                if os.environ.get("PYSQLITE3_BINARY") is not None:
+                    import sys
+                    sys.modules['sqlite3'] = __import__('pysqlite3')
 
                 from chromadb.config import Settings as ChromaSettings
                 from langchain_community.vectorstores.chroma import Chroma
