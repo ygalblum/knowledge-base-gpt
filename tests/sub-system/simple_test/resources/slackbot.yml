@@ -27,6 +27,7 @@ data:
     fake_model:
       response_path: /etc/knowledgebase/fake_responses.json
     vllm: {}
+    infinity: {}
   fake_responses.json: |
     [
       "0",

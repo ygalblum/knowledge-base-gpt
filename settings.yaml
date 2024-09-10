@@ -32,6 +32,9 @@ embedding:
 hugging_face:
   embedding_model: $EMBEDDINGS_MODEL_NAME|all-MiniLM-L6-v2
 
+infinity:
+  embedding_model: $EMBEDDINGS_MODEL_NAME|sentence-transformers/all-MiniLM-L6-v2
+
 vectorstore: {}
 
 fake_model: {}
