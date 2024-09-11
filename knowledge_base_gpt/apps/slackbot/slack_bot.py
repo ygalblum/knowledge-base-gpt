@@ -5,6 +5,7 @@ from injector import inject, singleton
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.errors import SlackApiError
+from slack_sdk.http_retry.builtin_handlers import RateLimitErrorRetryHandler
 from slack_sdk.web import WebClient
 
 from knowledge_base_gpt.libs.settings.settings import Settings
@@ -39,8 +40,13 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         # Override Base URL for testing against a mock server
         if settings.slackbot.base_url:
             client_params['base_url'] = settings.slackbot.base_url
+        client = WebClient(**client_params)
+
+        # Add the RateLimit Error Retry Handler
+        client.retry_handlers.append(RateLimitErrorRetryHandler(max_retry_count=5))
+
         self._handler = SocketModeHandler(
-            app=App(client=WebClient(**client_params)),
+            app=App(client=client),
             app_token=settings.slackbot.app_token
         )
 
