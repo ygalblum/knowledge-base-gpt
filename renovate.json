@@ -14,6 +14,10 @@
         "minor",
         "patch"
       ]
+    },
+    {
+      "matchPackageNames": ["protobuf"],
+      "allowedVersions": "3.20.*"
     }
   ],
   "commitBody": "Signed-off-by: {{{gitAuthor}}}"
