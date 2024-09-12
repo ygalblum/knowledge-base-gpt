@@ -52,7 +52,7 @@ class LLMSettings(BaseModel):
 
 class EmbeddingSettings(BaseModel):
     """ Embedding Settings """
-    mode: Literal["hugging_face", "ollama", "fake"] = Field(
+    mode: Literal["hugging_face", "ollama", "infinity", "fake"] = Field(
         'hugging_face',
         description="LLM Backend to use for embedding"
     )
@@ -147,6 +147,18 @@ class VLLMSettings(BaseModel):
 
 class HuggingFaceSettings(BaseModel):
     """ Hugging Face Settings """
+    embedding_model: str = Field(
+        None,
+        description="Model to use. Example: 'nomic-embed-text'.",
+    )
+
+
+class InfinitySettings(BaseModel):
+    """ Infinity Settings """
+    api_url: str = Field(
+        "http://localhost:7997",
+        description="Base URL of Infinity API. Example: 'https://localhost:7997'.",
+    )
     embedding_model: str = Field(
         None,
         description="Model to use. Example: 'nomic-embed-text'.",
@@ -279,6 +291,7 @@ class Settings(BaseModel):
     text_splitter: TextSpliterSettings
     embedding: EmbeddingSettings
     hugging_face: HuggingFaceSettings
+    infinity: InfinitySettings
     vectorstore: VectorStoreSettings
     fake_model: FakeModelSettings
     vllm: VLLMSettings

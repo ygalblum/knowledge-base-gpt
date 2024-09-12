@@ -43,7 +43,7 @@ spec:
           value: /server-settings
         resources:
           limits:
-            cpu: 500m
+            cpu: 250m
             memory: 128Mi
         ports:
         - name: http

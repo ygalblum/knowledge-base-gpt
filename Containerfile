@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/ubi:9.4-1181 as builder
+FROM registry.access.redhat.com/ubi9/ubi:9.4-1214.1725849297 as builder
 
 RUN dnf install --nodocs -y \
         python3.11 \
@@ -25,9 +25,9 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 RUN touch README.md
 
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
+RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --extras=pysql-b
 
-FROM registry.access.redhat.com/ubi9/ubi:9.4-1181 as runtime
+FROM registry.access.redhat.com/ubi9/ubi:9.4-1214.1725849297 as runtime
 
 WORKDIR /app
 
@@ -52,5 +52,7 @@ ENV BASH_ENV="${VIRTUAL_ENV}/bin/activate" \
     PROMPT_COMMAND=". ${VIRTUAL_ENV}/bin/activate"
 
 USER 1001
+
+ENV PYSQLITE3_BINARY=1
 
 ENTRYPOINT ["python", "-m", "knowledge_base_gpt.apps.slackbot"]
