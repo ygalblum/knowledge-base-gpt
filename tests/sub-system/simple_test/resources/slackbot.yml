@@ -9,6 +9,7 @@ data:
       bot_token: xoxb-test
       forward_channel: forward-questions
       base_url: http://slack-server-mock:8888
+      command_strings: {}
     llm:
       mode: fake
     ollama: {}

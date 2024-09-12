@@ -57,8 +57,14 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
 
         # Register message and command handlers
         self._handler.app.message()(self._got_message)
-        self._handler.app.command('/conversation_reset')(self._reset_conversation)
-        self._handler.app.command('/conversation_forward')(self._forward_question)
+
+        cmd_string = f'/{settings.slackbot.command_strings.reset}'
+        self._logger.info("Registering to %s as reset command", cmd_string)
+        self._handler.app.command(cmd_string)(self._reset_conversation)
+
+        cmd_string = f'/{settings.slackbot.command_strings.forward}'
+        self._logger.info("Registering to %s as forward command", cmd_string)
+        self._handler.app.command(cmd_string)(self._forward_question)
 
     def run(self):
         """ Start the Slackbot backend application """
