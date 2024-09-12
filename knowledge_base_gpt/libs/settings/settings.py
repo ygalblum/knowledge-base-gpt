@@ -7,6 +7,18 @@ from pydantic import BaseModel, Field
 from knowledge_base_gpt.libs.settings.settings_loader import load_active_settings
 
 
+class SlackBotCommandStrings(BaseModel):
+    """ Override strings used for Slack commands """
+    reset: str = Field(
+        "conversation_reset",
+        description="Slack command to reset the current conversation"
+    )
+    forward: str = Field(
+        "conversation_forward",
+        description="Slack command to forward the current conversation to the forward channel"
+    )
+
+
 class SlackBotSettings(BaseModel):
     """ Slackbot Settings """
     app_token: str = Field(
@@ -22,6 +34,7 @@ class SlackBotSettings(BaseModel):
         "",
         description="Base URL of the Slack server - used for testing"
     )
+    command_strings: SlackBotCommandStrings
 
 
 class LLMSettings(BaseModel):
