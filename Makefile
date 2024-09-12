@@ -15,10 +15,13 @@ SHORT_HASH := $(shell git rev-parse --short HEAD)
 IMG_TAG ?= ${LATEST_TAG}-${SHORT_HASH}
 IMG ?= quay.io/yblum/knowledge_base_gpt:${IMG_TAG}
 
+# By default build for Linux on x86_64
+PLATFORM ?= linux/amd64
+
 .PHONY: image-build
 image-build: ## Build the container image.
-	$(CONTAINER_RUNTIME) build -t ${IMG} .
+	$(CONTAINER_RUNTIME) image build --platform ${PLATFORM} -t ${IMG} .
 
 .PHONY: image-push
 image-push: ## Push the container image.
-	$(CONTAINER_RUNTIME) push ${IMG}
+	$(CONTAINER_RUNTIME) image push ${IMG}
