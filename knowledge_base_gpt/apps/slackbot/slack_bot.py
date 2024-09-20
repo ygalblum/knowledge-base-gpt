@@ -133,8 +133,8 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
         )
 
     @staticmethod
-    def _messages_to_text(messages):
-        text = ''
+    def _format_forward_message(command, messages):
+        text = f"<@{command['user_name']}> asked me the following and I could not find an answer:\n"
         for message in messages:
             text += "Question: " if message.type == 'human' else "Answer: "
             text += message.content
@@ -154,7 +154,7 @@ class KnowledgeBaseSlackBot():  # pylint:disable=R0903
             self._logger.debug("Forwarding the conversion to the predefined channel")
             self._handler.app.client.chat_postMessage(
                 channel=self._forward_question_channel_id,
-                text=self._messages_to_text(messages)
+                text=self._format_forward_message(command, messages)
             )
             msg = f'The conversation was forwarded to {self._forward_question_channel_name}'
 
