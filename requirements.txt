@@ -12,5 +12,5 @@ envyaml==1.10.211231
 sentence-transformers==3.1.0
 langchain-openai==0.1.23
 langchain-huggingface==0.0.3
-langchain-google-community==1.0.8
+langchain-google-community==2.0.1
 pysqlite3-binary==0.5.3.post1
