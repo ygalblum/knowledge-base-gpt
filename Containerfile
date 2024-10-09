@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/ubi:9.4-1214.1725849297 as builder
+FROM registry.access.redhat.com/ubi9/ubi:9.4-1214.1726694543 as builder
 
 RUN dnf install --nodocs -y \
         python3.11 \
@@ -27,7 +27,7 @@ RUN touch README.md
 
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --extras=pysql-b
 
-FROM registry.access.redhat.com/ubi9/ubi:9.4-1214.1725849297 as runtime
+FROM registry.access.redhat.com/ubi9/ubi:9.4-1214.1726694543 as runtime
 
 WORKDIR /app
 
