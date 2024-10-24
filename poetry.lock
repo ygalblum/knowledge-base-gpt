@@ -1468,18 +1468,18 @@ adal = ["adal (>=1.0.2)"]
 
 [[package]]
 name = "langchain"
-version = "0.3.3"
+version = "0.3.4"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "langchain-0.3.3-py3-none-any.whl", hash = "sha256:05ac98c674853c2386d043172820e37ceac9b913aaaf1e51217f0fc424112c72"},
-    {file = "langchain-0.3.3.tar.gz", hash = "sha256:6435882996a029a60c61c356bbe51bab4a8f43a54210f5f03e3c4474d19d1842"},
+    {file = "langchain-0.3.4-py3-none-any.whl", hash = "sha256:7a1241d9429510d2083c62df0da998a7b2b05c730cd4255b89da9d47c57f48fd"},
+    {file = "langchain-0.3.4.tar.gz", hash = "sha256:3596515fcd0157dece6ec96e0240d29f4cf542d91ecffc815d32e35198dfff37"},
 ]
 
 [package.dependencies]
 aiohttp = ">=3.8.3,<4.0.0"
-langchain-core = ">=0.3.10,<0.4.0"
+langchain-core = ">=0.3.12,<0.4.0"
 langchain-text-splitters = ">=0.3.0,<0.4.0"
 langsmith = ">=0.1.17,<0.2.0"
 numpy = [
@@ -1490,24 +1490,24 @@ pydantic = ">=2.7.4,<3.0.0"
 PyYAML = ">=5.3"
 requests = ">=2,<3"
 SQLAlchemy = ">=1.4,<3"
-tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<9.0.0"
+tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<10"
 
 [[package]]
 name = "langchain-community"
-version = "0.3.2"
+version = "0.3.3"
 description = "Community contributed LangChain integrations."
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "langchain_community-0.3.2-py3-none-any.whl", hash = "sha256:fffcd484c7674e81ceaa72a809962338bfb17ec8f9e0377ce4e9d884e6fe8ca5"},
-    {file = "langchain_community-0.3.2.tar.gz", hash = "sha256:469bf5357a08c915cebc4c506dca4617eec737d82a9b6e340df5f3b814dc89bc"},
+    {file = "langchain_community-0.3.3-py3-none-any.whl", hash = "sha256:319cfc2f923a066c91fbb8e02decd7814018af952b6b98298b8ac9d30ea1da56"},
+    {file = "langchain_community-0.3.3.tar.gz", hash = "sha256:bfb3f2b219aed21087e0ecb7d2ebd1c81401c02b92239e11645c822d5be63f80"},
 ]
 
 [package.dependencies]
 aiohttp = ">=3.8.3,<4.0.0"
 dataclasses-json = ">=0.5.7,<0.7"
-langchain = ">=0.3.3,<0.4.0"
-langchain-core = ">=0.3.10,<0.4.0"
+langchain = ">=0.3.4,<0.4.0"
+langchain-core = ">=0.3.12,<0.4.0"
 langsmith = ">=0.1.125,<0.2.0"
 numpy = [
     {version = ">=1,<2", markers = "python_version < \"3.12\""},
@@ -1517,17 +1517,17 @@ pydantic-settings = ">=2.4.0,<3.0.0"
 PyYAML = ">=5.3"
 requests = ">=2,<3"
 SQLAlchemy = ">=1.4,<3"
-tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<9.0.0"
+tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<10"
 
 [[package]]
 name = "langchain-core"
-version = "0.3.10"
+version = "0.3.12"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "langchain_core-0.3.10-py3-none-any.whl", hash = "sha256:146be6bf2d3dc0d6f4feb46ef082182cf57b056e8163d45278529cd7b7343d2f"},
-    {file = "langchain_core-0.3.10.tar.gz", hash = "sha256:63b9a3d03b52dba29cc248b752c574cdcb5fb04bd0fc5c76097fcbb7aaba5221"},
+    {file = "langchain_core-0.3.12-py3-none-any.whl", hash = "sha256:46050d34f5fa36dc57dca971c6a26f505643dd05ee0492c7ac286d0a78a82037"},
+    {file = "langchain_core-0.3.12.tar.gz", hash = "sha256:98a3c078e375786aa84939bfd1111263af2f3bc402bbe2cac9fa18a387459cf2"},
 ]
 
 [package.dependencies]
@@ -1539,7 +1539,7 @@ pydantic = [
     {version = ">=2.7.4,<3.0.0", markers = "python_full_version >= \"3.12.4\""},
 ]
 PyYAML = ">=5.3"
-tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<9.0.0"
+tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<10.0.0"
 typing-extensions = ">=4.7"
 
 [[package]]
@@ -1595,18 +1595,18 @@ transformers = ">=4.39.0"
 
 [[package]]
 name = "langchain-openai"
-version = "0.2.2"
+version = "0.2.3"
 description = "An integration package connecting OpenAI and LangChain"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "langchain_openai-0.2.2-py3-none-any.whl", hash = "sha256:3a203228cb38e4711ebd8c0a3bd51854e447f1d017e8475b6467b07ce7dd3e88"},
-    {file = "langchain_openai-0.2.2.tar.gz", hash = "sha256:9ae8e2ec7d1ca84fd3bfa82186724528d68e1510a1dc9cdf617a7c669b7a7768"},
+    {file = "langchain_openai-0.2.3-py3-none-any.whl", hash = "sha256:f498c94817c980cb302439b95d3f3275cdf2743e022ee674692c75898523cf57"},
+    {file = "langchain_openai-0.2.3.tar.gz", hash = "sha256:e142031704de1104735f503f76352c53b27ac0a2806466392993c4508c42bf0c"},
 ]
 
 [package.dependencies]
-langchain-core = ">=0.3.9,<0.4.0"
-openai = ">=1.40.0,<2.0.0"
+langchain-core = ">=0.3.12,<0.4.0"
+openai = ">=1.52.0,<2.0.0"
 tiktoken = ">=0.7,<1"
 
 [[package]]
@@ -2288,13 +2288,13 @@ sympy = "*"
 
 [[package]]
 name = "openai"
-version = "1.51.2"
+version = "1.52.2"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.7.1"
 files = [
-    {file = "openai-1.51.2-py3-none-any.whl", hash = "sha256:5c5954711cba931423e471c37ff22ae0fd3892be9b083eee36459865fbbb83fa"},
-    {file = "openai-1.51.2.tar.gz", hash = "sha256:c6a51fac62a1ca9df85a522e462918f6bb6bc51a8897032217e453a0730123a6"},
+    {file = "openai-1.52.2-py3-none-any.whl", hash = "sha256:57e9e37bc407f39bb6ec3a27d7e8fb9728b2779936daa1fcf95df17d3edfaccc"},
+    {file = "openai-1.52.2.tar.gz", hash = "sha256:87b7d0f69d85f5641678d414b7ee3082363647a5c66a462ed7f3ccb59582da0d"},
 ]
 
 [package.dependencies]
@@ -3195,13 +3195,13 @@ files = [
 
 [[package]]
 name = "redis"
-version = "5.1.1"
+version = "5.2.0"
 description = "Python client for Redis database and key-value store"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "redis-5.1.1-py3-none-any.whl", hash = "sha256:f8ea06b7482a668c6475ae202ed8d9bcaa409f6e87fb77ed1043d912afd62e24"},
-    {file = "redis-5.1.1.tar.gz", hash = "sha256:f6c997521fedbae53387307c5d0bf784d9acc28d9f1d058abeac566ec4dbed72"},
+    {file = "redis-5.2.0-py3-none-any.whl", hash = "sha256:ae174f2bb3b1bf2b09d54bf3e51fbc1469cf6c10aa03e21141f51969801a7897"},
+    {file = "redis-5.2.0.tar.gz", hash = "sha256:0b1087665a771b1ff2e003aa5bdd354f15a70c9e25d5a7dbf9c722c16528a7b0"},
 ]
 
 [package.dependencies]
@@ -3699,17 +3699,17 @@ files = [
 
 [[package]]
 name = "slack-bolt"
-version = "1.20.1"
+version = "1.21.1"
 description = "The Bolt Framework for Python"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "slack_bolt-1.20.1-py2.py3-none-any.whl", hash = "sha256:8fa26e72b0e55c18c1d34a73558e7fe2150bdc7c947de780b938fdb1d7e854fe"},
-    {file = "slack_bolt-1.20.1.tar.gz", hash = "sha256:4657e592339797b9b804547a21e6b35dd8e2cd1eab676bfb23960660aae049fd"},
+    {file = "slack_bolt-1.21.1-py2.py3-none-any.whl", hash = "sha256:feb3c97ed7c388318d6e007a9c1b50dd88b0d59e64ff1f8c4e770db30e890ec8"},
+    {file = "slack_bolt-1.21.1.tar.gz", hash = "sha256:f0f1e7223f0e5621a768d1efce470058619b4f4eacbec405625c8c813e489c20"},
 ]
 
 [package.dependencies]
-slack-sdk = ">=3.26.0,<4"
+slack-sdk = ">=3.33.1,<4"
 
 [[package]]
 name = "slack-sdk"
@@ -4769,4 +4769,4 @@ pysql-b = ["pysqlite3-binary"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "9a3eeac79765c48b396943d654d9fdb7122e79967d568c995e478af0d7b70ec5"
+content-hash = "1115786b33ba8691c5d908998335c1e658feff21c18e64cb7f1966c20b705e5b"
