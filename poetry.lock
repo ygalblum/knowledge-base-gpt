@@ -1479,18 +1479,18 @@ adal = ["adal (>=1.0.2)"]
 
 [[package]]
 name = "langchain"
-version = "0.3.12"
+version = "0.3.13"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "langchain-0.3.12-py3-none-any.whl", hash = "sha256:581ad93a9de12e4b957bc2af9ba8482eb86e3930e84c4ee20ed677da5e2311cd"},
-    {file = "langchain-0.3.12.tar.gz", hash = "sha256:0d8247afbf37beb263b4adc29f7aa8a5ae83c43a6941894e2f9ba39d5c869e3b"},
+    {file = "langchain-0.3.13-py3-none-any.whl", hash = "sha256:dd3549a28dc28b5d4769122b60fad0890aee86928d1bdbba3f9349d9f023315d"},
+    {file = "langchain-0.3.13.tar.gz", hash = "sha256:3d618a8e7e496704dc4407d224218ff28baf9416c1241e7bdcdd117e6c70daa8"},
 ]
 
 [package.dependencies]
 aiohttp = ">=3.8.3,<4.0.0"
-langchain-core = ">=0.3.25,<0.4.0"
+langchain-core = ">=0.3.26,<0.4.0"
 langchain-text-splitters = ">=0.3.3,<0.4.0"
 langsmith = ">=0.1.17,<0.3"
 numpy = [
@@ -1505,21 +1505,21 @@ tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<10"
 
 [[package]]
 name = "langchain-community"
-version = "0.3.12"
+version = "0.3.13"
 description = "Community contributed LangChain integrations."
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "langchain_community-0.3.12-py3-none-any.whl", hash = "sha256:5a993c931d46dc07fcdfcdfa4d87095c5a15d37ff32b0c16e9ecf6f5caa58c9c"},
-    {file = "langchain_community-0.3.12.tar.gz", hash = "sha256:b4694f34c7214dede03fe5a75e9f335e16bd788dfa6ca279302ad357bf0d0fc4"},
+    {file = "langchain_community-0.3.13-py3-none-any.whl", hash = "sha256:d6f623d59d44ea85b9cafac8ca6e9970c343bf892a9a3252b3f25e30df339be2"},
+    {file = "langchain_community-0.3.13.tar.gz", hash = "sha256:8abe05b4ab160018dbd368f7b4dc79ef6a66178a461b47c4ce401d430337e0c2"},
 ]
 
 [package.dependencies]
 aiohttp = ">=3.8.3,<4.0.0"
 dataclasses-json = ">=0.5.7,<0.7"
 httpx-sse = ">=0.4.0,<0.5.0"
-langchain = ">=0.3.12,<0.4.0"
-langchain-core = ">=0.3.25,<0.4.0"
+langchain = ">=0.3.13,<0.4.0"
+langchain-core = ">=0.3.27,<0.4.0"
 langsmith = ">=0.1.125,<0.3"
 numpy = [
     {version = ">=1.22.4,<2", markers = "python_version < \"3.12\""},
@@ -1533,13 +1533,13 @@ tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<10"
 
 [[package]]
 name = "langchain-core"
-version = "0.3.26"
+version = "0.3.27"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "langchain_core-0.3.26-py3-none-any.whl", hash = "sha256:03c1f43d1e1fc3ec37700764a7f4fc79279072978a9cae1ad3a395b2d02f3e8f"},
-    {file = "langchain_core-0.3.26.tar.gz", hash = "sha256:828133f3a05fbb71d09f00c9fa7d2cbaccb6232ae4aa7e1b1be09951cac0bac5"},
+    {file = "langchain_core-0.3.27-py3-none-any.whl", hash = "sha256:5db42cd73f4f2d5d2550403a4c8b7dec2cd56f1501fe207d009b5b9632a5ca02"},
+    {file = "langchain_core-0.3.27.tar.gz", hash = "sha256:3d71835c4c630db03a19757565046029e89ee96a4b06788892599d49bb3fc58a"},
 ]
 
 [package.dependencies]
@@ -1607,17 +1607,17 @@ transformers = ">=4.39.0"
 
 [[package]]
 name = "langchain-openai"
-version = "0.2.12"
+version = "0.2.13"
 description = "An integration package connecting OpenAI and LangChain"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "langchain_openai-0.2.12-py3-none-any.whl", hash = "sha256:916965c45584d9ea565825ad3bb7629b1ff57f12f36d4b937e5b7d65903839d6"},
-    {file = "langchain_openai-0.2.12.tar.gz", hash = "sha256:8b92096623065a2820e89aa5fb0a262fb109d56c346e3b09ba319af424c45cd1"},
+    {file = "langchain_openai-0.2.13-py3-none-any.whl", hash = "sha256:4b0707694b5081b474e0d8313572fbe611de0df82cf4659068ed20ccb629d1f8"},
+    {file = "langchain_openai-0.2.13.tar.gz", hash = "sha256:5b0eb9c7ab3f46ba7b5a53337e76586fb89b67475a465f3e3f0ab40a2f94235d"},
 ]
 
 [package.dependencies]
-langchain-core = ">=0.3.21,<0.4.0"
+langchain-core = ">=0.3.27,<0.4.0"
 openai = ">=1.55.3,<2.0.0"
 tiktoken = ">=0.7,<1"
 
@@ -4782,4 +4782,4 @@ pysql-b = ["pysqlite3-binary"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "8103f6a314fec44b95794026b0b75d570aae0ef0216b807daec75dca7611d0be"
+content-hash = "9ad085e16630d8da60f0ee7e1bdf605cb4f41a7bcd375e1d815d94c511a24c69"
