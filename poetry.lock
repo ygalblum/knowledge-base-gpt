@@ -2959,14 +2959,14 @@ xmp = ["defusedxml"]
 
 [[package]]
 name = "posthog"
-version = "3.24.2"
+version = "3.25.0"
 description = "Integrate PostHog into any python application."
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "posthog-3.24.2-py2.py3-none-any.whl", hash = "sha256:9f018fe9d51155bc5124477837bb4a16d044e81a683f9df66a81b87877065cc9"},
-    {file = "posthog-3.24.2.tar.gz", hash = "sha256:23d881147082e9f13c095a7451357985ad7dea8395bbaa38cebef769fe649665"},
+    {file = "posthog-3.25.0-py2.py3-none-any.whl", hash = "sha256:85db78c13d1ecb11aed06fad53759c4e8fb3633442c2f3d0336bc0ce8a585d30"},
+    {file = "posthog-3.25.0.tar.gz", hash = "sha256:9168f3e7a0a5571b6b1065c41b3c171fbc68bfe72c3ac0bfd6e3d2fcdb7df2ca"},
 ]
 
 [package.dependencies]
