@@ -1,6 +1,6 @@
 langchain==0.3.23
 langchain-community==0.3.21
-chromadb==0.6.3
+chromadb==1.0.5
 google-api-python-client==2.166.0
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.1
