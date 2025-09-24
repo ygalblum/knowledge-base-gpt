@@ -8,19 +8,19 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-langchain = "0.3.23"
-langchain-community = "0.3.21"
+langchain = "0.3.27"
+langchain-community = "0.3.29"
 chromadb = "0.6.3"
-google-api-python-client = "2.166.0"
+google-api-python-client = "2.183.0"
 google-auth-httplib2 = "0.2.0"
-google-auth-oauthlib = "1.2.1"
+google-auth-oauthlib = "1.2.2"
 PyPDF2 = "3.0.1"
-slack_bolt = "1.23.0"
-redis = "5.2.1"
+slack_bolt = "1.25.0"
+redis = "5.3.1"
 injector = "^0.22.0"
 envyaml = "^1.10.211231"
 langchain-openai = "^0.3.0"
-langchain-huggingface = {version = "^0.1.0", optional = true}
+langchain-huggingface = {version = "^0.3.0", optional = true}
 langchain-google-community = "^2.0.0"
 pysqlite3-binary = { version = "^0.5.3", optional = true}
 protobuf = "3.20.*"
